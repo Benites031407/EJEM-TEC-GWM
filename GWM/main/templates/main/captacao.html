@@ -1,0 +1,225 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Topbar da página -->
+    <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 8px; color: white;">
+        <h5 class="mb-0 fs-6">{% block page_title %}Captação de Clientes – {{ month }}/{{ year }}{% endblock %}</h5>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Card do formulário -->
+    <div class="card shadow-sm p-4 mb-5">
+        {% if form.errors %}
+            <div class="alert alert-danger mb-4">
+                <strong>Por favor, corrija os erros abaixo:</strong>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-4">
+                {% for field in form %}
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" for="{{ field.id_for_label }}">
+                                {{ field.label }} 
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                            {% if field.name == 'pl' or field.name == 'planejado_migracao' %}
+                                <div class="form-text">
+                                    <small>Informe o valor em moeda (R$)</small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary px-5 py-2 mt-4">
+                    <i class="fas fa-paper-plane me-2"></i> Enviar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabela de entradas recentes -->
+    {% if entries %}
+    <div class="card shadow-sm p-4 mb-5">
+        <h5 class="card-title mb-4">Clientes Cadastrados ({{ month }}/{{ year }})</h5>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Patrimônio Líquido</th>
+                        <th>Planejado Migração</th>
+                        <th>Origem</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.nome }}</td>
+                        <td>{{ entry.pl_formatted|default:"R$ 0,00" }}</td>
+                        <td>{{ entry.planejado_migracao_formatted|default:"R$ 0,00" }}</td>
+                        <td>{{ entry.origem }}</td>
+                        <td>
+                            <span class="badge {% if entry.status == 'Quente' %}bg-danger{% elif entry.status == 'Morno' %}bg-warning{% elif entry.status == 'Frio' %}bg-info{% else %}bg-secondary{% endif %}">
+                                {{ entry.status }}
+                            </span>
+                        </td>
+                        <td>{{ entry.acao }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mark default 'Não Selecionado' options as invalid
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            if (this.value === 'Não Selecionado') {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+        
+        // Initialize on page load
+        if (select.value === 'Não Selecionado') {
+            select.classList.add('is-invalid');
+        }
+    });
+    
+    // Currency formatting for PL and Planejado fields
+    document.querySelectorAll('#id_pl_display, #id_planejado_migracao_display').forEach(function(input) {
+        // Format on load if there's an initial value
+        if (input.value) {
+            formatCurrency(input, null);
+        }
+        
+        // Format on input
+        input.addEventListener('input', function(e) {
+            // Store cursor position
+            const start = this.selectionStart;
+            const length = this.value.length;
+            
+            formatCurrency(this, null);
+            
+            // Adjust cursor position based on change in length
+            const newLength = this.value.length;
+            const newPosition = start + (newLength - length);
+            
+            // Only set position if input is focused
+            if (document.activeElement === this) {
+                this.setSelectionRange(newPosition, newPosition);
+            }
+        });
+        
+        // Format on focus out (blur)
+        input.addEventListener('blur', function(e) {
+            formatCurrency(this, 'blur');
+        });
+        
+        // Clear formatting on focus to allow easier editing
+        input.addEventListener('focus', function(e) {
+            // Store the numeric value without any non-number characters except commas
+            const numericValue = this.value.replace(/[^\d,]/g, '');
+            if (numericValue) {
+                // Keep only the numbers and comma
+                this.value = numericValue;
+            }
+        });
+    });
+    
+    function formatCurrency(input, blur) {
+        // Get input value
+        let input_val = input.value;
+        
+        // Don't validate empty input
+        if (input_val === "") { return; }
+        
+        // Allow only numbers and comma for decimal
+        input_val = input_val.replace(/[^0-9,]/g, "");
+        
+        // Check for decimal
+        if (input_val.indexOf(",") >= 0) {
+            // Get position of first decimal
+            // This prevents multiple decimals
+            let decimal_pos = input_val.indexOf(",");
+            
+            // Split number by decimal point
+            let left_side = input_val.substring(0, decimal_pos);
+            let right_side = input_val.substring(decimal_pos + 1);
+            
+            // Remove all non-digits
+            left_side = left_side.replace(/\D/g, "");
+            right_side = right_side.replace(/\D/g, "");
+            
+            // Limit decimal to 2 digits
+            right_side = right_side.substring(0, 2);
+            
+            // Pad to 2 decimals if in blur mode
+            if (blur === "blur") {
+                right_side = right_side.padEnd(2, '0');
+            }
+            
+            // Apply thousands separator to left side
+            left_side = left_side.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            
+            // Join parts
+            input_val = "R$ " + left_side + "," + right_side;
+        } else {
+            // No decimal entered
+            // Add separators
+            input_val = input_val.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            
+            // Format with currency symbol and decimal
+            input_val = "R$ " + input_val + (blur === "blur" ? ",00" : "");
+        }
+        
+        // Send updated value back to input
+        input.value = input_val;
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,240 @@
+:root {
+    --verde-escuro: #354431;
+    --verde-claro: #5b7954;
+    --azul-escuro: #002733;
+    --azul-claro: #005678;
+    --cinza-claro: #f8f9fa;
+  }
+  
+  body {
+    background-color: var(--cinza-claro);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #212529;
+  }
+  
+  .sidebar {
+    background-color: var(--azul-escuro);
+    color: white;
+    width: 280px;
+    min-height: 100vh;
+    height: auto;
+    position: fixed; /* Ou sticky */
+    top: 0;
+    left: 0;
+    z-index: 100; 
+  }
+  
+  .sidebar h4 a {
+    color: white;
+    text-decoration: none;
+    border-bottom: 3px solid var(--verde-claro);
+    padding-bottom: 5px;
+    display: inline-block;
+  }
+  
+  .sidebar .nav-link {
+    color: #d1d1d1;
+    font-weight: 500;
+  }
+  
+  .sidebar .nav-link:hover,
+  .sidebar .nav-link.active {
+    background-color: var(--azul-claro);
+    color: white;
+    border-radius: 4px;
+  }
+  
+  .btn-primary {
+    background-color: var(--azul-claro);
+    border-color: var(--azul-claro);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--verde-claro);
+    border-color: var(--verde-claro);
+  }
+  
+  .btn-success {
+    background-color: var(--verde-claro);
+    border-color: var(--verde-claro);
+  }
+  
+  .card {
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 24px;
+  }
+  
+  .card h3 {
+    color: var(--verde-escuro);
+    font-weight: 600;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--verde-claro);
+    padding-bottom: 10px;
+  }
+  
+  .form-label {
+    color: var(--azul-escuro);
+    font-weight: 600;
+  }
+  
+  .table thead {
+    background-color: var(--azul-claro);
+    color: white;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #e6f2ff;
+  }
+  
+  .nav-link.active {
+    background-color: #354431;
+    font-weight: bold;
+    border-left: 4px solid #5b7954;
+    padding-left: 12px;
+}
+
+  .sidebar .nav-link {
+    font-size: 15px;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+}
+
+  .sidebar .nav-link:hover {
+    background-color: #005678;
+    border-radius: 6px;
+}
+
+  .topbar-title {
+    font-size: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .content {
+    margin-left: 280px; /* Empurra o conteúdo para a direita para não ficar sob a sidebar */
+    width: calc(100% - 280px); /* Garante que o conteúdo ocupe o restante da largura */
+    padding: 15px; /* Adicione algum padding ao conteúdo */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Garante que o conteúdo tenha pelo menos a altura da tela */
+  }
+
+  /* Ajuste para o container dentro do conteúdo, se necessário */
+  .content > .container {
+    flex-grow: 1; /* Permite que o container interno cresça */
+  }
+
+  /* Para telas menores, você pode querer ajustar o comportamento da sidebar */
+  @media (max-width: 768px) {
+    .sidebar {
+        position: static; /* A sidebar flui com o documento em telas menores */
+        width: 100%;
+        min-height: auto;
+    }
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+  }
+
+/* ========== Dashboard de Unidades Styles ========== */
+/* Estilos para as páginas de unidades (master e head) */
+
+/* Gradientes e cores de background */
+.bg-gradient-primary-to-secondary {
+    background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%);
+    color: white;
+}
+
+
+/* Estilos para cards de unidade */
+.unit-card {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem !important;
+}
+
+.unit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* Estilos para item de estatísticas */
+.stat-item {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem !important;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Estilos para barras de progresso */
+.progress {
+    height: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.progress-sm {
+    height: 0.5rem !important;
+}
+
+/* Estilos para bordas coloridas */
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid var(--azul-claro) !important;
+}
+
+/* Estilos para botões com ícones */
+.btn-icon-split {
+    display: flex;
+    align-items: center;
+}
+
+.btn-icon-split .icon {
+    background: rgba(0,0,0,0.15);
+    padding: 0.375rem 0.75rem;
+    display: inline-block;
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+
+.btn-icon-split .text {
+    padding: 0.375rem 0.75rem;
+    display: inline-block;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* Espaçamento e layout para cards */
+.card-header {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.card-footer {
+    padding: 0.75rem 1.25rem;
+    background-color: rgba(0,0,0,0.03);
+    border-top: 1px solid rgba(0,0,0,0.125);
+}
+
+/* Badges e indicadores */
+.badge {
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    border-radius: 10rem;
+}

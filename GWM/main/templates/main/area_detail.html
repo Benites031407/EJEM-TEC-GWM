@@ -1,0 +1,67 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ area.nome }}</h1>
+        <a href="{% url 'units_list' %}" class="btn btn-outline-secondary">Voltar para lista de unidades</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Informações da Área</h5>
+            
+            <p>
+                <strong>Head da Área:</strong> 
+                {% if head %}
+                    {{ head.get_full_name }}
+                {% else %}
+                    <span class="text-danger">Não definido</span>
+                {% endif %}
+            </p>
+            
+            <h6 class="mt-3">Unidades com esta área:</h6>
+            {% if units %}
+                <ul>
+                    {% for unit in units %}
+                    <li>
+                        <a href="{% url 'unit_detail' unit.id %}">{{ unit.nome }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Esta área não está associada a nenhuma unidade.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h2>Assessores</h2>
+    <div class="row">
+        {% for advisor in advisors %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ advisor.get_full_name }}</h5>
+                    <p><strong>Email:</strong> {{ advisor.email }}</p>
+                    <p><strong>Telefone:</strong> {{ advisor.phone_number|default:"Não informado" }}</p>
+                    {% if advisor.cge %}
+                    <p><strong>CGE:</strong> {{ advisor.cge }}</p>
+                    {% endif %}
+                    {% if advisor.unidade %}
+                    <p><strong>Unidade:</strong> {{ advisor.unidade.nome }}</p>
+                    {% endif %}
+                    
+                    <a href="{% url 'user_team' advisor.id %}" class="btn btn-sm btn-outline-primary">Ver equipe</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Nenhum assessor nesta área.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

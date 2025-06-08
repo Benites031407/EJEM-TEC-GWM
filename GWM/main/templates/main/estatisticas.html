@@ -1,0 +1,237 @@
+{% extends 'main/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container my-5">
+    <div class="card shadow p-4">
+        
+        <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 8px; color: white;">
+            <h5 class="mb-0 fs-6">{% block page_title %}Estatísticas – {{ month }}/{{ year }}{% endblock %}</h5>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if is_edit %}
+        <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle me-2"></i> Você está editando informações enviadas anteriormente.
+        </div>
+        {% endif %}
+
+        <form method="POST" id="estatisticasForm">
+            {% csrf_token %}
+            {{ form.motivo }} <!-- Hidden field -->
+            
+            <!-- Form errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Efetivou operação -->
+            <div class="mb-4">
+                <h5 class="fw-bold">Efetivou alguma operação?</h5>
+                <div class="d-flex gap-3 mt-3">
+                    {% for radio in form.efetivou_operacao %}
+                        <div class="form-check form-check-inline">
+                            {{ radio.tag }}
+                            <label class="form-check-label">{{ radio.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.efetivou_operacao.errors %}
+                    <div class="text-danger mt-1">{{ form.efetivou_operacao.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Se sim, mostrar áreas -->
+            <div id="areas_div" style="display:none;">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        {% for field in form %}
+                            {% if field.name in "rv,cambio,seguros,consorcio" %}
+                                <div class="mb-3">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    <div id="qtd_{{ field.name }}" class="mt-2" style="display:none;">
+                                        <label>Quantas operações {{ field.label }}?</label>
+                                        <input type="number" name="qtd_{{ field.name }}" class="form-control" value="{{ field.value|default:'0' }}" min="0">
+                                        <input type="hidden" name="qtd_{{ field.name }}_hidden" value="0">
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6">
+                        {% for field in form %}
+                            {% if field.name in "corporate,expansao,banking,advisory" %}
+                                <div class="mb-3">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    <div id="qtd_{{ field.name }}" class="mt-2" style="display:none;">
+                                        <label>Quantas operações {{ field.label }}?</label>
+                                        <input type="number" name="qtd_{{ field.name }}" class="form-control" value="{{ field.value|default:'0' }}" min="0">
+                                        <input type="hidden" name="qtd_{{ field.name }}_hidden" value="0">
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivo se Não -->
+            <div id="motivo_nao_div" style="display:none;">
+                <div class="mb-3">
+                    <label class="fw-bold">Qual o motivo?</label>
+                    <textarea name="motivo_nao" class="form-control" rows="3" placeholder="Descreva o motivo...">{{ form.instance.motivo }}</textarea>
+                </div>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary px-5 py-2">
+                    <i class="fas fa-paper-plane me-2"></i> {% if is_edit %}Atualizar{% else %}Salvar{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('estatisticasForm');
+      const efetivouOperacaoRadios = document.querySelectorAll('input[name="efetivou_operacao"]');
+      const areasDiv = document.getElementById('areas_div');
+      const motivoNaoDiv = document.getElementById('motivo_nao_div');
+      const motivoField = document.querySelector('textarea[name="motivo"]');
+      const motivoNaoField = document.querySelector('textarea[name="motivo_nao"]');
+
+      function toggleSections() {
+          const selected = document.querySelector('input[name="efetivou_operacao"]:checked');
+          
+          if (!selected) {
+              areasDiv.style.display = 'none';
+              motivoNaoDiv.style.display = 'none';
+              return;
+          }
+
+          if (selected.value === 'True') {
+              areasDiv.style.display = 'block';
+              motivoNaoDiv.style.display = 'none';
+          } else if (selected.value === 'False') {
+              areasDiv.style.display = 'none';
+              motivoNaoDiv.style.display = 'block';
+              // If editing and there's a motivo value, show it in the motivo_nao field
+              if ('{{ is_edit }}' === 'True' && '{{ form.instance.motivo }}') {
+                  motivoNaoField.value = '{{ form.instance.motivo }}';
+              }
+          } else {
+              areasDiv.style.display = 'none';
+              motivoNaoDiv.style.display = 'none';
+          }
+      }
+
+      // Handle form submission
+      form.addEventListener('submit', function(event) {
+          const selected = document.querySelector('input[name="efetivou_operacao"]:checked');
+          
+          if (!selected) {
+              event.preventDefault();
+              alert('Por favor, indique se efetivou alguma operação.');
+              return;
+          }
+          
+          if (selected.value === 'True') {
+              // Check if at least one area is selected
+              const areaSelects = document.querySelectorAll('select[id^="id_"]');
+              let areaSelected = false;
+              let allOptionsSelected = true;
+              
+              areaSelects.forEach(select => {
+                  if (select.value === 'True') {
+                      areaSelected = true;
+                  }
+                  
+                  // Check if any option is still "Não selecionado"
+                  if (select.value === 'None' || select.value === '') {
+                      allOptionsSelected = false;
+                  }
+              });
+              
+              // Ensure quantity fields have values
+              const qtyInputs = document.querySelectorAll('input[type="number"][name^="qtd_"]');
+              qtyInputs.forEach(input => {
+                  if (!input.value || input.value.trim() === '') {
+                      input.value = '0';
+                  }
+              });
+              
+              if (!areaSelected) {
+                  event.preventDefault();
+                  alert('Por favor, selecione pelo menos uma área.');
+                  return;
+              }
+              
+              if (!allOptionsSelected) {
+                  event.preventDefault();
+                  alert('Por favor, selecione "Sim" ou "Não" para todas as áreas.');
+                  return;
+              }
+          } else if (selected.value === 'False') {
+              // Check if motivo is provided
+              if (!motivoNaoField.value.trim()) {
+                  event.preventDefault();
+                  alert('Por favor, indique o motivo.');
+                  return;
+              }
+              
+              // Copy motivo_nao to motivo field
+              motivoField.value = motivoNaoField.value;
+          }
+      });
+
+      efetivouOperacaoRadios.forEach(function(radio) {
+          radio.addEventListener('change', toggleSections);
+      });
+
+      toggleSections(); // Rodar ao carregar a página também
+
+      const areas = ['rv', 'cambio', 'seguros', 'consorcio', 'corporate', 'expansao', 'banking', 'advisory'];
+
+      areas.forEach(function(area) {
+          const select = document.getElementById('id_' + area);
+          const qtdDiv = document.getElementById('qtd_' + area);
+
+          if (select) {
+              select.addEventListener('change', function() {
+                  if (this.value === 'True') {
+                      qtdDiv.style.display = 'block';
+                  } else {
+                      qtdDiv.style.display = 'none';
+                  }
+              });
+              
+              // Trigger the event on page load
+              if (select.value === 'True') {
+                  qtdDiv.style.display = 'block';
+              }
+          }
+      });
+  });
+</script>
+
+{% endblock %}

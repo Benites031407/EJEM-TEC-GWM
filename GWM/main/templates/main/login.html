@@ -1,0 +1,73 @@
+{% extends 'main/login_base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+{% load static %}
+{% load form_tags %}
+
+
+<style>
+    body {
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f4f4f4; 
+        background-image: url('/static/images/gwm.png'); 
+        background-size: cover; /* Cover the entire viewport */
+        background-repeat: no-repeat; 
+        background-position: center;
+    }
+    .login-card {
+        max-width: 400px;
+        width: 100%;
+        padding: 2rem;
+        border-radius: 10px;
+        background-color: rgb(53, 68, 49);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .login-title {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+            font-weight: bold;
+        }
+
+</style>
+
+<div class="login-card">
+    <h3 class="login-title">Bem vindo ao portal GWM</h3>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="mb-3">
+            {{ form.username.label_tag }}
+            {{ form.username|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label_tag }}
+            {{ form.password|add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+    </form>
+</div>
+
+{% endblock %}

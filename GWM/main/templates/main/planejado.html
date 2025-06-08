@@ -1,0 +1,204 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<!--Topbar da página com título-->
+<div class="container mt-4">
+    <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 6px;">
+        <h5 class="mb-0 fs-6">{% block page_title %}
+            {% if area %}
+                Ações Planejadas – {{ area.nome }} – {{ month }}/{{ year }}
+            {% else %}
+                Ações Planejadas – {{ month }}/{{ year }}
+            {% endif %}
+        {% endblock %}</h5>
+    </div>
+
+    <!-- Container principal -->
+    <div class="container mt-4">
+        <!-- Card do formulário -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                {% if area %}
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Este formulário está configurado especificamente para a área de <strong>{{ area.nome }}</strong>.
+                </div>
+                {% endif %}
+                
+                <form method="post" id="planejado-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {% comment %}
+                    O botão de submit agora é sempre incluído no HTML, mas sua visibilidade e estado são controlados pelo JS.
+                    {% endcomment %}
+                    <button type="submit" class="btn btn-success {% if not can_edit and not request.session.edit_code_valid %}d-none{% endif %}" id="submit-btn">
+                        {% if is_edit %}Atualizar{% else %}Enviar{% endif %}
+                    </button>
+
+                    {% if not can_edit and not request.session.edit_code_valid %}
+                        <div class="alert alert-secondary mt-3">
+                            Este formulário está fora do período de edição.
+                        </div>
+                        {% if request.user.is_authenticated %}
+                            <button type="button" class="btn btn-warning mt-2" id="edit-btn">Solicitar Edição</button>
+                        {% endif %}
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Código -->
+<div class="modal fade" id="editCodeModal" tabindex="-1" aria-labelledby="editCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Código de Autorização</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <input type="password" class="form-control" id="edit-code" placeholder="Digite o código master">
+                <div class="text-danger mt-2" id="code-error" style="display: none;">Código inválido!</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="validate-code">Validar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const editBtn = document.getElementById('edit-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const modalEl = document.getElementById('editCodeModal');
+
+    if (editBtn) {
+        editBtn.addEventListener('click', function () {
+            console.log('Botão clicado ✅'); // ← Aqui está o console.log para debug
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        });
+    }
+
+    document.getElementById('validate-code').addEventListener('click', function () {
+        const code = document.getElementById('edit-code').value;
+
+        fetch("{% url 'validar_codigo' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.valid) {
+                // Remover todas as limitações do formulário
+                document.querySelectorAll('#planejado-form input, #planejado-form textarea, #planejado-form select').forEach(el => {
+                    el.disabled = false;
+                    el.readOnly = false;
+                    el.classList.remove('disabled');
+                });
+                
+                // Esconder o alerta de período fechado
+                const alertElement = document.querySelector('.alert-secondary');
+                if (alertElement) {
+                    alertElement.style.display = 'none';
+                }
+                
+                // Esconder o botão de solicitar edição
+                const editBtn = document.getElementById('edit-btn');
+                if (editBtn) {
+                    editBtn.style.display = 'none';
+                }
+                
+                // Mostrar o botão de submit
+                const submitBtn = document.getElementById('submit-btn');
+                if (submitBtn) {
+                    submitBtn.classList.remove('d-none'); // Remove a classe d-none do Bootstrap para mostrar o botão
+                }
+                
+                // Fechar o modal
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                
+                // Limpar o campo de código
+                document.getElementById('edit-code').value = '';
+            } else {
+                document.getElementById('code-error').style.display = 'block';
+            }
+        });
+    });
+
+    // Currency formatting for all .money-mask fields
+    document.querySelectorAll('.money-mask').forEach(function(input) {
+        // Format on load if there's an initial value
+        if (input.value) {
+            formatCurrency(input, null);
+        }
+
+        // Format on input
+        input.addEventListener('input', function(e) {
+            const start = this.selectionStart;
+            const length = this.value.length;
+            formatCurrency(this, null);
+            const newLength = this.value.length;
+            const newPosition = start + (newLength - length);
+            if (document.activeElement === this) {
+                this.setSelectionRange(newPosition, newPosition);
+            }
+        });
+        // Format on blur
+        input.addEventListener('blur', function(e) {
+            formatCurrency(this, 'blur');
+        });
+        // Clear formatting on focus for easier editing
+        input.addEventListener('focus', function(e) {
+            const numericValue = this.value.replace(/[^\d,]/g, '');
+            if (numericValue) {
+                this.value = numericValue;
+            }
+        });
+    });
+    function formatCurrency(input, blur) {
+        let input_val = input.value;
+        if (input_val === "") { return; }
+        input_val = input_val.replace(/[^0-9,]/g, "");
+        if (input_val.indexOf(",") >= 0) {
+            let decimal_pos = input_val.indexOf(",");
+            let left_side = input_val.substring(0, decimal_pos);
+            let right_side = input_val.substring(decimal_pos + 1);
+            left_side = left_side.replace(/\D/g, "");
+            right_side = right_side.replace(/\D/g, "");
+            right_side = right_side.substring(0, 2);
+            if (blur === "blur") {
+                right_side = right_side.padEnd(2, '0');
+            }
+            left_side = left_side.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            input_val = "R$ " + left_side + "," + right_side;
+        } else {
+            input_val = input_val.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            input_val = "R$ " + input_val + (blur === "blur" ? ",00" : "");
+        }
+        input.value = input_val;
+    }
+});
+</script>
+{% endblock %}

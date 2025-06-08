@@ -1,0 +1,142 @@
+{% extends 'main/base.html' %}
+{% block title %}Home - Master{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4 border-0 rounded-lg bg-gradient-primary-to-secondary">
+        <div class="card-body p-4">
+            <h4 class="mb-0 fw-bold text-white"><i class="fas fa-crown me-2"></i>Bem-vindo, {{ user.first_name|default:user.username }} 👋</h4>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Performance da Empresa -->
+        <div class="col-md-12">
+            <div class="card shadow mb-4 rounded-lg border-0">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h5 class="mb-0 text-white"><i class="fas fa-chart-line me-2"></i>Performance da Empresa</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 text-muted">ROA Médio</h6>
+                                    <p class="text-success fs-4 mb-0 fw-bold">{{ roa_medio|floatformat:1 }}%</p>
+            </div>
+                                <div class="border-start ps-3">
+                                    <small class="text-success"><i class="fas fa-arrow-up me-1"></i>3.5% no mês</small>
+                </div>
+            </div>
+        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 text-muted">Retenção de Clientes</h6>
+                                    <p class="text-success fs-4 mb-0 fw-bold">94%</p>
+                                </div>
+                                <div class="border-start ps-3">
+                                    <small class="text-success"><i class="fas fa-arrow-up me-1"></i>2% no mês</small>
+                                </div>
+                </div>
+            </div>
+        </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acesso Rápido -->
+        <div class="col-md-12">
+            <div class="card shadow mb-4 rounded-lg border-0">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h5 class="mb-0 text-white"><i class="fas fa-network-wired me-2"></i>Gestão das Unidades</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'unidades' %}" class="btn btn-outline-primary w-100 py-3 rounded-lg quick-access-btn">
+                        <i class="fas fa-building me-2"></i>Ver Unidades
+                    </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'dashboard_master' %}" class="btn btn-outline-dark w-100 py-3 rounded-lg quick-access-btn">
+                        <i class="fas fa-chart-bar me-2"></i>Dashboard Consolidada
+                    </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{% url 'painel_alertas_master' %}" class="btn btn-outline-danger w-100 py-3 rounded-lg quick-access-btn">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Painel de Alertas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    .bg-gradient-primary-to-secondary {
+        background: linear-gradient(to right, var(--azul-escuro), var(--azul-claro));
+    }
+    
+    .bg-gradient-welcome {
+        background: linear-gradient(135deg, var(--azul-claro), var(--verde-claro));
+    }
+    
+    .card {
+        transition: transform 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .area-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .quick-access-btn {
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border-width: 2px;
+    }
+    
+    .quick-access-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .bg-success-soft {
+        background-color: rgba(40, 167, 69, 0.15);
+    }
+    
+    .bg-primary-soft {
+        background-color: rgba(0, 123, 255, 0.15);
+    }
+    
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.15);
+    }
+    
+    .bg-info-soft {
+        background-color: rgba(23, 162, 184, 0.15);
+    }
+    
+    .hover-item {
+        transition: background-color 0.2s ease;
+    }
+    
+    .hover-item:hover {
+        background-color: rgba(0,0,0,0.02);
+    }
+</style>
+{% endblock %}

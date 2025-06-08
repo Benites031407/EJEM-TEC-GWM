@@ -1,0 +1,155 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Topbar da página -->
+    <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 8px; color: white;">
+        <h5 class="mb-0 fs-6">{% block page_title %}<i class="fas fa-history me-2"></i> Histórico de Envios {% endblock %}</h5>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row g-4">
+
+        <!-- Card Captação -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="fas fa-user-plus me-2"></i> Captação</h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for c in captacoes %}
+                        <li class="list-group-item">
+                            <small class="text-muted"><strong>{{ c.created_at|date:"d/m/Y H:i" }}</strong></small><br>
+                            <strong>Nome:</strong> {{ c.nome }}<br> 
+                            <strong>PL:</strong> {{ c.pl|currency }}<br> 
+                            <strong>Origem:</strong> {{ c.origem }}<br> 
+                            <strong>Ação:</strong> {{ c.acao }}<br> 
+                            <strong>Status:</strong> {{ c.status }}<br> 
+                            <strong>Planejado Migração:</strong> {{ c.planejado_migracao|currency }}<br>
+                            {% if c.comentario %}
+                            <div class="mt-2 p-2 bg-light rounded">
+                                <strong>Comentários:</strong> 
+                                <p class="mb-0 fst-italic text-muted">{{ c.comentario }}</p>
+                            </div>
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">Nenhuma captação registrada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card Estatísticas -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Estatísticas</h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for est in estatisticas %}
+                        <li class="list-group-item">
+                            <small class="text-muted"><strong>{{ est.created_at|date:"d/m/Y H:i" }}</strong></small>
+                            <br>
+
+                            <strong>Efetivou operação:</strong> 
+                            {% if est.efetivou_operacao %}
+                                <span class="badge bg-success">Sim</span>
+                            {% else %}
+                                <span class="badge bg-danger">Não</span>
+                                {% if est.motivo %}
+                                <small class="d-block text-muted mt-1">
+                                    <strong>Motivo:</strong> {{ est.motivo }}
+                                </small>
+                                {% endif %}
+                            {% endif %}
+                            <br>
+
+                            {% if est.efetivou_operacao %}
+                            <div class="mt-2">
+                                <strong>Áreas envolvidas:</strong>
+                                <table class="table table-sm table-borderless mt-1">
+                                    <thead>
+                                        <tr>
+                                            <th>Área</th>
+                                            <th>Status</th>
+                                            <th>Quantidade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>RV</td>
+                                            <td>{% if est.rv %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.rv %}{{ est.qtd_rv }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Câmbio</td>
+                                            <td>{% if est.cambio %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.cambio %}{{ est.qtd_cambio }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Seguros</td>
+                                            <td>{% if est.seguros %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.seguros %}{{ est.qtd_seguros }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Consórcio</td>
+                                            <td>{% if est.consorcio %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.consorcio %}{{ est.qtd_consorcio }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Corporate</td>
+                                            <td>{% if est.corporate %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.corporate %}{{ est.qtd_corporate }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Expansão</td>
+                                            <td>{% if est.expansao %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.expansao %}{{ est.qtd_expansao }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banking</td>
+                                            <td>{% if est.banking %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.banking %}{{ est.qtd_banking }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Advisory</td>
+                                            <td>{% if est.advisory %}<span class="badge bg-success">Sim</span>{% else %}<span class="badge bg-secondary">Não</span>{% endif %}</td>
+                                            <td>{% if est.advisory %}{{ est.qtd_advisory }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                                <div class="mt-2">
+                                    <em>Nenhuma operação efetivada neste período.</em>
+                                </div>
+                            {% endif %}
+                            
+                            {% if est.comentario %}
+                            <div class="mt-3 p-2 bg-light rounded">
+                                <strong>Comentários:</strong> 
+                                <p class="mb-0 fst-italic text-muted">{{ est.comentario }}</p>
+                            </div>
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">Nenhuma estatística registrada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

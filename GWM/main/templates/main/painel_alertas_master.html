@@ -1,0 +1,371 @@
+{% extends 'main/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-bell text-primary me-2"></i>Painel de Alertas
+        </h1>
+        <span class="badge bg-primary rounded-pill fs-6">
+            Data atual: {% now "d/m/Y" %}
+        </span>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Pendências Planejado
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ planejados_pendentes.count }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-success opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">Heads de Área, Unidade e Responsáveis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pendências Executado
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ executados_pendentes.count }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tasks fa-2x text-warning opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">Heads de Área, Unidade e Responsáveis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Pendências Estatísticas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ estatisticas_pendentes.count }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-danger opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">Apenas Assessores</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Cards -->
+    <div class="row g-4">
+        <!-- Planejado -->
+        <div class="col-lg-4">
+            <div class="card shadow h-100 border-0 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-clipboard-list me-2"></i>Ações Planejadas (Heads)
+                        </h6>
+                        <span class="badge bg-success rounded-pill">{{ planejados_pendentes.count }}</span>
+                    </div>
+                    {% if prazo_planejado %}
+                        <div class="mt-2 small">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-alt me-2 text-white"></i>
+                        {% if prazo_planejado.dias_especificos %}
+                                    <span>Dias disponíveis: <strong>{{ prazo_planejado.dias_especificos }}</strong></span>
+                        {% else %}
+                                    <span class="text-white">Prazo: <strong>{{ prazo_planejado.dia_inicio }} até {{ prazo_planejado.dia_fim }}</strong></span>
+                        {% endif %}
+                        {% if prazo_planejado.recorrente %}
+                                    <span class="badge bg-info ms-2">Recorrente</span>
+                        {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning mt-2 mb-0 py-1 small">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Prazo não configurado
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    <div class="pending-list-container">
+                        {% if planejados_pendentes %}
+                            <ul class="list-group list-group-flush pending-list">
+                    {% for user in planejados_pendentes %}
+                                    <li class="list-group-item list-group-item-action d-flex align-items-center p-3">
+                                        <div class="avatar-circle bg-success text-white me-3">
+                                            <span>{{ user.get_full_name|default:user.username|make_list|first|upper }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ user.get_full_name|default:user.username }}</h6>
+                                            {% if user.cargo %}
+                                                <small class="text-muted">{{ user.cargo|title }}</small>
+                                            {% endif %}
+                                        </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                                <p class="text-muted mb-0">Nenhuma pendência</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executado -->
+        <div class="col-lg-4">
+            <div class="card shadow h-100 border-0 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-tasks me-2"></i>Ações Executadas (Heads)
+                        </h6>
+                        <span class="badge bg-warning text-dark rounded-pill">{{ executados_pendentes.count }}</span>
+                    </div>
+                    {% if prazo_executado %}
+                        <div class="mt-2 small">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-alt me-2 text-white"></i>
+                        {% if prazo_executado.dias_especificos %}
+                                    <span>Dias disponíveis: <strong>{{ prazo_executado.dias_especificos }}</strong></span>
+                        {% else %}
+                                    <span class="text-white">Prazo: <strong>{{ prazo_executado.dia_inicio }} até {{ prazo_executado.dia_fim }}</strong></span>
+                        {% endif %}
+                        {% if prazo_executado.recorrente %}
+                                    <span class="badge bg-info ms-2">Recorrente</span>
+                        {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning mt-2 mb-0 py-1 small">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Prazo não configurado
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    <div class="pending-list-container">
+                        {% if executados_pendentes %}
+                            <ul class="list-group list-group-flush pending-list">
+                    {% for user in executados_pendentes %}
+                                    <li class="list-group-item list-group-item-action d-flex align-items-center p-3">
+                                        <div class="avatar-circle bg-warning text-dark me-3">
+                                            <span>{{ user.get_full_name|default:user.username|make_list|first|upper }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ user.get_full_name|default:user.username }}</h6>
+                                            {% if user.cargo %}
+                                                <small class="text-muted">{{ user.cargo|title }}</small>
+                                            {% endif %}
+                                        </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-check-circle text-warning fa-3x mb-3"></i>
+                                <p class="text-muted mb-0">Nenhuma pendência</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="col-lg-4">
+            <div class="card shadow h-100 border-0 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-chart-pie me-2"></i>Estatísticas (Assessores)
+                        </h6>
+                        <span class="badge bg-danger rounded-pill">{{ estatisticas_pendentes.count }}</span>
+                    </div>
+                    {% if prazo_estatisticas %}
+                        <div class="mt-2 small">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-alt me-2 text-white"></i>
+                        {% if prazo_estatisticas.dias_especificos %}
+                                    <span>Dias disponíveis: <strong>{{ prazo_estatisticas.dias_especificos }}</strong></span>
+                        {% else %}
+                                    <span class="text-white">Prazo: <strong>{{ prazo_estatisticas.dia_inicio }} até {{ prazo_estatisticas.dia_fim }}</strong></span>
+                        {% endif %}
+                        {% if prazo_estatisticas.recorrente %}
+                                    <span class="badge bg-info ms-2">Recorrente</span>
+                        {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning mt-2 mb-0 py-1 small">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Prazo não configurado
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0">
+                    <div class="pending-list-container">
+                        {% if estatisticas_pendentes %}
+                            <ul class="list-group list-group-flush pending-list">
+                    {% for user in estatisticas_pendentes %}
+                                    <li class="list-group-item list-group-item-action d-flex align-items-center p-3">
+                                        <div class="avatar-circle bg-danger text-white me-3">
+                                            <span>{{ user.get_full_name|default:user.username|make_list|first|upper }}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ user.get_full_name|default:user.username }}</h6>
+                                            {% if user.cargo %}
+                                                <small class="text-muted">{{ user.cargo|title }}</small>
+                                            {% endif %}
+                                        </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-check-circle text-danger fa-3x mb-3"></i>
+                                <p class="text-muted mb-0">Nenhuma pendência</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de Duplicados -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow border-0 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-clone me-2"></i>Cadastros Duplicados
+                        </h6>
+                        <span class="badge bg-white text-primary rounded-pill">{{ alertas_duplicados|length }}</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if alertas_duplicados %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th scope="col" class="ps-3">Nome</th>
+                                        <th scope="col">Assessor</th>
+                                        <th scope="col">Data</th>
+                                        <th scope="col" class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for alerta in alertas_duplicados %}
+                                        <tr>
+                                            <td class="ps-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle bg-primary text-white me-3">
+                                                        <span>{{ alerta.nome|make_list|first|upper }}</span>
+                                                    </div>
+                                                    <strong>{{ alerta.nome }}</strong>
+                                                </div>
+                                            </td>
+                                            <td>{{ alerta.assessor.get_full_name }}</td>
+                                            <td>{{ alerta.criado_em|date:"d/m/Y H:i" }}</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-danger">Duplicado</span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle text-primary fa-3x mb-3"></i>
+                            <p class="text-muted mb-0">Nenhum alerta de duplicidade registrado</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .border-left-primary {
+        border-left: 4px solid var(--azul-claro);
+    }
+    .border-left-success {
+        border-left: 4px solid var(--verde-claro);
+    }
+    .border-left-warning {
+        border-left: 4px solid #f6c23e;
+    }
+    .border-left-danger {
+        border-left: 4px solid #e74a3b;
+    }
+    .bg-gradient-primary-to-secondary {
+        background: linear-gradient(to right, var(--azul-escuro), var(--azul-claro));
+    }
+    .bg-gradient-success-light {
+        background: linear-gradient(to right, #1cc88a, #1cc88a80);
+    }
+    .bg-gradient-warning-light {
+        background: linear-gradient(to right, #f6c23e, #f6c23e80);
+    }
+    .bg-gradient-danger-light {
+        background: linear-gradient(to right, #e74a3b, #e74a3b80);
+    }
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    .pending-list-container {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    .pending-list .list-group-item:hover {
+        background-color: rgba(0,0,0,0.02);
+    }
+    .badge {
+        font-weight: 500;
+    }
+    .card {
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-3px);
+    }
+</style>
+{% endblock %}

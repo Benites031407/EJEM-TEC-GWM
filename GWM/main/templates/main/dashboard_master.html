@@ -1,0 +1,203 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Master{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard Master</h1>
+    </div>
+
+    <!-- KPIs Principais -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total PL</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pl_total|default:"R$ 0,00" }}</div>
+                </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-primary opacity-50"></i>
+        </div>
+    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">ROA Médio</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ roa_medio|floatformat:2 }}%</div>
+                </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-success opacity-50"></i>
+            </div>
+        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Leads Ativos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_leads }}</div>
+                </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-info opacity-50"></i>
+                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ticket Médio</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ ticket_medio|default:"R$ 0,00" }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico PL Total -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">PL Total da Empresa</h6>
+                </div>
+                <div class="card-body p-4">
+                    {{ pl_chart_geral|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards das Áreas - Grid Layout Simplificado -->
+    <div class="row">
+        {% for area in areas_data %}
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card shadow h-100 border-0 rounded-lg area-card">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">{{ area.nome }}</h6>
+                    <span class="badge bg-primary rounded-pill">Área</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="small-stat">
+                                <span class="stat-title text-muted">PL Total</span>
+                                <span class="stat-value text-primary">{{ area.pl_total|default:"R$ 0,00" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="small-stat">
+                                <span class="stat-title text-muted">Clientes</span>
+                                <span class="stat-value">{{ area.clientes_ativos }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="small-stat">
+                                <span class="stat-title text-muted">% Atingido</span>
+                                <span class="stat-value {% if area.percentual_atingido >= 100 %}text-success{% elif area.percentual_atingido >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ area.percentual_atingido|floatformat:1 }}%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="small-stat">
+                                <span class="stat-title text-muted">Pace</span>
+                                <span class="stat-value {% if area.pace >= 100 %}text-success{% elif area.pace >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                    {{ area.pace|floatformat:1 }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a href="{% url 'dashboard_area' area.slug %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-chart-line me-1"></i> Ver Dashboard Completo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    .border-left-primary {
+        border-left: 4px solid var(--azul-claro);
+    }
+    .border-left-success {
+        border-left: 4px solid var(--verde-claro);
+    }
+    .border-left-info {
+        border-left: 4px solid #36b9cc;
+    }
+    .border-left-warning {
+        border-left: 4px solid #f6c23e;
+    }
+    .bg-gradient-primary-to-secondary {
+        background: linear-gradient(to right, var(--azul-escuro), var(--azul-claro));
+    }
+    .card {
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .area-card {
+        transition: all 0.3s ease;
+        border-top: 3px solid var(--azul-claro);
+    }
+    .area-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .small-stat {
+        display: flex;
+        flex-direction: column;
+    }
+    .stat-title {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    .text-success {
+        color: var(--verde-claro) !important;
+    }
+    .text-danger {
+        color: #e74a3b !important;
+    }
+    .text-warning {
+        color: #f6c23e !important;
+    }
+    .text-primary {
+        color: var(--azul-claro) !important;
+    }
+</style>
+{% endblock %}
+
+

@@ -1,0 +1,476 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard {{ area.nome }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard - {{ area.nome }}</h1>
+        <a href="{% url 'dashboard_master' %}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-arrow-left mr-1"></i> Voltar ao Dashboard Master
+        </a>
+    </div>
+
+    <!-- KPIs Principais -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">PL Total</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{ area_pl|floatformat:2 }}M</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-primary opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">% Atingido</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ percentual_atingido|floatformat:1 }}%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-success opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pace</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pace|floatformat:1 }}%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-info opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 rounded-lg">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ticket Médio</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{ ticket_medio|floatformat:2 }}M</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico PL Total -->
+    <div class="row">
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">Evolução do PL - {{ area.nome }}</h6>
+                </div>
+                <div class="card-body p-4">
+                    {{ pl_chart|safe }}
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">Evolução de Clientes - {{ area.nome }}</h6>
+                </div>
+                <div class="card-body p-4">
+                    {{ clientes_chart|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalhes da Área -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">Detalhes da Área - {{ area.nome }}</h6>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <!-- Dynamic KPI cards based on area type -->
+                        {% if area.nome == "Expansão" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.entrevistas|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Entrevistas</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-user-tie text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.contratacoes|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Contratações</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-handshake text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.nps|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">NPS</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-star text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Seguro" or area.nome == "Seguros" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.qtd_reunioes|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">QTD de Reuniões</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-calendar-check text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.qtd_seguros|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">QTD de Seguros</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-shield-alt text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.volume_pa|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Volume de PA</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-money-bill-wave text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Renda Variável" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.receita|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Receita</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-dollar-sign text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.cpfs_operados|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">CPFs Operados</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-users text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.volume_ofertas|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Volume em Ofertas</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-chart-line text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Câmbio" or area.nome == "Cambio" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.receita|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Receita</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-dollar-sign text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.volume_operado|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Volume Operado</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-exchange-alt text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.assessores_ativos|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Assessores Operando</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-user-tie text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Corporate" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.volume_credito|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Volume de Crédito</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-money-check-alt text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.qtd_reunioes|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">QTD de Reuniões</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-calendar-check text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Banking" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.principalidade|default:"0"|floatformat:2 }}%</h4>
+                                        <p class="text-muted mb-0 small">Principalidade</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-university text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.cartoes_emitidos|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Emissões de Cartões</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-credit-card text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Marketing" %}
+                            <div class="col-md-3 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.seguidores|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Seguidores</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-users text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.interacoes|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Interações</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-heart text-danger"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.leads_redes|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Leads Redes Sociais</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-funnel-dollar text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.perc_pl_credito|default:"0"|floatformat:2 }}%</h4>
+                                        <p class="text-muted mb-0 small">% PL em Crédito</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-percentage text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Consórcio" or area.nome == "Consorcio" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.volume_financeiro|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">Volume Financeiro</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-dollar-sign text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.qtd_consorcios|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Quantidade de Consórcios</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-clipboard-list text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif area.nome == "Advisory" %}
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">R$ {{ area_metrics.pl_liquidez|default:"0"|floatformat:2 }}M</h4>
+                                        <p class="text-muted mb-0 small">PL com Liquidez</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-dollar-sign text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.percentual_pl_liquidez|default:"0"|floatformat:2 }}%</h4>
+                                        <p class="text-muted mb-0 small">% PL com Liquidez</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-percentage text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="small-box bg-light p-3 rounded shadow-sm text-center">
+                                    <div class="inner">
+                                        <h4 class="mb-1">{{ area_metrics.ofertas_publicas|default:"0" }}</h4>
+                                        <p class="text-muted mb-0 small">Ofertas Públicas</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <i class="fas fa-bullhorn text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usuários da Área -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">Informações da Área</h6>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="h5 mb-2 text-gray-800">Dados Gerais</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Head da Área
+                                        <span class="badge bg-primary rounded-pill">
+                                            {% if area.head %}
+                                                {{ area.head.get_full_name }}
+                                            {% else %}
+                                                Não definido
+                                            {% endif %}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Usuários na Área
+                                        <span class="badge bg-primary rounded-pill">{{ area_users_count }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Clientes Ativos
+                                        <span class="badge bg-primary rounded-pill">{{ clientes_ativos }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Leads Ativos
+                                        <span class="badge bg-primary rounded-pill">{{ leads_ativos }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h5 class="h5 mb-2 text-gray-800">Performance</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        PL Total
+                                        <span class="font-weight-bold">R$ {{ area_pl|floatformat:2 }}M</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        PL Planejado
+                                        <span class="font-weight-bold">R$ {{ area_planejado|floatformat:2 }}M</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Ticket Médio
+                                        <span class="font-weight-bold">R$ {{ ticket_medio|floatformat:2 }}M</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        % Atingido
+                                        <span class="font-weight-bold {% if percentual_atingido >= 100 %}text-success{% elif percentual_atingido >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ percentual_atingido|floatformat:1 }}%
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

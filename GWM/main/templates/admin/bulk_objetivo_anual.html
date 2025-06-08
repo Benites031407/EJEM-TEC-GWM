@@ -1,0 +1,161 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
+{% load form_filters %}
+
+{% block extrahead %}{{ block.super }}
+<script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .filter-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+        margin-bottom: 20px;
+    }
+  .filter-section h3 {
+        margin-top: 0;
+  }
+  .assessor-row {
+    padding: 8px;
+        border-bottom: 1px solid #eee;
+    }
+  .assessor-row:hover {
+    background-color: #f5f5f5;
+  }
+  .assessor-header {
+    font-weight: bold;
+    background-color: #e9ecef;
+    }
+  .assessor-unit {
+    color: #666;
+    font-size: 0.9em;
+    }
+  .assessor-area {
+    color: #666;
+    font-size: 0.9em;
+  }
+  .filter-buttons {
+    margin-top: 15px;
+    }
+    .submit-row {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:main_objetivoanual_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; {% trans 'Definir Objetivos em Massa' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <form method="post" id="objetivo-form">
+    {% csrf_token %}
+    
+    <fieldset class="module aligned filter-section">
+      <h3>Filtros</h3>
+      <div class="row">
+        <div class="col-sm-4 form-group">
+          <label for="{{ form.year.id_for_label }}">{{ form.year.label }}:</label>
+          {{ form.year }}
+          {% if form.year.help_text %}<div class="help">{{ form.year.help_text }}</div>{% endif %}
+        </div>
+        <div class="col-sm-4 form-group">
+          <label for="{{ form.area.id_for_label }}">{{ form.area.label }}:</label>
+          {{ form.area }}
+          {% if form.area.help_text %}<div class="help">{{ form.area.help_text }}</div>{% endif %}
+        </div>
+        <div class="col-sm-4 form-group">
+          <label for="{{ form.unidade.id_for_label }}">{{ form.unidade.label }}:</label>
+          {{ form.unidade }}
+          {% if form.unidade.help_text %}<div class="help">{{ form.unidade.help_text }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 form-group">
+          <label for="{{ form.valor_padrao.id_for_label }}">{{ form.valor_padrao.label }}:</label>
+          {{ form.valor_padrao }}
+          {% if form.valor_padrao.help_text %}<div class="help">{{ form.valor_padrao.help_text }}</div>{% endif %}
+        </div>
+        <div class="col-sm-6 filter-buttons">
+          <button type="submit" name="filter" class="btn btn-primary">Filtrar</button>
+          <button type="button" id="aplicar-padrao" class="btn btn-secondary">Aplicar Valor Padrão</button>
+        </div>
+      </div>
+    </fieldset>
+    
+    <fieldset class="module aligned">
+      <h2>Assessores</h2>
+      
+      <div class="results">
+        <div class="assessor-row assessor-header">
+          <div class="row">
+            <div class="col-sm-4">Nome</div>
+            <div class="col-sm-3">Unidade</div>
+            <div class="col-sm-3">Área</div>
+            <div class="col-sm-2">Objetivo (R$)</div>
+                    </div>
+                </div>
+                
+        {% for assessor in assessores %}
+        <div class="assessor-row">
+          <div class="row">
+            <div class="col-sm-4">
+              {{ assessor.get_full_name|default:assessor.username }}
+                        </div>
+            <div class="col-sm-3 assessor-unit">
+              {{ assessor.unidade|default:"Sem unidade" }}
+                    </div>
+            <div class="col-sm-3 assessor-area">
+              {{ assessor.area_ref|default:"Sem área" }}
+            </div>
+            <div class="col-sm-2">
+              {{ form.assessor_field }}
+              {% with field_name='assessor_'|add:assessor.id|stringformat:"s" %}
+                {{ form|getattribute:field_name }}
+              {% endwith %}
+                        </div>
+                        </div>
+                    </div>
+        {% empty %}
+        <div class="assessor-row">
+          <p>Nenhum assessor encontrado com os filtros selecionados.</p>
+        </div>
+                    {% endfor %}
+                </div>
+    </fieldset>
+            
+            <div class="submit-row">
+      <input type="submit" name="save" value="Salvar Objetivos" class="default">
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript">
+  (function($) {
+    $(document).ready(function() {
+      // Filter form handling
+      $('#id_area, #id_unidade').change(function() {
+        // Submit the form when filters change
+        $('button[name="filter"]').click();
+        });
+        
+      // Apply default value to all fields
+      $('#aplicar-padrao').click(function() {
+        var defaultValue = $('#id_valor_padrao').val();
+        if (defaultValue) {
+          $('input[name^="assessor_"]').val(defaultValue);
+            }
+        });
+    });
+  })(django.jQuery);
+</script>
+{% endblock %} 

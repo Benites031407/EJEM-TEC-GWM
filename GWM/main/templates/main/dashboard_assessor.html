@@ -1,0 +1,440 @@
+{% extends 'main/base.html' %}
+{% block title %}Dashboard - Assessor | GWM{% endblock %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header Card with User Info -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="avatar me-3 bg-dark rounded-circle text-center d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="fas fa-user fa-lg text-white"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 fw-bold text-white">Dashboard</h4>
+                        <p class="mb-0 text-white-50">{{ user.first_name|default:user.username }}</p>
+                    </div>
+                </div>
+                <div>
+                    <button id="refreshBtn" class="btn btn-sm btn-outline-light">
+                        <i class="fas fa-sync-alt me-1"></i> Atualizar dados
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body bg-light">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-calendar-alt me-2 text-muted"></i>
+                        <span>Dados atualizados em: {{ data_atualizacao|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center justify-content-md-end">
+                        <span class="text-muted me-2">Unidade:</span>
+                        <span class="fw-bold">{{ request.user.unidade }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Progresso Anual</h5>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="text-center mb-3">
+                        <h6 class="text-uppercase text-muted mb-1">Progresso</h6>
+                        <div class="d-inline-block position-relative" style="width: 120px; height: 120px;">
+                            <div class="position-absolute top-50 start-50 translate-middle">
+                                <h3 class="mb-0">{{ percentual_atingido|floatformat:0 }}%</h3>
+                                <small class="text-muted">Concluído</small>
+                            </div>
+                            <canvas id="progressChart" width="120" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Objetivo Anual</span>
+                            <span>{{ pl_atual|currency }} de {{ objetivo_ano|currency }}</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" 
+                                 role="progressbar" 
+                                 style="width: {{ percentual_atingido|floatformat:0|default:'0' }}%;" 
+                                 aria-valuenow="{{ percentual_atingido|floatformat:0|default:'0' }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="me-3">
+                                    {% if pace >= 100 %}
+                                    <div class="rounded-circle bg-success text-white p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    {% elif pace >= 75 %}
+                                    <div class="rounded-circle bg-info text-white p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </div>
+                                    {% elif pace >= 50 %}
+                                    <div class="rounded-circle bg-warning text-white p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-exclamation"></i>
+                                    </div>
+                                    {% else %}
+                                    <div class="rounded-circle bg-danger text-white p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Ritmo de Execução</h6>
+                                    <p class="mb-0 small text-muted">
+                                        {% if pace >= 100 %}
+                                        Excelente! Você está acima do ritmo esperado.
+                                        {% elif pace >= 75 %}
+                                        Bom ritmo! Continue assim.
+                                        {% elif pace >= 50 %}
+                                        Atenção! Você está um pouco abaixo do ritmo esperado.
+                                        {% else %}
+                                        Alerta! Você precisa aumentar seu ritmo para atingir o objetivo.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <a href="{% url 'captacao' %}" class="btn btn-primary btn-sm w-100">
+                                        <i class="fas fa-plus-circle me-1"></i> Nova Captação
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{% url 'estatisticas' %}" class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-chart-pie me-1"></i> Estatísticas
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{% url 'historico' %}" class="btn btn-outline-secondary btn-sm w-100">
+                                        <i class="fas fa-history me-1"></i> Histórico
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- First Row of Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">PL Atual</h6>
+                            <h5 class="mb-1 display-6">{{ pl_atual|currency }}</h5>
+                            <div class="d-flex align-items-center">
+                                {% if pl_trend > 0 %}
+                                <span class="badge bg-success">+{{ pl_trend|floatformat:1 }}%</span>
+                                <small class="text-success ms-1"><i class="fas fa-arrow-up"></i> desde mês anterior</small>
+                                {% elif pl_trend < 0 %}
+                                <span class="badge bg-danger">{{ pl_trend|floatformat:1 }}%</span>
+                                <small class="text-danger ms-1"><i class="fas fa-arrow-down"></i> desde mês anterior</small>
+                                {% else %}
+                                <span class="badge bg-secondary">0%</span>
+                                <small class="text-muted ms-1"><i class="fas fa-equals"></i> sem alteração</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="position-absolute top-3 end-0 mt-3 me-3">
+                            <i class="fas fa-dollar-sign fa-2x" style="color: rgba(0, 123, 255, 0.8);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">ROA</h6>
+                            <h5 class="mb-1 display-6">{{ roa|floatformat:2 }}%</h5>
+                            <small class="text-muted">Retorno sobre Ativos</small>
+                        </div>
+                        <div class="position-absolute top-3 end-0 mt-3 me-3">
+                            <i class="fas fa-percentage fa-2x" style="color: rgba(40, 167, 69, 0.8);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row of Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">Clientes Ativos</h6>
+                            <h5 class="mb-1 display-6">{{ clientes_ativos }}</h5>
+                            <small class="text-muted">Total de captações</small>
+                        </div>
+                        <div class="position-absolute top-3 end-0 mt-3 me-3">
+                            <i class="fas fa-users fa-2x" style="color: rgba(23, 162, 184, 0.8);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">Ticket Médio</h6>
+                            <h5 class="mb-1 display-6">{{ ticket_medio|currency }}</h5>
+                            <small class="text-muted">Por cliente</small>
+                        </div>
+                        <div class="position-absolute top-3 end-0 mt-3 me-3">
+                            <i class="fas fa-money-bill-wave fa-2x" style="color: rgba(255, 193, 7, 0.8);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-bullseye me-2"></i>Objetivos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Objetivo AUC ({{ year }})</span>
+                                <span class="fw-bold">{{ objetivo_ano|currency }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Horizonte de Análise</span>
+                                <span class="fw-bold">{{ horizonte_meses|default:"12" }} meses</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">PL Projetado</span>
+                                <span class="fw-bold">{{ pl_projetado|currency }}</span>
+                            </div>
+                            <div class="mt-3 text-muted small">
+                                <i class="fas fa-info-circle me-1"></i> PL Projetado = PL Atual + Migração Planejada
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Evolução do PL</h5>
+                </div>
+                <div class="card-body">
+                    <div id="pl_evolucao_chart" class="h-100" style="min-height: 250px;">
+                        {{ pl_evolucao_chart|safe }}
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-2">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <small class="text-muted d-block">Maior PL</small>
+                            <strong>{{ maior_pl|default:pl_atual|currency }}</strong>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted d-block">Média</small>
+                            <strong>{{ pl_medio|default:pl_atual|currency }}</strong>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted d-block">Variação</small>
+                            <strong class="{% if pl_variacao > 0 %}text-success{% elif pl_variacao < 0 %}text-danger{% endif %}">
+                                {% if pl_variacao > 0 %}+{% endif %}{{ pl_variacao|default:"0"|floatformat:1 }}%
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status do cliente -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-thermometer-half me-2"></i>Status de Clientes</h5>
+                <a href="{% url 'captacao' %}" class="btn btn-sm btn-outline-light">Ver todos</a>
+            </div>
+        </div>
+        <div class="card-body py-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle p-3 me-3" style="background-color: rgba(53, 78, 220, 0.1);">
+                            <i class="fas fa-thermometer-empty fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-1">Clientes Frios</h6>
+                            <h2 class="mb-0">{{ clientes_frios|default:"0" }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle p-3 me-3" style="background-color: rgba(255, 193, 7, 0.1);">
+                            <i class="fas fa-thermometer-half fa-2x text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-1">Clientes Mornos</h6>
+                            <h2 class="mb-0">{{ clientes_mornos|default:"0" }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle p-3 me-3" style="background-color: rgba(220, 53, 69, 0.1);">
+                            <i class="fas fa-thermometer-full fa-2x text-danger"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-1">Clientes Quentes</h6>
+                            <h2 class="mb-0">{{ clientes_quentes|default:"0" }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Planejado vs Migrado</h5>
+                </div>
+                <div class="card-body">
+                    <div id="comparativo_chart" class="h-100" style="min-height: 250px;">
+                        {{ comparativo_chart|safe }}
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-2">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <small class="text-muted d-block">Total Planejado</small>
+                            <strong>{{ total_planejado|default:"0"|currency }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Total Migrado</small>
+                            <strong>{{ total_migrado|default:"0"|currency }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Evolução de Clientes</h5>
+                </div>
+                <div class="card-body">
+                    <div id="clientes_evolucao_chart" class="h-100" style="min-height: 250px;">
+                        {{ clientes_evolucao_chart|safe }}
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-2">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <small class="text-muted d-block">Novos este mês</small>
+                            <strong>{{ novos_clientes_mes|default:"0" }}</strong>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted d-block">Taxa de Conversão</small>
+                            <strong>{{ taxa_conversao|default:"0"|floatformat:1 }}%</strong>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted d-block">Ativos/Inativos</small>
+                            <strong>{{ clientes_ativos|default:"0" }}/{{ clientes_inativos|default:"0" }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Progress Doughnut Chart
+        const progressCtx = document.getElementById('progressChart').getContext('2d');
+        new Chart(progressCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [
+                        {{ percentual_atingido|floatformat:0|default:"0" }}, 
+                        Math.max(0, 100 - {{ percentual_atingido|floatformat:0|default:"0" }})
+                    ],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(200, 200, 200, 0.2)'
+                    ],
+                    borderWidth: 0,
+                    cutout: '80%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+        
+        // Atualizar dashboard
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Atualizando...';
+                this.disabled = true;
+                location.reload();
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

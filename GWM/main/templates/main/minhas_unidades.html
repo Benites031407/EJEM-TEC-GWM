@@ -1,0 +1,195 @@
+{% extends 'main/base.html' %}
+{% block title %}Minhas Unidades Gerenciadas{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-building text-primary me-2"></i>Minhas Unidades Gerenciadas
+        </h1>
+        <span class="badge bg-success rounded-pill fs-6">
+            Data atual: {% now "d/m/Y" %}
+        </span>
+    </div>
+
+    <!-- Units Grid -->
+    {% if unidades %}
+        <div class="row g-4">
+            {% for unidade in unidades %}
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100 rounded-lg position-relative unit-card">
+                        <div class="card-header py-3 bg-gradient-green-to-teal">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="m-0 font-weight-bold text-white">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ unidade.nome }}
+                                </h5>
+                                <span class="badge bg-success rounded-pill">
+                                    <i class="fas fa-crown me-1"></i>Sua Unidade
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if unidade.descricao %}
+                                <p class="card-text mb-4">{{ unidade.descricao }}</p>
+                            {% else %}
+                                <p class="card-text text-muted mb-4"><em>Sem descrição</em></p>
+                            {% endif %}
+                            
+                            <!-- Unit Stats Cards -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <div class="stat-item p-3 bg-success rounded-lg text-center">
+                                        <div class="small text-white mb-1">ROA Médio</div>
+                                        <h5 class="m-0 text-white">{{ unidade.roa|default:"0.0" }}%</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-item p-3 bg-info rounded-lg text-center">
+                                        <div class="small text-white mb-1">Assessores</div>
+                                        <h5 class="m-0 text-white">{{ unidade.enhanced_data.assessores_count }}</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-item p-3 bg-primary rounded-lg text-center">
+                                        <div class="small text-white mb-1">Clientes</div>
+                                        <h5 class="m-0 text-white">{{ unidade.enhanced_data.clientes_count }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Performance Metrics -->
+                            <div class="card border-left-info shadow h-100 py-2 mb-3">
+                                <div class="card-body py-2">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Performance da Unidade
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ unidade.enhanced_data.performance_percent }}%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ unidade.enhanced_data.performance_percent }}%" aria-valuenow="{{ unidade.enhanced_data.performance_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Financial Metrics -->
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card border-left-success shadow h-100 py-2">
+                                        <div class="card-body py-2">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                        PL Total
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{ unidade.enhanced_data.pl_total }}</div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-left-warning shadow h-100 py-2">
+                                        <div class="card-body py-2">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                        Ticket Médio
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {{ unidade.enhanced_data.ticket_medio }}</div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-receipt fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer border-0 d-flex justify-content-between py-3">
+                            <a href="{% url 'dashboard_headunidade' %}" class="btn btn-success btn-icon-split">
+                                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                                <span class="text">Dashboard</span>
+                            </a>
+                            <a href="{% url 'dashboard_unidade' unidade.slug %}" class="btn btn-primary btn-icon-split">
+                                <span class="icon"><i class="fas fa-eye"></i></span>
+                                <span class="text">Detalhes</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card shadow border-0 p-4 rounded-lg text-center">
+            <div class="py-5">
+                <i class="fas fa-exclamation-circle text-warning fa-4x mb-3"></i>
+                <h4>Nenhuma unidade encontrada</h4>
+                <p class="text-muted">Você não possui unidades atribuídas como head.</p>
+                <p class="small mt-3">Entre em contato com o administrador do sistema para atribuição de unidades.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .bg-gradient-green-to-teal {
+        background: linear-gradient(135deg, #1cc88a 0%, #36b9cc 100%);
+        color: white;
+    }
+    .unit-card {
+        transition: all 0.3s ease;
+        border-radius: 0.5rem !important;
+    }
+    .unit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    }
+    .stat-item {
+        transition: all 0.3s ease;
+        border-radius: 0.5rem !important;
+    }
+    .stat-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    .btn-icon-split {
+        display: flex;
+        align-items: center;
+    }
+    .btn-icon-split .icon {
+        background: rgba(0,0,0,0.15);
+        padding: 0.375rem 0.75rem;
+        display: inline-block;
+        border-radius: 0.25rem 0 0 0.25rem;
+    }
+    .btn-icon-split .text {
+        padding: 0.375rem 0.75rem;
+        display: inline-block;
+        border-radius: 0 0.25rem 0.25rem 0;
+    }
+    .progress {
+        height: 0.5rem;
+        border-radius: 0.25rem;
+    }
+</style>
+{% endblock %} 

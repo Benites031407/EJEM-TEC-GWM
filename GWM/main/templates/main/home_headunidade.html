@@ -1,0 +1,410 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}Dashboard do Head de Unidade{% endblock %}
+{% block content %}
+
+<div class="container">
+    
+    {% if no_unit %}
+    <!-- Mensagem de sem unidade atribuída -->
+    <div class="card bg-warning-subtle mb-4 shadow-lg border-0">
+        <div class="card-body text-center py-5">
+            <h4 class="card-title mb-3">Nenhuma Unidade Atribuída</h4>
+            <p class="card-text">
+                Você tem o cargo de Head de Unidade, mas não está atribuído como responsável por nenhuma unidade no sistema.
+            </p>
+            <p>Por favor, entre em contato com o administrador para que uma unidade seja atribuída à sua conta.</p>
+            
+            <hr>
+            <div class="text-start">
+                <h5>Informações de Depuração:</h5>
+                <p><strong>Usuário:</strong> {{ user.username }} (ID: {{ user.id }})</p>
+                <p><strong>Cargo:</strong> {{ user.cargo }}</p>
+                <p><strong>Unidade do usuário:</strong> {% if user.unidade %}{{ user.unidade.nome }}{% else %}Nenhuma{% endif %}</p>
+                
+                {% if units_info %}
+                <h5 class="mt-4">Unidades Disponíveis no Sistema:</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Tem Head?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for unit in units_info %}
+                            <tr>
+                                <td>{{ unit.id }}</td>
+                                <td>{{ unit.nome }}</td>
+                                <td>{% if unit.has_head %}Sim{% else %}Não{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>Não há unidades cadastradas no sistema.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary-to-secondary shadow-lg border-0">
+                <div class="card-body">
+                    <div class="d-sm-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title text-white mb-0">Olá, {{ user.first_name|default:user.username }} 👋</h3>
+                            <p class="text-white">
+                                Dashboard da Unidade <strong>{{ unidade.nome }}</strong>
+                            </p>
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-end mt-3 mt-sm-0 gap-2">
+                            <a href="{% url 'dashboard_headunidade' %}" class="btn btn-outline-light px-4">
+                                <i class="fas fa-chart-line me-2"></i> Dashboard da Unidade
+                            </a>
+                            <a href="{% url 'assessor_monitoring' %}" class="btn btn-outline-light px-4">
+                                <i class="fas fa-user-check me-2"></i> Monitorar Assessores
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-gradient-primary-to-secondary">
+                    <h5 class="mb-0"><i class="fas fa-bolt text-warning me-2"></i>Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="{% url 'dashboard_headunidade' %}" class="text-decoration-none">
+                                <div class="card bg-light border-0 h-100 hover-effect">
+                                    <div class="card-body d-flex align-items-center">
+                                        <div class="bg-primary rounded-circle p-3 me-3 text-white">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Dashboard da Unidade</h6>
+                                            <p class="text-muted small mb-0">Visão geral de métricas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'assessor_monitoring' %}" class="text-decoration-none">
+                                <div class="card bg-light border-0 h-100 hover-effect">
+                                    <div class="card-body d-flex align-items-center">
+                                        <div class="bg-success rounded-circle p-3 me-3 text-white">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Monitorar Assessores</h6>
+                                            <p class="text-muted small mb-0">Desempenho individual</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores da Unidade -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary-to-secondary d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-primary me-2"></i>Indicadores da Unidade</h5>
+                    <a href="{% url 'dashboard_headunidade' %}" class="btn btn-sm btn-outline-light">
+                        <i class="fas fa-external-link-alt me-1"></i>Ver Detalhes
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card bg-primary bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="text-primary mb-0">Assessores</h4>
+                                            <h4 class="mt-3 mb-0">{{ assessor_count|default:"0" }}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">Total de assessores na unidade</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card bg-success bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="text-success mb-0">Captações</h4>
+                                            <h4 class="mt-3 mb-0">{{ total_captacoes|default:"0" }}</h4>
+                                        </div>
+                                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="fas fa-user-plus text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">Total de clientes cadastrados</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card bg-info bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="text-info mb-0">PL Total</h4>
+                                            <h4 class="mt-3 mb-0">R$ {{ total_pl }}</h4>
+                                        </div>
+                                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="fas fa-wallet text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">Patrimônio sob gestão</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card bg-warning bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="text-warning mb-0">ROA</h4>
+                                            <h4 class="mt-3 mb-0">{{ unidade.roa|default:"0" }}%</h4>
+                                        </div>
+                                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="fas fa-percentage text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">Retorno sobre ativos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessores e Pendências -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary-to-secondary d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-users text-success me-2"></i>Equipe de Assessores</h5>
+                    <a href="{% url 'assessor_monitoring' %}" class="btn btn-sm btn-outline-light">
+                        <i class="fas fa-external-link-alt me-1"></i>Monitorar Todos
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assessor in assessores %}
+                                <tr>
+                                    <td class="fw-medium">{{ assessor.get_full_name|default:assessor.username }}</td>
+                                    <td>{{ assessor.email }}</td>
+                                    <td>
+                                        {% if assessor in assessores_sem_estatisticas %}
+                                            <span class="badge bg-warning text-dark">Pendências</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Em dia</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'assessor_monitoring_detail' assessor.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-chart-line me-1"></i>Monitorar
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-3">
+                                        <div class="text-muted">Nenhum assessor cadastrado nesta unidade</div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pendências -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary-to-secondary">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Pendências</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% if assessores_sem_estatisticas %}
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <h5 class="mb-1">Envios de formulário pendentes</h5>
+                                    <span class="badge bg-danger rounded-pill" style="font-size: 1.2rem;">{{ assessores_sem_estatisticas|length }}</span>
+                                </div>
+                                <p class="mb-1 16px">Assessores que ainda não enviaram as estatísticas mensais</p>
+                                <div class="mt-2">
+                                    {% for assessor in assessores_sem_estatisticas|slice:":3" %}
+                                        <span class="badge bg-light text-dark me-1">{{ assessor.get_full_name|default:assessor.username }}</span>
+                                    {% endfor %}
+                                    {% if assessores_sem_estatisticas|length > 3 %}
+                                        <span class="badge bg-secondary">+{{ assessores_sem_estatisticas|length|add:"-3" }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        {% if not assessores_sem_estatisticas %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                                <h5>Nenhuma pendência encontrada!</h5>
+                                <p class="text-muted small">Todos os formulários foram enviados pela equipe.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Atividades por Área -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary-to-secondary">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar text-info me-2"></i>Operações por Categoria</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-chart-line text-primary fa-2x"></i>
+                                </div>
+                                <h5>Renda Variável</h5>
+                                <h3 class="fw-bold">{{ indicators.rv|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-sack-dollar text-success fa-2x"></i>
+                                </div>
+                                <h5>Câmbio</h5>
+                                <h3 class="fw-bold">{{ indicators.cambio|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-shield-alt text-info fa-2x"></i>
+                                </div>
+                                <h5>Seguros</h5>
+                                <h3 class="fw-bold">{{ indicators.seguros|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-handshake text-warning fa-2x"></i>
+                                </div>
+                                <h5>Consórcio</h5>
+                                <h3 class="fw-bold">{{ indicators.consorcio|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-building text-danger fa-2x"></i>
+                                </div>
+                                <h5>Corporate</h5>
+                                <h3 class="fw-bold">{{ indicators.corporate|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-secondary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-expand-arrows-alt text-secondary fa-2x"></i>
+                                </div>
+                                <h5>Expansão</h5>
+                                <h3 class="fw-bold">{{ indicators.expansao|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div class="bg-dark bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-university text-dark fa-2x"></i>
+                                </div>
+                                <h5>Banking</h5>
+                                <h3 class="fw-bold">{{ indicators.banking|default:"0" }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="text-center">
+                                <div style="background-color: rgba(111, 66, 193, 0.1)" class="rounded-circle p-3 d-inline-flex mb-3">
+                                    <i class="fas fa-briefcase" style="color: #6f42c1; font-size: 2rem;"></i>
+                                </div>
+                                <h5>Advisory</h5>
+                                <h3 class="fw-bold">{{ indicators.advisory|default:"0" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Footer -->
+    <div class="text-center text-muted mb-4">
+        <small>GWM • Atualizado em: {% now "d/m/Y H:i" %}</small>
+    </div>
+</div>
+
+<style>
+.hover-effect {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

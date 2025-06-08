@@ -1,0 +1,286 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}Dashboard - Unidade {{ unidade.nome }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Unit Header -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold text-white">
+                    <i class="fas fa-building me-2"></i>Dashboard | {{ unidade.nome }}
+                </h4>
+                <span class="badge bg-light text-dark rounded-pill">
+                    <i class="fas fa-calendar-alt me-1"></i>Atualizado em: {% now "d/m/Y H:i" %}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="text-muted mb-3">Visão Geral da Unidade</h5>
+                    <div class="d-flex gap-4 mb-3">
+                        <div>
+                            <span class="text-muted d-block small">ROA</span>
+                            <h5 class="fw-bold" style="color: #354431;">{{ roa }}%</h5>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">Clientes</span>
+                            <h5 class="fw-bold" style="color: #005678;">{{ clientes_ativos }}</h5>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">PL Total</span>
+                            <h5 class="fw-bold" style="color: #5b7954;">{{ pl_total|default:"R$ 0,00" }}</h5>
+                        </div>
+                    </div>
+                    {% if unidade.descricao %}
+                        <p class="mb-0 text-muted">{{ unidade.descricao }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="p-3 rounded-circle mx-auto mb-2" style="background-color: #f0f4f8; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-city fa-4x" style="color: #002733;"></i>
+                    </div>
+                    <h5 class="mb-0" style="color: #002733;">Horizonte: {{ horizonte_meses }} meses</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Indicators -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-calculator fa-2x" style="color: rgba(53, 68, 49, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">PL Projetado</h6>
+                    <h4 class="fw-bold mt-2" style="color: #354431;">{{ pl_projetado|default:"R$ 0,00" }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 75%; background-color: #354431;" 
+                             aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-chart-line fa-2x" style="color: rgba(0, 39, 51, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">Objetivo AUC (Ano)</h6>
+                    <h4 class="fw-bold mt-2" style="color: #002733;">{{ objetivo_auc|default:"R$ 0,00" }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 60%; background-color: #002733;" 
+                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-money-bill-wave fa-2x" style="color: rgba(91, 121, 84, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">PL Atual</h6>
+                    <h4 class="fw-bold mt-2" style="color: #5b7954;">{{ pl_atual|default:"R$ 0,00" }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 45%; background-color: #5b7954;" 
+                             aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-users fa-2x" style="color: rgba(0, 86, 120, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">Ticket Médio</h6>
+                    <h4 class="fw-bold mt-2" style="color: #005678;">{{ ticket_medio|default:"R$ 0,00" }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 65%; background-color: #005678;" 
+                             aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Migration Analytics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background-color: rgba(53, 68, 49, 0.1); border: none;">
+                    <h5 class="mb-0" style="color: #354431;">
+                        <i class="fas fa-exchange-alt me-2"></i>Análise de Migração
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-lg mb-3" style="background-color: rgba(53, 68, 49, 0.1);">
+                                <h6 class="text-muted mb-1">Planejado Migração</h6>
+                                <h4 class="fw-bold" style="color: #354431;">{{ migracao_planejada|default:"R$ 0,00" }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-lg mb-3" style="background-color: rgba(0, 86, 120, 0.1);">
+                                <h6 class="text-muted mb-1">Expectativa Migração</h6>
+                                <h4 class="fw-bold" style="color: #005678;">{{ expectativa_migracao }}%</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="text-muted mb-2">Progresso de Migração</h6>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ expectativa_migracao }}%; background: linear-gradient(90deg, #354431, #5b7954);" 
+                                 aria-valuenow="{{ expectativa_migracao }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ expectativa_migracao }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background-color: rgba(0, 39, 51, 0.1); border: none;">
+                    <h5 class="mb-0" style="color: #002733;">
+                        <i class="fas fa-users me-2"></i>Perfil de Clientes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="p-2 me-3 rounded-circle" style="background-color: #002733;">
+                                    <i class="fas fa-user-check text-white"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block text-muted small">Clientes Ativos</span>
+                                    <h5 class="mb-0">{{ clientes_ativos }}</h5>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="p-2 me-3 rounded-circle" style="background-color: #5b7954;">
+                                    <i class="fas fa-wallet text-white"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block text-muted small">Ticket Médio</span>
+                                    <h5 class="mb-0">{{ ticket_medio|default:"R$ 0,00" }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas id="clientsChart" width="100%" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Growth Chart -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: rgba(0, 86, 120, 0.1); border: none;">
+            <h5 class="mb-0" style="color: #005678;">
+                <i class="fas fa-chart-bar me-2"></i>Crescimento Projetado
+            </h5>
+            <div>
+                <button class="btn btn-sm" style="background-color: #005678; color: white;">Mês</button>
+                <button class="btn btn-sm btn-outline-secondary">Trimestre</button>
+                <button class="btn btn-sm btn-outline-secondary">Ano</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <canvas id="growthChart" width="100%" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Cliente Chart
+    const clientsCtx = document.getElementById('clientsChart').getContext('2d');
+    const clientsChart = new Chart(clientsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Ativos', 'Prospecção', 'Inativos'],
+            datasets: [{
+                data: [{{ clientes_ativos }}, {{ clientes_ativos|divisibleby:2 }}, {{ clientes_ativos|divisibleby:4 }}],
+                backgroundColor: ['#5b7954', '#005678', '#354431'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            cutout: '70%'
+        }
+    });
+
+    // Growth Chart
+    const growthCtx = document.getElementById('growthChart').getContext('2d');
+    const growthChart = new Chart(growthCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            datasets: [
+                {
+                    label: 'PL Real',
+                    data: [10000000, 11000000, 11500000, 12000000, {{ pl_atual|default:0|floatformat:0 }}, null, null, null, null, null, null, null],
+                    borderColor: '#5b7954',
+                    backgroundColor: 'rgba(91, 121, 84, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Projeção',
+                    data: [10000000, 11000000, 11500000, 12000000, {{ pl_atual|default:0|floatformat:0 }}, 
+                           {{ pl_atual|default:0|add:1000000 }}, {{ pl_atual|default:0|add:2000000 }}, 
+                           {{ pl_atual|default:0|add:3000000 }}, {{ pl_atual|default:0|add:4000000 }},
+                           {{ pl_atual|default:0|add:5000000 }}, {{ pl_atual|default:0|add:6000000 }}, 
+                           {{ pl_projetado|default:0|floatformat:0 }}],
+                    borderColor: '#005678',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value) {
+                            // Format to Brazilian currency (millions)
+                            return 'R$ ' + (value / 1000000).toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + ' Mi';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

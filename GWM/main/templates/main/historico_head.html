@@ -1,0 +1,136 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Topbar da página -->
+    <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 6px;">
+        <h5 class="mb-0 fs-6">{% block page_title %}<i class="fas fa-history me-2"></i> Histórico de Envios {% endblock %}</h5>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Card Planejado -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="fas fa-pencil-alt me-2"></i> Planejado</h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for c in planejado %}
+                        <li class="list-group-item">
+                            <small class="text-muted">{{ c.updated_at|date:"d/m/Y H:i" }}</small><br>
+                            {% if c.area_nome == 'Expansão' %}
+                                <strong>Entrevistas Planejadas:</strong> {{ c.entrevistas }}<br>
+                                <strong>Contratações previstas:</strong> {{ c.contratacoes }}<br>
+                                <strong>NPS Esperado:</strong> {{ c.nps }}<br>
+                            {% elif c.area_nome == 'Seguro' %}
+                                <strong>Qtd de Reuniões:</strong> {{ c.qtd_reunioes }}<br>
+                                <strong>Qtd de Seguros:</strong> {{ c.qtd_seguros }}<br>
+                                <strong>Volume de PA:</strong> {{ c.volume_pa|currency }}<br>
+                            {% elif c.area_nome == 'Renda Variável' %}
+                                <strong>Receita Planejada:</strong> {{ c.receita|currency }}<br>
+                                <strong>CPFs Operados:</strong> {{ c.cpfs_operados }}<br>
+                                <strong>Volume Ofertas Públicas:</strong> {{ c.volume_ofertas|currency }}<br>
+                            {% elif c.area_nome == 'Câmbio' %}
+                                <strong>Receita Estimada:</strong> {{ c.receita|currency }}<br>
+                                <strong>Volume Operado:</strong> {{ c.volume_operado|currency }}<br>
+                                <strong>Qtd de Assessores que Operaram:</strong> {{ c.assessores_ativos }}<br>
+                            {% elif c.area_nome == 'Corporate' %}
+                                <strong>Volume de Crédito:</strong> {{ c.volume_credito|currency }}<br>
+                                <strong>Qtd de Reuniões:</strong> {{ c.qtd_reunioes }}<br>
+                            {% elif c.area_nome == 'Banking' %}
+                                <strong>Principalidade:</strong> {{ c.principalidade|currency }}<br>
+                                <strong>Cartões Emitidos:</strong> {{ c.cartoes_emitidos|currency }}<br>
+                            {% elif c.area_nome == 'Marketing' %}
+                                <strong>Seguidores:</strong> {{ c.seguidores }}<br>
+                                <strong>Interações:</strong> {{ c.interacoes }}<br>
+                                <strong>Leads Sociais:</strong> {{ c.leads_sociais }}<br>
+                                <strong>% PL Crédito:</strong> {{ c.percentual_pl_credito|currency }}<br>
+                                <strong>Captação Mesa:</strong> {{ c.captacao_mesa|currency }}<br>
+                            {% elif c.area_nome == 'Consórcio' %}
+                                <strong>Qtd de Reuniões:</strong> {{ c.qtd_reunioes }}<br>
+                                <strong>Qtd de Consórcios:</strong> {{ c.qtd_consorcios }}<br>
+                                <strong>Volume Financeiro:</strong> {{ c.volume_financeiro|currency }}<br>
+                                <strong>% Atingido:</strong> {{ c.percentual_atingido|currency }}<br>
+                                <strong>Pace:</strong> {{ c.pace }}<br>
+                            {% elif c.area_nome == 'Advisory' %}
+                                <strong>PL em Liquidez:</strong> {{ c.pl_liquidez|currency }}<br>
+                                <strong>% PL Liquidez:</strong> {{ c.percentual_pl_liquidez|currency }}<br>
+                                <strong>Volume Crédito:</strong> {{ c.volume_credito|currency }}<br>
+                                <strong>% PL Crédito:</strong> {{ c.percentual_pl_credito|currency }}<br>
+                                <strong>Ofertas Públicas:</strong> {{ c.ofertas_publicas|currency }}<br>
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">Nenhum planejamento registrado.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card Executado -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="fas fa-check-double me-2"></i> Executado</h6>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for est in executado %}
+                        <li class="list-group-item">
+                            <small class="text-muted">{{ est.updated_at|date:"d/m/Y H:i" }}</small><br>
+                            {% if est.area_nome == 'Expansão' %}
+                                <strong>Entrevistas Executadas:</strong> {{ est.entrevistas }}<br>
+                                <strong>Contratações Realizadas:</strong> {{ est.contratacoes }}<br>
+                                <strong>NPS Alcançado:</strong> {{ est.nps }}<br>
+                            {% elif est.area_nome == 'Seguro' %}
+                                <strong>Qtd de Reuniões:</strong> {{ est.qtd_reunioes }}<br>
+                                <strong>Qtd de Seguros:</strong> {{ est.qtd_seguros }}<br>
+                                <strong>Volume de PA:</strong> {{ est.volume_pa|currency }}<br>
+                            {% elif est.area_nome == 'Renda Variável' %}
+                                <strong>Receita Alcançada:</strong> {{ est.receita|currency }}<br>
+                                <strong>CPFs Operados:</strong> {{ est.cpfs_operados }}<br>
+                                <strong>Volume Ofertas Públicas:</strong> {{ est.volume_ofertas|currency }}<br>
+                            {% elif est.area_nome == 'Câmbio' %}
+                                <strong>Receita Alcançada:</strong> {{ est.receita|currency }}<br>
+                                <strong>Volume Operado:</strong> {{ est.volume_operado|currency }}<br>
+                                <strong>Qtd de Assessores que Operaram:</strong> {{ est.assessores_ativos }}<br>
+                            {% elif est.area_nome == 'Corporate' %}
+                                <strong>Volume de Crédito:</strong> {{ est.volume_credito|currency }}<br>
+                                <strong>Qtd de Reuniões:</strong> {{ est.qtd_reunioes }}<br>
+                            {% elif est.area_nome == 'Banking' %}
+                                <strong>Principalidade:</strong> {{ est.principalidade|currency }}<br>
+                                <strong>Cartões Emitidos:</strong> {{ est.cartoes_emitidos|currency }}<br>
+                            {% elif est.area_nome == 'Marketing' %}
+                                <strong>Seguidores:</strong> {{ est.seguidores }}<br>
+                                <strong>Interações:</strong> {{ est.interacoes }}<br>
+                                <strong>Leads Sociais:</strong> {{ est.leads_sociais }}<br>
+                                <strong>% PL Crédito:</strong> {{ est.percentual_pl_credito|currency }}<br>
+                                <strong>Captação Mesa:</strong> {{ est.captacao_mesa|currency }}<br>
+                            {% elif est.area_nome == 'Consórcio' %}
+                                <strong>Qtd de Reuniões:</strong> {{ est.qtd_reunioes }}<br>
+                                <strong>Qtd de Consórcios:</strong> {{ est.qtd_consorcios }}<br>
+                                <strong>Volume Financeiro:</strong> {{ est.volume_financeiro|currency }}<br>
+                                <strong>% Atingido:</strong> {{ est.percentual_atingido|currency }}<br>
+                                <strong>Pace:</strong> {{ est.pace }}<br>
+                            {% elif est.area_nome == 'Advisory' %}
+                                <strong>PL em Liquidez:</strong> {{ est.pl_liquidez|currency }}<br>
+                                <strong>% PL Liquidez:</strong> {{ est.percentual_pl_liquidez|currency }}<br>
+                                <strong>Volume Crédito:</strong> {{ est.volume_credito|currency }}<br>
+                                <strong>% PL Crédito:</strong> {{ est.percentual_pl_credito|currency }}<br>
+                                <strong>Ofertas Públicas:</strong> {{ est.ofertas_publicas|currency }}<br>
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">Nenhuma ação executada registrada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

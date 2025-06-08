@@ -1,0 +1,563 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - {{ unidade.nome }} | GWM{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Unit Header -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold text-white">
+                    <i class="fas fa-building me-2"></i>Dashboard | {{ unidade.nome }}
+                </h4>
+                <div>
+                    <a href="{% url 'home_headunidade' %}" class="btn btn-sm btn-outline-light me-2">
+                        <i class="fas fa-home me-1"></i> Voltar à Home
+                    </a>
+                    <a href="{% url 'assessor_monitoring' %}" class="btn btn-sm btn-light">
+                        <i class="fas fa-user-check me-1"></i> Monitorar Assessores
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="text-muted mb-3">Visão Geral da Unidade</h5>
+                    <div class="d-flex gap-4 mb-3">
+                        <div>
+                            <span class="text-muted d-block small">ROA</span>
+                            <h5 class="fw-bold" style="color: #354431;">{{ roa|floatformat:2 }}%</h5>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">Clientes</span>
+                            <h5 class="fw-bold" style="color: #005678;">{{ clientes_ativos }}</h5>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">PL Total</span>
+                            <h5 class="fw-bold" style="color: #5b7954;">R$ {{ pl_atual }}</h5>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">Assessores</span>
+                            <h5 class="fw-bold" style="color: #002733;">{{ assessores_count }}</h5>
+                        </div>
+                    </div>
+                    {% if unidade.descricao %}
+                        <p class="mb-0 text-muted">{{ unidade.descricao }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="p-3 rounded-circle mx-auto mb-2" style="background-color: #f0f4f8; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-city fa-4x" style="color: #002733;"></i>
+                    </div>
+                    <h5 class="mb-0" style="color: #002733;">Horizonte: {{ horizonte_meses }} meses</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Indicators -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-calculator fa-2x" style="color: rgba(53, 68, 49, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">PL Projetado</h6>
+                    <h4 class="fw-bold mt-2" style="color: #354431;">R$ {{ pl_total }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 75%; background-color: #354431;" 
+                             aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-chart-line fa-2x" style="color: rgba(0, 39, 51, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">Ticket Médio</h6>
+                    <h4 class="fw-bold mt-2" style="color: #002733;">R$ {{ ticket_medio }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 60%; background-color: #002733;" 
+                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-money-bill-wave fa-2x" style="color: rgba(91, 121, 84, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">PL Atual</h6>
+                    <h4 class="fw-bold mt-2" style="color: #5b7954;">R$ {{ pl_atual }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 45%; background-color: #5b7954;" 
+                             aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow unit-card">
+                <div class="card-body position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3">
+                        <i class="fas fa-users fa-2x" style="color: rgba(0, 86, 120, 0.2);"></i>
+                    </div>
+                    <h6 class="text-muted">Assessores</h6>
+                    <h4 class="fw-bold mt-2" style="color: #005678;">{{ assessores_count }}</h4>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: 65%; background-color: #005678;" 
+                             aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Migration Analytics & Client Distribution -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #ffffff;">
+                        <i class="fas fa-exchange-alt me-2"></i>Análise de Migração
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-lg mb-3" style="background-color: rgba(53, 68, 49, 0.1);">
+                                <h6 class="text-muted mb-1">Planejado Migração</h6>
+                                <h4 class="fw-bold" style="color: #354431;">R$ {{ migracao_planejada }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-lg mb-3" style="background-color: rgba(0, 86, 120, 0.1);">
+                                <h6 class="text-muted mb-1">Expectativa Migração</h6>
+                                <h4 class="fw-bold" style="color: #005678;">{{ expectativa_migracao|floatformat:1 }}%</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="text-muted mb-2">Progresso de Migração</h6>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ expectativa_migracao }}%; background: linear-gradient(90deg, #354431, #5b7954);" 
+                                 aria-valuenow="{{ expectativa_migracao }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ expectativa_migracao|floatformat:1 }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <div class="row text-center small">
+                        <div class="col-4">
+                            <div class="text-muted">ROA</div>
+                            <div class="fw-bold">{{ roa|floatformat:2 }}%</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Horizonte</div>
+                            <div class="fw-bold">{{ horizonte_meses }} meses</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted">Projetado</div>
+                            <div class="fw-bold">R$ {{ pl_total }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #fafeff;">
+                        <i class="fas fa-users me-2"></i>Perfil de Clientes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="p-2 me-3 rounded-circle" style="background-color: #002733;">
+                                    <i class="fas fa-user-check text-white"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block text-muted small">Clientes Ativos</span>
+                                    <h5 class="mb-0">{{ clientes_ativos }}</h5>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="p-2 me-3 rounded-circle" style="background-color: #5b7954;">
+                                    <i class="fas fa-wallet text-white"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block text-muted small">Ticket Médio</span>
+                                    <h5 class="mb-0">R$ {{ ticket_medio }}</h5>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="p-2 me-3 rounded-circle" style="background-color: #005678;">
+                                    <i class="fas fa-chart-pie text-white"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block text-muted small">Distribuição</span>
+                                    <div class="d-flex gap-2 mt-1">
+                                        <span class="badge bg-primary">{{ clientes_frios }}</span>
+                                        <span class="badge bg-warning">{{ clientes_mornos }}</span>
+                                        <span class="badge bg-danger">{{ clientes_quentes }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas id="clientsChart" width="100%" height="150"></canvas>
+                            <div class="d-flex justify-content-center mt-2 gap-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary me-1">&nbsp;</span>
+                                    <small>Frios</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-warning me-1">&nbsp;</span>
+                                    <small>Mornos</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-danger me-1">&nbsp;</span>
+                                    <small>Quentes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clientes por Status -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #ffffff;">
+                        <i class="fas fa-user-tag me-2"></i>Clientes por Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Status</th>
+                                            <th class="text-center">Quantidade</th>
+                                            <th class="text-center">Percentual</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-primary me-2">•</span> Frios
+                                            </td>
+                                            <td class="text-center">{{ clientes_frios }}</td>
+                                            <td class="text-center">
+                                                {% if clientes_ativos > 0 %}
+                                                    {{ clientes_frios|floatformat:0|default:"0" }}%
+                                                {% else %}
+                                                    0%
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-warning me-2">•</span> Mornos
+                                            </td>
+                                            <td class="text-center">{{ clientes_mornos }}</td>
+                                            <td class="text-center">
+                                                {% if clientes_ativos > 0 %}
+                                                    {{ clientes_mornos|floatformat:0|default:"0" }}%
+                                                {% else %}
+                                                    0%
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-danger me-2">•</span> Quentes
+                                            </td>
+                                            <td class="text-center">{{ clientes_quentes }}</td>
+                                            <td class="text-center">
+                                                {% if clientes_ativos > 0 %}
+                                                    {{ clientes_quentes|floatformat:0|default:"0" }}%
+                                                {% else %}
+                                                    0%
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr class="table-light">
+                                            <td><strong>Total</strong></td>
+                                            <td class="text-center"><strong>{{ clientes_ativos }}</strong></td>
+                                            <td class="text-center"><strong>100%</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <div style="max-width: 220px;">
+                                <canvas id="clientStatusChart" width="100%" height="100%"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessores Cards -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #ffffff;">
+                        <i class="fas fa-user-tie me-2"></i>Assessores da Unidade
+                    </h5>
+                    <a href="{% url 'assessor_monitoring' %}" class="btn btn-sm btn-outline-light" style="background-color: #005678; color: white;">
+                        <i class="fas fa-external-link-alt me-1"></i> Ver Todos
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Assessor</th>
+                                    <th class="text-center">PL Gerenciado</th>
+                                    <th class="text-center">Clientes</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assessor in assessores %}
+                                <tr>
+                                    <td>{{ assessor.get_full_name|default:assessor.username }}</td>
+                                    <td class="text-center">R$ {{ assessor.pl_gerenciado }}</td>
+                                    <td class="text-center">{{ assessor.clientes_count|default:"0" }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-{{ assessor.status_color|default:"secondary" }}">
+                                            {{ assessor.status|default:"Sem dados" }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'assessor_monitoring_detail' assessor.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-chart-line me-1"></i> Monitorar
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-3 text-muted">
+                                        Nenhum assessor cadastrado na unidade
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Growth Chart -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <h5 class="mb-0" style="color: #ffffff;">
+                <i class="fas fa-chart-bar me-2"></i>Crescimento Projetado
+            </h5>
+            <div>
+                <button class="btn btn-sm btn-outline-light">Mês</button>
+                <button class="btn btn-sm btn-outline-light">Trimestre</button>
+                <button class="btn btn-sm btn-outline-light">Ano</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <canvas id="growthChart" width="100%" height="300"></canvas>
+        </div>
+    </div>
+
+    <div class="mt-3 text-center text-muted">
+        <small>Dados atualizados em: {{ data_atualizacao|date:"d/m/Y H:i"|default:"-" }}</small>
+    </div>
+</div>
+
+<style>
+.unit-card {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem !important;
+}
+.unit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+</style>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Client Chart
+        const clientsCtx = document.getElementById('clientsChart').getContext('2d');
+        const clientsChart = new Chart(clientsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Frios', 'Mornos', 'Quentes'],
+                datasets: [{
+                    data: [
+                        {{ clientes_frios }}, 
+                        {{ clientes_mornos }}, 
+                        {{ clientes_quentes }}
+                    ],
+                    backgroundColor: [
+                        'rgba(0, 86, 179, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Client Status Chart
+        const clientStatusCtx = document.getElementById('clientStatusChart').getContext('2d');
+        const clientStatusChart = new Chart(clientStatusCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Frios', 'Mornos', 'Quentes'],
+                datasets: [{
+                    data: [
+                        {{ clientes_frios }}, 
+                        {{ clientes_mornos }}, 
+                        {{ clientes_quentes }}
+                    ],
+                    backgroundColor: [
+                        'rgba(0, 86, 179, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.raw || 0;
+                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Growth Chart
+        const growthCtx = document.getElementById('growthChart').getContext('2d');
+        const growthChart = new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                datasets: [
+                    {
+                        label: 'PL Real',
+                        data: [
+                            {% if pl_atual %}{{ pl_atual|add:"-5000000"|default:"10000000" }}{% else %}10000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"-4000000"|default:"11000000" }}{% else %}11000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"-3000000"|default:"12000000" }}{% else %}12000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"-2000000"|default:"13000000" }}{% else %}13000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual }}{% else %}14000000{% endif %}, 
+                            null, null, null, null, null, null, null
+                        ],
+                        borderColor: '#5b7954',
+                        backgroundColor: 'rgba(91, 121, 84, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Projeção',
+                        data: [
+                            {% if pl_atual %}{{ pl_atual|add:"-5000000"|default:"10000000" }}{% else %}10000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"-4000000"|default:"11000000" }}{% else %}11000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"-3000000"|default:"12000000" }}{% else %}12000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"-2000000"|default:"13000000" }}{% else %}13000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual }}{% else %}14000000{% endif %},
+                            {% if pl_atual %}{{ pl_atual|add:"1000000" }}{% else %}15000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"2000000" }}{% else %}16000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"3000000" }}{% else %}17000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"4000000" }}{% else %}18000000{% endif %},
+                            {% if pl_atual %}{{ pl_atual|add:"5000000" }}{% else %}19000000{% endif %}, 
+                            {% if pl_atual %}{{ pl_atual|add:"6000000" }}{% else %}20000000{% endif %}, 
+                            {% if pl_total %}{{ pl_total }}{% else %}21000000{% endif %}
+                        ],
+                        borderColor: '#005678',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

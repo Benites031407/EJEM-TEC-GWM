@@ -1,0 +1,13 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+    {% if show_bulk_button %}
+    <li>
+        <a href="{% url 'admin:main_objetivoanual_bulk' %}" class="btn btn-high btn-success">
+            {% trans "Definir Objetivos em Massa" %}
+        </a>
+    </li>
+    {% endif %}
+    {{ block.super }}
+{% endblock %} 

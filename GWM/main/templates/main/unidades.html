@@ -1,0 +1,115 @@
+{% extends 'main/base.html' %}
+{% block title %}Unidades da Empresa{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-building text-primary me-2"></i>Unidades da Empresa
+        </h1>
+    </div>
+
+    <!-- Units Grid -->
+    <div class="row g-4">
+        {% for unidade in unidades %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow h-100 rounded-lg position-relative unit-card">
+                    <div class="card-header py-3" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="m-0 font-weight-bold text-white">
+                                <i class="fas fa-map-marker-alt me-2"></i>{{ unidade.nome }}
+                            </h5>
+                            {% if unidade.head %}
+                                <span class="badge bg-success rounded-pill" style="background-color: #5b7954 !important;">
+                                    <i class="fas fa-user me-1"></i>Head: {{ unidade.head.get_full_name|default:unidade.head.username }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-pill">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Sem Head
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if unidade.descricao %}
+                            <p class="card-text mb-4">{{ unidade.descricao }}</p>
+                        {% else %}
+                            <p class="card-text text-muted mb-4"><em>Sem descrição</em></p>
+                        {% endif %}
+                        
+                        <!-- Unit Stats -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <div class="stat-item p-3 rounded-lg text-center" style="background-color: #354431; color: white;">
+                                    <div class="small text-white mb-1">ROA Médio</div>
+                                    <h5 class="m-0 text-white">{{ unidade.roa|default:"0.0" }}%</h5>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-item p-3 rounded-lg text-center" style="background-color: #005678; color: white;">
+                                    <div class="small text-white mb-1">Assessores</div>
+                                    <h5 class="m-0 text-white">{{ unidade.enhanced_data.assessores_count }}</h5>
+                                </div>
+                            </div>
+        <div class="col-md-4">
+                                <div class="stat-item p-3 rounded-lg text-center" style="background-color: #5b7954; color: white;">
+                                    <div class="small text-white mb-1">Clientes</div>
+                                    <h5 class="m-0 text-white">{{ unidade.enhanced_data.clientes_count }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Performance Indicator -->
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small text-muted">Performance:</span>
+                                <span class="small font-weight-bold">{{ unidade.enhanced_data.performance_percent }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     aria-valuenow="{{ unidade.enhanced_data.performance_percent }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100"
+                                     style="width: {{ unidade.enhanced_data.performance_percent }}%; background-color: #002733;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Financial Info -->
+                        <div class="mt-3 d-flex justify-content-between">
+                            <div class="text-center">
+                                <span class="small text-muted d-block">PL Total</span>
+                                <span class="font-weight-bold" style="color: #354431;">{{ unidade.enhanced_data.pl_total|default:"R$ 0,00" }}</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="small text-muted d-block">Ticket Médio</span>
+                                <span class="font-weight-bold" style="color: #005678;">{{ unidade.enhanced_data.ticket_medio|default:"R$ 0,00" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer border-0 d-flex justify-content-between py-3">
+                        <a href="{% url 'dashboard_unidade' unidade.slug %}" class="btn btn-icon-split" style="background-color: #005678; color: white;">
+                            <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                            <span class="text">Dashboard</span>
+                        </a>
+                        {% if not unidade.head %}
+                            <button class="btn btn-icon-split" style="background-color: #5b7954; color: white;" data-toggle="modal" data-target="#assignHeadModal{{ unidade.id }}">
+                                <span class="icon"><i class="fas fa-user-plus"></i></span>
+                                <span class="text">Atribuir Head</span>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info" style="background-color: #e6f2ff; color: #002733; border-color: #005678;">
+                    <i class="fas fa-info-circle me-2"></i>Nenhuma unidade cadastrada
+                </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

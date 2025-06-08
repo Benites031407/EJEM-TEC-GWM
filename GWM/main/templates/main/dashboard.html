@@ -1,0 +1,1082 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}Dashboard - Área{% endblock %}
+{% block content %}
+{% load plotly_dash %}
+
+<!-- Topbar -->
+<div class="container-fluid mt-4">
+    <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 6px;">
+        <h5 class="mb-0 fs-6">{% block page_title %}Dashboard de Análise (Head){% endblock %}</h5>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4">
+        <!-- Area-specific KPIs -->
+        {% for area in areas %}
+            <!-- KPI cards based on area type -->
+            {% if area.nome == 'Expansão' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Entrevistas</h6>
+                                    <h3 class="mb-0">{{ area.entrevistas|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-user-tie fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Contratações</h6>
+                                    <h3 class="mb-0">{{ area.contratacoes|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-user-check fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">NPS</h6>
+                                    <h3 class="mb-0">{{ area.nps|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-star fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Seguro' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">QTD de reuniões</h6>
+                                    <h3 class="mb-0">{{ area.qtd_reunioes|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-handshake fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">QTD de seguros realizados</h6>
+                                    <h3 class="mb-0">{{ area.qtd_seguros|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-shield-alt fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Volume de PA</h6>
+                                    <h3 class="mb-0">R$ {{ area.volume_pa|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-money-bill-wave fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Renda Variável' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Receita</h6>
+                                    <h3 class="mb-0">R$ {{ area.receita|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-dollar-sign fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">CPFs Operados</h6>
+                                    <h3 class="mb-0">{{ area.cpfs_operados|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-users fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Volume Ofertas Públicas</h6>
+                                    <h3 class="mb-0">R$ {{ area.volume_ofertas|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-bar fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Cambio' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header fw-bold bg-secondary text-white">Banking</div>
+                        <div class="card-body">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Volume Operado</h6>
+                                    <h3 class="mb-0">R$ {{ area.volume_operado|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-exchange-alt fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Assessores Operados</h6>
+                                    <h3 class="mb-0">{{ area.assessores_ativos|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-users fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Corporate' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Volume de Crédito</h6>
+                                    <h3 class="mb-0">R$ {{ area.volume_credito|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-credit-card fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Quantidade de reuniões</h6>
+                                    <h3 class="mb-0">{{ area.qtd_reunioes|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-handshake fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Pace</h6>
+                                    <h3 class="mb-0">{{ area.pace|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: {{ area.pace|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-tachometer-alt fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Banking' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Principalidade</h6>
+                                    <h3 class="mb-0">{{ area.principalidade|default:"0" }}%</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-percentage fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Emissões de cartões</h6>
+                                    <h3 class="mb-0">{{ area.cartoes_emitidos|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-credit-card fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Pace</h6>
+                                    <h3 class="mb-0">{{ area.pace|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: {{ area.pace|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-tachometer-alt fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Marketing' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Seguidores</h6>
+                                    <h3 class="mb-0">{{ area.seguidores|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-users fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Interações</h6>
+                                    <h3 class="mb-0">{{ area.interacoes|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-comment-alt fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Leads Sociais</h6>
+                                    <h3 class="mb-0">{{ area.leads_sociais|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-user-plus fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Captação Mesa (AUC)</h6>
+                                    <h3 class="mb-0">R$ {{ area.captacao_mesa|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-money-bill-wave fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-danger border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-danger opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-purple border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Pace</h6>
+                                    <h3 class="mb-0">{{ area.pace|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-purple" role="progressbar" 
+                                             style="width: {{ area.pace|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-tachometer-alt fa-2x text-purple opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Consórcio' %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">QTD de reuniões</h6>
+                                    <h3 class="mb-0">{{ area.qtd_reunioes|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-handshake fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">QTD consórcios realizados</h6>
+                                    <h3 class="mb-0">{{ area.qtd_consorcios|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Volume Financeiro</h6>
+                                    <h3 class="mb-0">R$ {{ area.volume_financeiro|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-money-bill-wave fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Advisory' %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-primary border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">PL em Liquidez (D+0/D+5)</h6>
+                                    <h3 class="mb-0">R$ {{ area.pl_liquidez|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-money-bill-wave fa-2x text-primary opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-success border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% do PL em Liquidez</h6>
+                                    <h3 class="mb-0">{{ area.percentual_pl_liquidez|default:"0" }}%</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-percentage fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-info border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Vol. Financeiro Crédito Corp.</h6>
+                                    <h3 class="mb-0">R$ {{ area.volume_credito|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-building fa-2x text-info opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-warning border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% do PL em Crédito Corp.</h6>
+                                    <h3 class="mb-0">{{ area.percentual_pl_credito|default:"0" }}%</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-pie fa-2x text-warning opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-danger border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">Ofertas Públicas</h6>
+                                    <h3 class="mb-0">R$ {{ area.ofertas_publicas|default:"0" }}</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-hand-holding-usd fa-2x text-danger opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100 border-start border-purple border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted mb-2">% Atingido</h6>
+                                    <h3 class="mb-0">{{ area.percentual_atingido|default:"0" }}%</h3>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ area.percentual_atingido|default:"0" }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-chart-line fa-2x text-success opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Area-specific Charts -->
+    <div class="row mb-4">
+        {% for area in areas %}
+            {% if area.nome == 'Expansão' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Entrevistas - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de entrevistas AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Contratações - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de contratações AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-expansao" style="height: 600px;">
+                                    {% plotly_app name="ExpansaoApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Seguro' or area.nome == 'Seguros' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Reuniões - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de reuniões AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Seguros - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de seguros AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-seguros" style="height: 600px;">
+                                    {% plotly_app name="SegurosApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Renda Variável' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Receita - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de receita AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de CPFs Operados - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de CPFs AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-rendavariavel" style="height: 600px;">
+                                    {% plotly_app name="Renda_variavelApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Cambio' or area.nome == 'Câmbio' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Volume Operado - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de volume operado AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Receita - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de receita AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-cambio" style="height: 600px;">
+                                    {% plotly_app name="CambioApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            {% elif area.nome == 'Corporate' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Volume de Crédito - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de crédito AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Reuniões - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de reuniões AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-corporate" style="height: 600px;">
+                                    {% plotly_app name="CorporateApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Banking' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Principalidade - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de principalidade AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Cartões - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de cartões AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-banking" style="height: 600px;">
+                                    {% plotly_app name="BankingApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Marketing' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Seguidores - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de seguidores AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Interações - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de interações AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-marketing" style="height: 600px;">
+                                    {% plotly_app name="MarketingApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Consórcio' or area.nome == 'Consorcio' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Volume Financeiro - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de volume financeiro AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Consórcios - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de consórcios AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-consorcio" style="height: 600px;">
+                                    {% plotly_app name="ConsorcioApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif area.nome == 'Advisory' %}
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de PL com Liquidez - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de PL com liquidez AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Ofertas Públicas - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de ofertas públicas AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header fw-bold bg-gradient-primary-to-secondary text-white">{{ area.nome }}</div>
+                            <div class="card-body">
+                                <div id="grafico-advisory" style="height: 600px;">
+                                    {% plotly_app name="AdvisoryApp" ratio=0.5 %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Default charts for areas without specific charts -->
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução do PL - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de PL AQUI-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4 rounded-lg">
+                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Clientes - {{ area.nome }}</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <!--Gráfico evolução de clientes AQUI-->
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+
+    <!-- Performance Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-gradient-primary-to-secondary d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Performance por Área</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Área</th>
+                                    <th>Indicador Principal</th>
+                                    <th>Meta</th>
+                                    <th>% Atingido</th>
+                                    <th>Pace</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for area in areas %}
+                                <tr>
+                                    <td><strong>{{ area.nome }}</strong></td>
+                                    <td>
+                                        {% if area.nome == 'Expansão' %}
+                                            {{ area.entrevistas|default:"0" }} entrevistas
+                                        {% elif area.nome == 'Seguro' %}
+                                            R$ {{ area.volume_pa|default:"0" }}
+                                        {% elif area.nome == 'Renda Variável' %}
+                                            R$ {{ area.receita|default:"0" }} receita
+                                        {% elif area.nome == 'Câmbio' %}
+                                            R$ {{ area.volume_operado|default:"0" }}
+                                        {% elif area.nome == 'Corporate' %}
+                                            R$ {{ area.volume_credito|default:"0" }}
+                                        {% elif area.nome == 'Banking' %}
+                                            {{ area.principalidade|default:"0" }}%
+                                        {% elif area.nome == 'Marketing' %}
+                                            {{ area.seguidores|default:"0" }} seguidores
+                                        {% elif area.nome == 'Consórcio' %}
+                                            R$ {{ area.volume_financeiro|default:"0" }}
+                                        {% elif area.nome == 'Advisory' %}
+                                            R$ {{ area.pl_liquidez|default:"0" }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ area.meta|default:"0" }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1" style="height: 7px;">
+                                                <div class="progress-bar 
+                                                    {% if area.percentual_atingido > 80 %}bg-success
+                                                    {% elif area.percentual_atingido > 50 %}bg-warning
+                                                    {% else %}bg-danger{% endif %}" 
+                                                    role="progressbar" 
+                                                    style="width: {{ area.percentual_atingido|default:'0' }}%">
+                                                </div>
+                                            </div>
+                                            <span class="ms-2">{{ area.percentual_atingido|default:"0" }}%</span>
+                                        </div>
+                                    </td>
+                                    <td>{{ area.pace|default:"0" }}%</td>
+                                    <td>
+                                        {% if area.percentual_atingido >= 90 %}
+                                            <span class="badge bg-success">Excelente</span>
+                                        {% elif area.percentual_atingido >= 70 %}
+                                            <span class="badge bg-primary">Bom</span>
+                                        {% elif area.percentual_atingido >= 50 %}
+                                            <span class="badge bg-warning">Regular</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Abaixo</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

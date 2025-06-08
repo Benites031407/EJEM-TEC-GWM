@@ -1,0 +1,314 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Monitoramento de Assessores - {{ unidade.nome }} | GWM{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Stylish Header with Gradient -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold text-white">
+                    <i class="bi bi-people-fill me-2"></i>Monitoramento de Assessores
+                </h4>
+                <div>
+                    <a href="{% url 'dashboard_headunidade' %}" class="btn btn-sm btn-outline-light me-2">
+                        <i class="bi bi-speedometer2 me-1"></i> Dashboard da Unidade
+                    </a>
+                    <a href="{% url 'home_headunidade' %}" class="btn btn-sm btn-light">
+                        <i class="bi bi-house me-1"></i> Voltar para Home
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="text-muted mb-3">{{ unidade.nome }} - Acompanhamento de desempenho</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Summary -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow h-100 bg-white bg-opacity-10">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="text-muted mb-1">Assessores</h5>
+                            <h5 class="fw-bold mb-0">{{ assessor_metrics|length }}</h5>
+                        </div>
+                        <div class="position-absolute top-4 end-0 mt-3 me-3">
+                            <i class="fas fa-users fa-2x" style="color: rgba(0, 86, 120, 0.2);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow h-100 bg-white bg-opacity-10">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="text-muted mb-1">Total Clientes</h5>
+                            <h5 class="fw-bold mb-0">{{ total_clientes|default:"0" }}</h5>
+                        </div>
+                        <div class="position-absolute top-2 end-0 mt-3 me-3">
+                            <i class="fas fa-user-plus fa-2x" style="color: rgba(91, 121, 84, 0.2);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow h-100 bg-white bg-opacity-10">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="text-muted mb-1">Total PL</h5>
+                            <h5 class="fw-bold mb-0">{{ total_pl|default:"0,00" }}</h5>
+                        </div>
+                        <div class="position-absolute top-2 end-0 mt-3 me-3">
+                            <i class="fas fa-money-bill-wave fa-2x" style="color: rgba(91, 121, 84, 0.2);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow h-100 bg-white bg-opacity-10">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="text-muted mb-1">Total Operações</h5>
+                            <h5 class="fw-bold mb-0">{{ total_operacoes|default:"0" }}</h5>
+                        </div>
+                        <div class="position-absolute top-2 end-0 mt-3 me-3">
+                            <i class="fas fa-exchange-alt fa-2x" style="color: rgba(255, 193, 7, 0.2);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Team Performance Table -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-header py-3" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-white"><i class="bi bi-people-fill me-2"></i>Equipe de Assessores</h5>
+                <div class="input-group" style="width: 250px;">
+                    <input type="text" id="assessorSearch" class="form-control form-control-sm" placeholder="Buscar assessor...">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            {% if assessor_metrics %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="assessorTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Nome</th>
+                            <th class="text-center">Clientes</th>
+                            <th class="text-center">Operações</th>
+                            <th class="text-end">PL Total</th>
+                            <th class="text-center">Performance</th>
+                            <th class="text-end pe-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for metric in assessor_metrics %}
+                        <tr>
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-3 bg-light rounded-circle text-center d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <span class="fw-bold text-primary">{{ metric.assessor.get_full_name|default:metric.assessor.username|slice:":1" }}</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ metric.assessor.get_full_name|default:metric.assessor.username }}</h6>
+                                        <small class="text-muted">{{ metric.assessor.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark rounded-pill px-3 py-2">{{ metric.captacoes_count }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark rounded-pill px-3 py-2">{{ metric.total_operations }}</span>
+                            </td>
+                            <td class="text-end fw-bold">
+                                {{ metric.pl_total|currency }}
+                            </td>
+                            <td class="text-center">
+                                {% with percentage=metric.performance_percentage|default:50 %}
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="progress flex-grow-1" style="height: 6px; max-width: 100px;">
+                                        <div class="progress-bar bg-{% if percentage >= 75 %}success{% elif percentage >= 50 %}warning{% else %}danger{% endif %}" 
+                                             role="progressbar" style="width: {{ percentage }}%;" 
+                                             aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <span class="ms-2 text-{% if percentage >= 75 %}success{% elif percentage >= 50 %}warning{% else %}danger{% endif %}">
+                                        {{ percentage }}%
+                                    </span>
+                                </div>
+                                {% endwith %}
+                            </td>
+                            <td class="text-end pe-3">
+                                <a href="{% url 'assessor_monitoring_detail' metric.assessor.id %}" class="btn btn-sm btn-primary rounded-pill px-3">
+                                    <i class="bi bi-eye me-1"></i> Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-exclamation-circle text-warning" style="font-size: 3rem;"></i>
+                </div>
+                <h5>Não há assessores cadastrados nesta unidade.</h5>
+                <p class="text-muted">Entre em contato com o administrador para adicionar assessores à sua equipe.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Status Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #ffffff;"><i class="bi bi-trophy text-warning me-2"></i>Melhores desempenhos</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for metric in top_performers|slice:":5" %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold">{{ forloop.counter }}. {{ metric.assessor.get_full_name|default:metric.assessor.username }}</span>
+                                <div class="text-muted small">{{ metric.captacoes_count }} clientes</div>
+                                <div class="text-success fw-bold">{{ metric.pl_total|currency }}</div>
+                            </div>                            
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center py-4 text-muted">
+                            Nenhum dado disponível
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #ffffff;"><i class="bi bi-lightning text-primary me-2"></i>Clientes por Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="clientStatusChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow h-100">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); color: white;">
+                    <h5 class="mb-0" style="color: #ffffff;"><i class="bi bi-calendar-check text-success me-2"></i>Envios Recentes</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for operation in recent_operations|slice:":5" %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">{{ operation.tipo }}</h6>
+                                    <p class="mb-0 small text-muted">{{ operation.assessor }}</p>
+                                </div>
+                                <div>
+                                    <span class="badge bg-success">{{ operation.data }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center py-4 text-muted">
+                            Nenhuma operação recente
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4 text-center text-muted">
+        <small>Dados atualizados em: {% now "d/m/Y H:i" %}</small>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Client Status Pie Chart
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('clientStatusChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Frios', 'Mornos', 'Quentes'],
+                datasets: [{
+                    data: [{{ clientes_frios }}, {{ clientes_mornos }}, {{ clientes_quentes }}],
+                    backgroundColor: [
+                        'rgba(0, 86, 179, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgb(0, 86, 179)',
+                        'rgb(255, 193, 7)',
+                        'rgb(220, 53, 69)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('assessorSearch');
+        const table = document.getElementById('assessorTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            for (let i = 0; i < rows.length; i++) {
+                const nameCell = rows[i].getElementsByTagName('td')[0];
+                const name = nameCell.textContent || nameCell.innerText;
+                
+                if (name.toLowerCase().indexOf(searchTerm) > -1) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %} 

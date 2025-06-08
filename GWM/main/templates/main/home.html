@@ -1,0 +1,184 @@
+{% extends 'main/base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="container mt-3">
+    <!-- Topbar com gradiente -->
+    <div class="topbar px-4 py-3 mb-4 text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 8px; color: white;">
+        <h5 class="mb-0">Bem-vindo à GWM</h5>
+        <div class="d-flex align-items-center">
+            <span class="me-3"><i class="fas fa-calendar-check me-1"></i> {% now "d/m/Y" %}</span>
+        </div>
+    </div>
+    
+    <!-- Mensagem de Boas-Vindas com Card Personalizado -->
+    <div class="card mb-4 shadow-lg border-0" style="border-radius: 12px; background: linear-gradient(45deg, rgba(0,86,120,0.03), rgba(53,68,49,0.05));">
+        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 56px; height: 56px; background: linear-gradient(45deg, #005678, #354431);">
+                    <i class="fas fa-user text-white fa-lg"></i>
+                </div>
+                <div>
+                    <h4 class="card-title mb-0">Olá, {{ user.first_name|default:user.username }} 👋</h4>
+                    <p class="card-text text-muted mt-1">Seja bem-vindo(a) ao Portal GWM. Confira seu painel abaixo:</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'dashboard_assessor' %}" class="btn btn-primary">
+                    <i class="fas fa-chart-line me-1"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Overview em Cards com ícones modernos -->
+    <div class="card mb-4 shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-header bg-gradient-primary-to-secondary py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 fw-bold text-white"><i class="fas fa-chart-line me-2"></i>Formulários do Mês</h6>
+        </div>
+    
+    <div class="row g-4 mb-4">
+            <!-- Card Estatísticas -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 position-relative overflow-hidden" style="border-radius: 12px;">
+                {% if has_estatisticas %}
+                    <div class="position-absolute" style="top:0; right:0; width:120px; height:120px; background: rgba(40,167,69,0.15); border-radius: 0 0 0 100%"></div>
+                {% endif %}
+                <div class="card-body p-4 d-flex flex-column h-100 position-relative">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex justify-content-center align-items-center me-3" 
+                             style="width: 48px; height: 48px; background-color: {% if has_estatisticas %}rgba(40,167,69,0.1){% else %}rgba(0,86,120,0.1){% endif %}">
+                            <i class="fas fa-chart-pie {% if has_estatisticas %}text-success{% else %}text-primary{% endif %} fa-lg"></i>
+                        </div>
+                        <h5 class="card-title m-0">Estatísticas</h5>
+                    </div>
+                    <div class="mb-3">
+                        <span class="fs-6 {% if has_estatisticas %}text-success{% else %}text-muted{% endif %}">
+                            <i class="fas {% if has_estatisticas %}fa-check-circle{% else %}fa-clock{% endif %} me-1"></i>
+                            {% if has_estatisticas %}Enviado este mês{% else %}Pendente{% endif %}
+                        </span>
+                    </div>
+                    <div class="mt-auto">
+                        <a href="{% url 'estatisticas' %}" class="btn btn-sm w-100 {% if has_estatisticas %}btn-outline-success{% else %}btn-primary{% endif %}">
+                            {% if has_estatisticas %}Ver detalhes{% else %}Preencher agora{% endif %}
+                        </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Card Captação -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 position-relative overflow-hidden" style="border-radius: 12px;">
+                <div class="position-absolute" style="top:0; right:0; width:120px; height:120px; background: rgba(0,123,255,0.15); border-radius: 0 0 0 100%"></div>
+                <div class="card-body p-4 d-flex flex-column h-100 position-relative">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex justify-content-center align-items-center me-3" 
+                             style="width: 48px; height: 48px; background-color: rgba(0,123,255,0.1);">
+                            <i class="fas fa-users text-primary fa-lg"></i>
+                        </div>
+                        <h5 class="card-title m-0">Captação</h5>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fs-6 text-primary">
+                                <i class="fas fa-user-plus me-1"></i> {{ captacao_qtd }} envios
+                            </span>
+                            {% if captacao_qtd > 0 %}
+                            <span class="badge bg-primary">{{ captacao_qtd }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ captacao_qtd|default:0|add:10 }}%;" aria-valuenow="{{ captacao_qtd|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mt-auto">
+                        <a href="{% url 'captacao' %}" class="btn btn-primary btn-sm w-100">Adicionar captação</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Histórico -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 position-relative overflow-hidden" style="border-radius: 12px;">
+                <div class="position-absolute" style="top:0; right:0; width:120px; height:120px; background: rgba(108,117,125,0.15); border-radius: 0 0 0 100%"></div>
+                <div class="card-body p-4 d-flex flex-column h-100 position-relative">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle d-flex justify-content-center align-items-center me-3" 
+                             style="width: 48px; height: 48px; background-color: rgba(108,117,125,0.1);">
+                            <i class="fas fa-history text-secondary fa-lg"></i>
+                        </div>
+                        <h5 class="card-title m-0">Histórico</h5>
+                    </div>
+                    <div class="mb-3">
+                        <span class="fs-6 text-muted">
+                            <i class="fas fa-file-alt me-1"></i> Registros anteriores
+                        </span>
+                        <p class="small text-muted mt-2">Acesse o histórico completo de seus envios e formulários anteriores.</p>
+                    </div>
+                    <div class="mt-auto">
+                        <a href="{% url 'historico' %}" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="fas fa-history me-1"></i> Ver histórico
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Atividades recentes ou ações rápidas -->
+    <div class="card mb-4 shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-header bg-gradient-primary-to-secondary py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 fw-bold text-white"><i class="fas fa-bolt me-2"></i>Ações rápidas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 text-center">
+                <div class="col-6 col-md-3">
+                    <a href="{% url 'captacao' %}" class="btn btn-light rounded py-3 w-100 h-100 d-flex flex-column align-items-center">
+                        <i class="fas fa-user-plus mb-2 text-primary fa-lg"></i>
+                        <span>Nova Captação</span>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="{% url 'estatisticas' %}" class="btn btn-light rounded py-3 w-100 h-100 d-flex flex-column align-items-center">
+                        <i class="fas fa-chart-bar mb-2 text-success fa-lg"></i>
+                        <span>Estatísticas</span>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="{% url 'dashboard_assessor' %}" class="btn btn-light rounded py-3 w-100 h-100 d-flex flex-column align-items-center">
+                        <i class="fas fa-chart-line mb-2 text-info fa-lg"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="{% url 'historico' %}" class="btn btn-light rounded py-3 w-100 h-100 d-flex flex-column align-items-center">
+                        <i class="fas fa-history mb-2 text-secondary fa-lg"></i>
+                        <span>Histórico</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-light {
+        background-color: #f8f9fa;
+        transition: all 0.2s ease;
+    }
+    .btn-light:hover {
+        background-color: #e9ecef;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .card {
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}

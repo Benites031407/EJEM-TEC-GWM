@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ unit.nome }}</h1>
+        <a href="{% url 'units_list' %}" class="btn btn-outline-secondary">Voltar para lista</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Informações da Unidade</h5>
+            <p><strong>ROA:</strong> {{ unit.roa }}%</p>
+            <p><strong>Descrição:</strong> {{ unit.descricao|default:"Sem descrição" }}</p>
+            <p>
+                <strong>Head da Unidade:</strong> 
+                {% if structure.unit_head %}
+                    {{ structure.unit_head.name }}
+                {% else %}
+                    <span class="text-danger">Não definido</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <h2>Áreas</h2>
+    {% if structure.areas %}
+    <div class="row">
+        {% for area_structure in structure.areas %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    {{ area_structure.area.name }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Head da Área: 
+                        {% if area_structure.area_head %}
+                            {{ area_structure.area_head.name }}
+                        {% else %}
+                            <span class="text-danger">Não definido</span>
+                        {% endif %}
+                    </h5>
+                    
+                    <h6 class="mt-3">Assessores:</h6>
+                    {% if area_structure.advisors %}
+                    <ul class="list-group">
+                        {% for advisor in area_structure.advisors %}
+                        <li class="list-group-item">{{ advisor.name }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">Nenhum assessor nesta área</p>
+                    {% endif %}
+                    
+                    <a href="{% url 'area_detail' area_structure.area.id %}" class="btn btn-sm btn-outline-primary mt-3">Ver detalhes da área</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>Esta unidade não possui áreas definidas. Para associar áreas a esta unidade:</p>
+        <ol>
+            <li>No painel administrativo, adicione usuários a esta unidade</li>
+            <li>Associe esses usuários a áreas específicas</li>
+        </ol>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
