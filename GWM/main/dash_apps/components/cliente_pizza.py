@@ -1,11 +1,11 @@
-from ..db import pegar_cliente
+from ..db import pegar_captacao
 from django_plotly_dash import DjangoDash
 import plotly.express as px
 from dash import html, dcc
 
 
 def grafico_origem_clientes_component():
-    df = pegar_cliente()
+    df = pegar_captacao()
 
     if df.empty:
         return html.Div("Sem dados para exibir.")

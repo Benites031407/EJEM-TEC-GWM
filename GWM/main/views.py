@@ -16,6 +16,9 @@ from django.contrib import messages
 from .models import Planejado, Executado, Captacao, Estatisticas, Unidade, CustomUser, AlertaDuplicado, CodigoEdicao, Area, AgendamentoMensal, ObjetivoAnual
 from datetime import datetime, timedelta, date
 from decimal import Decimal
+from main.dash_apps.components.app_top5leads import app
+from main.dash_apps.components.cliente_pizza import app
+from main.dash_apps.components.callback_pl_auc import app
 from main.dash_apps.components.app_seguro import app
 from main.dash_apps.components.app_expansao import app
 from main.dash_apps.components.app_renda_variavel import app

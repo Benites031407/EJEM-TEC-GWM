@@ -1,4 +1,4 @@
-from ..db import pegar_cliente
+from ..db import pegar_captacao
 
 from django_plotly_dash import DjangoDash
 import dash
@@ -7,13 +7,13 @@ from dash import html, dcc
 
 
 def top5_leads_component():
-    df = pegar_cliente()
-    df_top5 = df.sort_values(by='pl_total', ascending=False).head(5)
+    df = pegar_captacao()
+    df_top5 = df.sort_values(by='pl', ascending=False).head(5)
 
     fig = go.Figure(data=[
         go.Bar(
             x=df_top5['nome'],
-            y=df_top5['pl_total'],
+            y=df_top5['pl'],
             marker_color='royalblue'
         )
     ])
