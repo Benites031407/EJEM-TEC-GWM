@@ -554,7 +554,11 @@ def planejado_view(request):
             
         form = PlanejadoAreaForm(request.POST, instance=instance)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.month = month
+            obj.year = year
+            obj.save()
             # Limpa o código de edição da sessão após salvar
             request.session.pop('edit_code_valid', None)
             messages.success(request, "Formulário enviado com sucesso!")
@@ -607,7 +611,11 @@ def executado_view(request):
             
         form = ExecutadoAreaForm(request.POST, instance=instance)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.month = month
+            obj.year = year
+            obj.save()
             # Limpa o código de edição da sessão após salvar
             request.session.pop('edit_code_valid', None)
             messages.success(request, "Formulário enviado com sucesso!")
