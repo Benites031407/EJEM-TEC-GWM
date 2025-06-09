@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,14 +100,15 @@ WSGI_APPLICATION = 'GWM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'GWM',
-        'USER': 'postgres',
-        'PASSWORD': 'banana',
-        'HOST': 'localhost',
+        'NAME': 'gwm',
+        'USER': 'gwm_user',
+        'PASSWORD': '0ULmVOmGX1NVi5dA287m0x7wWjoYqh55',
+        'HOST': 'dpg-d13ihr0dl3ps738tek30-a',
         'PORT': '5432',
     }
 }
 
+DATABASES['default'] = dj_database_url.parse("postgresql://gwm_user:0ULmVOmGX1NVi5dA287m0x7wWjoYqh55@dpg-d13ihr0dl3ps738tek30-a.virginia-postgres.render.com/gwm")
 
 
 # Password validation
