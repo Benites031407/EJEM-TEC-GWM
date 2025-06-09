@@ -98,9 +98,9 @@ WSGI_APPLICATION = 'GWM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gwm_final',
+        'NAME': 'GWM',
         'USER': 'postgres',
-        'PASSWORD': 'julioben10',
+        'PASSWORD': 'banana',
         'HOST': 'localhost',
         'PORT': '5432',
     }

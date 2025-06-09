@@ -1,9 +1,8 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
 {% block title %}Dashboard Master{% endblock %}
-
 {% block content %}
+{% load plotly_dash %}
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Dashboard Master</h1>
@@ -83,8 +82,10 @@
                 <div class="card-header py-3 bg-gradient-primary-to-secondary">
                     <h6 class="m-0 font-weight-bold text-white">PL Total da Empresa</h6>
                 </div>
-                <div class="card-body p-4">
-                    {{ pl_chart_geral|safe }}
+                <div class="card-body">
+                    <div id="grafico-top5-clientes" style="height: 500px;">
+                        {% plotly_app name="Top5LeadsApp" ratio=2.5 %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,14 +1,15 @@
 from ..db import pegar_captacao
 from django_plotly_dash import DjangoDash
 import plotly.express as px
-from dash import html, dcc
+from dash import html, dcc, Input, Output
 
 
-def grafico_origem_clientes_component():
-    df = pegar_captacao()
-
+def gerar_grafico(df):
     if df.empty:
-        return html.Div("Sem dados para exibir.")
+        return {
+            "data": [],
+            "layout": {"title": "Sem dados para exibir."}
+        }
 
     agrupado = df.groupby("origem").size().reset_index(name='quantidade')
 
@@ -36,14 +37,22 @@ def grafico_origem_clientes_component():
         margin=dict(t=60, b=30, l=30, r=30)
     )
 
-    return html.Div([
-        dcc.Graph(figure=fig, id="grafico-origem-clientes")
-    ])
+    return fig
 
 
+# Criando o app Dash
 app = DjangoDash("grafico-origem-clientes-pizza")
 
-# componentes/grafico_top5_leads.py
-# Define o layout usando o componente
-app.layout = grafico_origem_clientes_component()
-# app.layout =  html.Div("è isso aqui")
+app.layout = html.Div([
+    dcc.Interval(id="interval-update", interval=10*1000, n_intervals=0),  # 10 segundos
+    dcc.Graph(id="grafico-origem-clientes")
+])
+
+
+@app.callback(
+    Output("grafico-origem-clientes", "figure"),
+    Input("interval-update", "n_intervals")
+)
+def atualizar_grafico(n):
+    df = pegar_captacao()
+    return gerar_grafico(df)

@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% block title %}Dashboard - Assessor | GWM{% endblock %}
 {% load custom_filters %}
-
+{% load plotly_dash%}
 {% block content %}
 <div class="container-fluid">
     <!-- Header Card with User Info -->
@@ -364,24 +364,8 @@
                     <h5 class="mb-0"><i class="fas fa-users me-2"></i>Evolução de Clientes</h5>
                 </div>
                 <div class="card-body">
-                    <div id="clientes_evolucao_chart" class="h-100" style="min-height: 250px;">
-                        {{ clientes_evolucao_chart|safe }}
-                    </div>
-                </div>
-                <div class="card-footer bg-light py-2">
-                    <div class="row text-center">
-                        <div class="col-4">
-                            <small class="text-muted d-block">Novos este mês</small>
-                            <strong>{{ novos_clientes_mes|default:"0" }}</strong>
-                        </div>
-                        <div class="col-4">
-                            <small class="text-muted d-block">Taxa de Conversão</small>
-                            <strong>{{ taxa_conversao|default:"0"|floatformat:1 }}%</strong>
-                        </div>
-                        <div class="col-4">
-                            <small class="text-muted d-block">Ativos/Inativos</small>
-                            <strong>{{ clientes_ativos|default:"0" }}/{{ clientes_inativos|default:"0" }}</strong>
-                        </div>
+                    <div id="grafico-origem-clientes" style="height: 600px;">
+                        {% plotly_app name="grafico-origem-clientes-pizza" ratio=1 %}
                     </div>
                 </div>
             </div>

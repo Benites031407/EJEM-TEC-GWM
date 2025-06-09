@@ -3,9 +3,9 @@ import pandas as pd
 
 def conectar():
     return psycopg2.connect(
-        dbname="gwm_final",
+        dbname="GWM",
         user="postgres",
-        password="julioben10",
+        password="banana",
         host="localhost",
         port="5432"
     )
