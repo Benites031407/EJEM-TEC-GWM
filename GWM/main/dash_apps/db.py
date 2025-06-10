@@ -3,12 +3,14 @@ import pandas as pd
 
 def conectar():
     return psycopg2.connect(
-        dbname="gwm",
-        user="gwm_user",
-        password="0ULmVOmGX1NVi5dA287m0x7wWjoYqh55",
-        host="dpg-d13ihr0dl3ps738tek30-a",
-        port="5432"
+    dbname="gwmdeploy",
+    user="gwmdeploy_user",
+    password="Tz6WY8Qk68u5bctdVJdQPjsKUX0q3p2h",
+    host="dpg-d13mllm3jp1c73d85d30-a.virginia-postgres.render.com",
+    port="5432",
+    sslmode='require'
     )
+
 
 def pegar_planejado():
     conn = conectar()
