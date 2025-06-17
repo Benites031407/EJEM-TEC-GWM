@@ -678,7 +678,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Entrevistas - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de entrevistas AQUI-->
+                            {% plotly_app name="EvolucaoEntrevistasApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -688,7 +688,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Contratações - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de contratações AQUI-->
+                            {% plotly_app name="EvolucaoContratacoesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -711,17 +711,17 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Reuniões - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de reuniões AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6">
                     <div class="card shadow mb-4 rounded-lg">
                         <div class="card-header py-3 bg-gradient-primary-to-secondary">
-                            <h6 class="m-0 font-weight-bold text-white">Evolução de Seguros - {{ area.nome }}</h6>
+                            <h6 class="m-0 font-weight-bold text-white">Evolução de Volume Financeiro - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de seguros AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -744,7 +744,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Receita - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de receita AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -754,7 +754,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de CPFs Operados - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de CPFs AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -771,23 +771,33 @@
                     </div>
                 </div>
             {% elif area.nome == 'Cambio' or area.nome == 'Câmbio' %}
-                <div class="col-xl-6 col-lg-6">
+                <div class="col-12 mb-4">
                     <div class="card shadow mb-4 rounded-lg">
                         <div class="card-header py-3 bg-gradient-primary-to-secondary">
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Volume Operado - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de volume operado AQUI-->
+                            <style>
+                                .card-body {
+                                    height: 600px;
+                                }
+                            </style>
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6">
+                <div class="col-12 mb-4">
                     <div class="card shadow mb-4 rounded-lg">
                         <div class="card-header py-3 bg-gradient-primary-to-secondary">
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Receita - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de receita AQUI-->
+                            <style>
+                                .card-body {
+                                    height: 600px;
+                                }
+                            </style>
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -811,7 +821,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Volume de Crédito - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de crédito AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -821,7 +831,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Reuniões - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de reuniões AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -844,7 +854,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Principalidade - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de principalidade AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -854,7 +864,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Cartões - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de cartões AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -877,7 +887,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Seguidores - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de seguidores AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -887,7 +897,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Interações - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de interações AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -910,7 +920,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Volume Financeiro - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de volume financeiro AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -920,7 +930,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Consórcios - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de consórcios AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -943,7 +953,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de PL com Liquidez - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de PL com liquidez AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -953,7 +963,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Ofertas Públicas - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de ofertas públicas AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -977,7 +987,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução do PL - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de PL AQUI-->
+                            {% plotly_app name="EvolucaoVolumeApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
@@ -987,7 +997,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Evolução de Clientes - {{ area.nome }}</h6>
                         </div>
                         <div class="card-body p-4">
-                            <!--Gráfico evolução de clientes AQUI-->
+                            {% plotly_app name="EvolucaoReunioesApp" ratio=1 %}
                         </div>
                     </div>
                 </div>
