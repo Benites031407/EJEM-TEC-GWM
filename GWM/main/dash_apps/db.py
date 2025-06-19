@@ -3,10 +3,10 @@ import pandas as pd
 
 def conectar():
     return psycopg2.connect(
-    dbname="gwmdeploy",
-    user="gwmdeploy_user",
-    password="Tz6WY8Qk68u5bctdVJdQPjsKUX0q3p2h",
-    host="dpg-d13mllm3jp1c73d85d30-a.virginia-postgres.render.com",
+    dbname="deploy",
+    user="deploy2_user",
+    password="s0N4Y56ytTN84reSeeoIGZPyr10mvsHl",
+    host="dpg-d19lpvbipnbc7396bu1g-a.virginia-postgres.render.com",
     port="5432",
     sslmode='require'
     )

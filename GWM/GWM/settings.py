@@ -110,7 +110,7 @@ WSGI_APPLICATION = 'GWM.wsgi.application'
 # }
 
 DATABASES = {
-    'default': dj_database_url.parse("postgresql://gwmdeploy_user:Tz6WY8Qk68u5bctdVJdQPjsKUX0q3p2h@dpg-d13mllm3jp1c73d85d30-a.virginia-postgres.render.com/gwmdeploy")
+    'default': dj_database_url.parse("postgresql://deploy2_user:s0N4Y56ytTN84reSeeoIGZPyr10mvsHl@dpg-d19lpvbipnbc7396bu1g-a.virginia-postgres.render.com/deploy2")
 }
 
 # Password validation
