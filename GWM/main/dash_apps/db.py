@@ -3,7 +3,7 @@ import pandas as pd
 
 def conectar():
     return psycopg2.connect(
-    dbname="deploy",
+    dbname="deploy2",
     user="deploy2_user",
     password="s0N4Y56ytTN84reSeeoIGZPyr10mvsHl",
     host="dpg-d19lpvbipnbc7396bu1g-a.virginia-postgres.render.com",
