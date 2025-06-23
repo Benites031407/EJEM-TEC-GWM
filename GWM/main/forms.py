@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Planejado, Executado, Captacao, Estatisticas, Area
+from .models import Planejado, Executado, Captacao, Estatisticas, Area, ReceitaPJ2
 from decimal import Decimal
 import re
 
@@ -752,6 +752,16 @@ def parse_brl_currency(value):
         return Decimal(value)
     except:
         return None
+
+class ReceitaPJ2Form(forms.ModelForm):
+    class Meta:
+        model = ReceitaPJ2
+        fields = ['value', 'month', 'year']
+        widgets = {
+            'value': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o valor da Receita PJ2...'}),
+            'month': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 12}),
+            'year': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
 
 
 

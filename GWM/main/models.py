@@ -364,3 +364,19 @@ class CodigoEdicao(models.Model):
     class Meta:
         verbose_name = "Código de Edição"
         verbose_name_plural = "Código de Edição"
+
+class ReceitaPJ2(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    month = models.IntegerField()
+    year = models.IntegerField()
+    value = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('month', 'year')
+        verbose_name = 'Receita PJ2'
+        verbose_name_plural = 'Receitas PJ2'
+
+    def __str__(self):
+        return f"PJ2 {self.month}/{self.year}: {self.value}"
