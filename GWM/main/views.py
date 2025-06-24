@@ -1130,7 +1130,81 @@ def dashboard_master(request):
                   Sum('qtd_banking') + Sum('qtd_advisory')
         )['total'] or 0
         
-        # Add area data to list - without charts for better performance
+        # Area-specific metrics (from dashboard_area)
+        area_metrics = {
+            'entrevistas': 0,
+            'contratacoes': 0,
+            'nps': 0,
+            'volume_pa': 0,
+            'qtd_reunioes': 0,
+            'qtd_seguros': 0,
+            'receita': 0,
+            'cpfs_operados': 0,
+            'volume_ofertas': 0,
+            'volume_operado': 0,
+            'assessores_ativos': 0,
+            'volume_credito': 0,
+            'principalidade': 0,
+            'cartoes_emitidos': 0,
+            'seguidores': 0,
+            'interacoes': 0,
+            'leads_redes': 0,
+            'captacao_mesa': 0,
+            'qtd_consorcios': 0,
+            'volume_financeiro': 0,
+            'pl_liquidez': 0,
+            'percentual_pl_liquidez': 0,
+            'vol_credito_corp': 0,
+            'perc_pl_credito': 0,
+            'ofertas_publicas': 0,
+        }
+        executado_data = Executado.objects.filter(
+            user__in=area_users,
+            year=current_year
+        )
+        for exec_item in executado_data:
+            for field in ['headcount', 'auc', 'receita']:
+                if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                    area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            if area.nome == 'Expansão':
+                for field in ['entrevistas', 'contratacoes', 'nps']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Seguro' or area.nome == 'Seguros':
+                for field in ['volume_pa', 'qtd_reunioes', 'qtd_seguros']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Renda Variável':
+                for field in ['receita', 'cpfs_operados', 'volume_ofertas']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Câmbio' or area.nome == 'Cambio':
+                for field in ['receita', 'volume_operado', 'assessores_ativos']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Corporate':
+                for field in ['volume_credito', 'qtd_reunioes']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Banking':
+                for field in ['principalidade', 'cartoes_emitidos']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Marketing':
+                for field in ['seguidores', 'interacoes', 'leads_redes', 'perc_pl_credito']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Consórcio' or area.nome == 'Consorcio':
+                for field in ['volume_financeiro', 'qtd_consorcios']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+            elif area.nome == 'Advisory':
+                for field in ['pl_liquidez', 'percentual_pl_liquidez', 'vol_credito_corp', 'perc_pl_credito', 'ofertas_publicas']:
+                    if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
+                        area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
+        area_metrics['percentual_atingido'] = percentual_atingido
+        area_metrics['pace'] = pace
+        # Add area data to list - now with area_metrics
         areas_data.append({
             'nome': area.nome,
             'slug': area.slug,
@@ -1142,6 +1216,7 @@ def dashboard_master(request):
             'leads_ativos': area_leads,
             'clientes_ativos': area_clientes,
             'ticket_medio': format_br_currency(area_ticket_medio),
+            'metrics': area_metrics,
         })
     
     # Create overall PL evolution chart

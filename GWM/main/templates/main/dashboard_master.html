@@ -99,23 +99,209 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-6 mb-3">
-                            <div class="small-stat">
-                                <span class="stat-title text-muted">PL Total</span>
-                                <span class="stat-value text-primary">{{ area.pl_total|default:"R$ 0,00" }}</span>
+                        {% if area.nome == 'Expansão' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Entrevistas</span>
+                                    <span class="stat-value">{{ area.metrics.entrevistas|default:"0" }}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6 mb-3">
-                            <div class="small-stat">
-                                <span class="stat-title text-muted">Clientes</span>
-                                <span class="stat-value">{{ area.clientes_ativos }}</span>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Contratações</span>
+                                    <span class="stat-value">{{ area.metrics.contratacoes|default:"0" }}</span>
+                                </div>
                             </div>
-                        </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">NPS</span>
+                                    <span class="stat-value">{{ area.metrics.nps|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Seguro' or area.nome == 'Seguros' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Volume PA</span>
+                                    <span class="stat-value">{{ area.metrics.volume_pa|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Reuniões</span>
+                                    <span class="stat-value">{{ area.metrics.qtd_reunioes|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Seguros</span>
+                                    <span class="stat-value">{{ area.metrics.qtd_seguros|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Renda Variável' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Receita</span>
+                                    <span class="stat-value">{{ area.metrics.receita|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">CPFs Operados</span>
+                                    <span class="stat-value">{{ area.metrics.cpfs_operados|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Volume Ofertas</span>
+                                    <span class="stat-value">{{ area.metrics.volume_ofertas|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Câmbio' or area.nome == 'Cambio' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Receita</span>
+                                    <span class="stat-value">{{ area.metrics.receita|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Volume Operado</span>
+                                    <span class="stat-value">{{ area.metrics.volume_operado|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Assessores Ativos</span>
+                                    <span class="stat-value">{{ area.metrics.assessores_ativos|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Corporate' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Volume Crédito</span>
+                                    <span class="stat-value">{{ area.metrics.volume_credito|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Reuniões</span>
+                                    <span class="stat-value">{{ area.metrics.qtd_reunioes|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Banking' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Principalidade</span>
+                                    <span class="stat-value">{{ area.metrics.principalidade|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Cartões Emitidos</span>
+                                    <span class="stat-value">{{ area.metrics.cartoes_emitidos|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Marketing' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Seguidores</span>
+                                    <span class="stat-value">{{ area.metrics.seguidores|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Interações</span>
+                                    <span class="stat-value">{{ area.metrics.interacoes|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Leads Redes</span>
+                                    <span class="stat-value">{{ area.metrics.leads_redes|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">% PL Crédito</span>
+                                    <span class="stat-value">{{ area.metrics.perc_pl_credito|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Consórcio' or area.nome == 'Consorcio' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Volume Financeiro</span>
+                                    <span class="stat-value">{{ area.metrics.volume_financeiro|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Qtd Consórcios</span>
+                                    <span class="stat-value">{{ area.metrics.qtd_consorcios|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% elif area.nome == 'Advisory' %}
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">PL Liquidez</span>
+                                    <span class="stat-value">{{ area.metrics.pl_liquidez|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">% PL Liquidez</span>
+                                    <span class="stat-value">{{ area.metrics.percentual_pl_liquidez|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Vol Crédito Corp</span>
+                                    <span class="stat-value">{{ area.metrics.vol_credito_corp|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">% PL Crédito</span>
+                                    <span class="stat-value">{{ area.metrics.perc_pl_credito|default:"0" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Ofertas Públicas</span>
+                                    <span class="stat-value">{{ area.metrics.ofertas_publicas|default:"0" }}</span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- Default: show PL, Clientes, Leads, Ticket Médio -->
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">PL Total</span>
+                                    <span class="stat-value text-primary">{{ area.pl_total|default:"R$ 0,00" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Clientes</span>
+                                    <span class="stat-value">{{ area.clientes_ativos }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Leads</span>
+                                    <span class="stat-value">{{ area.leads_ativos }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="small-stat">
+                                    <span class="stat-title text-muted">Ticket Médio</span>
+                                    <span class="stat-value">{{ area.ticket_medio }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
                         <div class="col-6 mb-3">
                             <div class="small-stat">
                                 <span class="stat-title text-muted">% Atingido</span>
                                 <span class="stat-value {% if area.percentual_atingido >= 100 %}text-success{% elif area.percentual_atingido >= 80 %}text-warning{% else %}text-danger{% endif %}">
-                                            {{ area.percentual_atingido|floatformat:1 }}%
+                                    {{ area.percentual_atingido|floatformat:1 }}%
                                 </span>
                             </div>
                         </div>
