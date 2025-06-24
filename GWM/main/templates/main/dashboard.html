@@ -7,7 +7,7 @@
 <!-- Topbar -->
 <div class="container-fluid mt-4">
     <div class="topbar px-4 py-3 mb-4 text-white d-flex align-items-center" style="background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-claro) 100%); border-radius: 6px;">
-        <h5 class="mb-0 fs-6">{% block page_title %}Dashboard de Análise (Head){% endblock %}</h5>
+        <h5 class="mb-0 fs-6">{% block page_title %}Dashboard{% endblock %}</h5>
     </div>
 
     <!-- KPIs -->
@@ -817,89 +817,6 @@
                 </div>
             {% endif %}
         {% endfor %}
-    </div>
-
-
-    <!-- Performance Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-gradient-primary-to-secondary d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Performance por Área</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Área</th>
-                                    <th>Indicador Principal</th>
-                                    <th>Meta</th>
-                                    <th>% Atingido</th>
-                                    <th>Pace</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for area in areas %}
-                                <tr>
-                                    <td><strong>{{ area.nome }}</strong></td>
-                                    <td>
-                                        {% if area.nome == 'Expansão' %}
-                                            {{ area.entrevistas|default:"0" }} entrevistas
-                                        {% elif area.nome == 'Seguro' %}
-                                            R$ {{ area.volume_pa|default:"0" }}
-                                        {% elif area.nome == 'Renda Variável' %}
-                                            R$ {{ area.receita|default:"0" }} receita
-                                        {% elif area.nome == 'Câmbio' %}
-                                            R$ {{ area.volume_operado|default:"0" }}
-                                        {% elif area.nome == 'Corporate' %}
-                                            R$ {{ area.volume_credito|default:"0" }}
-                                        {% elif area.nome == 'Banking' %}
-                                            {{ area.principalidade|default:"0" }}%
-                                        {% elif area.nome == 'Marketing' %}
-                                            {{ area.seguidores|default:"0" }} seguidores
-                                        {% elif area.nome == 'Consórcio' %}
-                                            R$ {{ area.volume_financeiro|default:"0" }}
-                                        {% elif area.nome == 'Advisory' %}
-                                            R$ {{ area.pl_liquidez|default:"0" }}
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ area.meta|default:"0" }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1" style="height: 7px;">
-                                                <div class="progress-bar 
-                                                    {% if area.percentual_atingido > 80 %}bg-success
-                                                    {% elif area.percentual_atingido > 50 %}bg-warning
-                                                    {% else %}bg-danger{% endif %}" 
-                                                    role="progressbar" 
-                                                    style="width: {{ area.percentual_atingido|default:'0' }}%">
-                                                </div>
-                                            </div>
-                                            <span class="ms-2">{{ area.percentual_atingido|default:"0" }}%</span>
-                                        </div>
-                                    </td>
-                                    <td>{{ area.pace|default:"0" }}%</td>
-                                    <td>
-                                        {% if area.percentual_atingido >= 90 %}
-                                            <span class="badge bg-success">Excelente</span>
-                                        {% elif area.percentual_atingido >= 70 %}
-                                            <span class="badge bg-primary">Bom</span>
-                                        {% elif area.percentual_atingido >= 50 %}
-                                            <span class="badge bg-warning">Regular</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">Abaixo</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}
