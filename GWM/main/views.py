@@ -1060,6 +1060,23 @@ def dashboard_master(request):
               Sum('qtd_banking') + Sum('qtd_advisory')
     )['total'] or 0
     
+    # NEW KPIs
+    # 1. AUC (on+offshore) - sum of all auc from Executado model
+    auc_total = float(Executado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
+    auc_total_formatted = format_br_currency(auc_total)
+    
+    # 2. Receita PJ1 - from API (placeholder function)
+    receita_pj1 = get_receita_pj1_from_api()
+    receita_pj1_formatted = format_br_currency(receita_pj1)
+    
+    # 3. Receita PJ2 - from master user (placeholder function)
+    receita_pj2 = get_receita_pj2_from_master()
+    receita_pj2_formatted = format_br_currency(receita_pj2)
+    
+    # 4. Receita total - sum of PJ1 and PJ2
+    receita_total = receita_pj1 + receita_pj2
+    receita_total_formatted = format_br_currency(receita_total)
+    
     # Calculate time-based metrics
     months_elapsed = current_month
     months_total = 12
@@ -1160,6 +1177,10 @@ def dashboard_master(request):
         'pl_chart_geral': pl_chart_geral_html,
         'percentual_atingido_geral': percentual_atingido_geral,
         'pace_geral': pace_geral,
+        'auc_total': auc_total_formatted,
+        'receita_pj1': receita_pj1_formatted,
+        'receita_pj2': receita_pj2_formatted,
+        'receita_total': receita_total_formatted,
     }
     
     return render(request, 'main/dashboard_master.html', context)
@@ -2279,3 +2300,22 @@ def parse_br_number(value):
         return result
     except ValueError:
         return 0.0
+
+# Helper functions for the new KPIs
+def get_receita_pj1_from_api():
+    """
+    Placeholder function to get Receita PJ1 from external API
+    Replace this with actual API call implementation
+    """
+    # TODO: Implement actual API call
+    # For now, return a placeholder value
+    return 1500000.00  # R$ 1.500.000,00
+
+def get_receita_pj2_from_master():
+    """
+    Placeholder function to get Receita PJ2 from master user
+    You can add a field to CustomUser model to store this value
+    """
+    # TODO: Add a field to CustomUser model for receita_pj2
+    # For now, return a placeholder value
+    return 800000.00  # R$ 800.000,00
