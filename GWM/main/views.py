@@ -13,7 +13,7 @@ from .forms import (
     PlanejadoAdvisoryForm, ExecutadoAdvisoryForm,
 )
 from django.contrib import messages
-from .models import Planejado, Executado, Captacao, Estatisticas, Unidade, CustomUser, AlertaDuplicado, CodigoEdicao, Area, AgendamentoMensal, ObjetivoAnual
+from .models import Planejado, Executado, Captacao, Estatisticas, Unidade, CustomUser, AlertaDuplicado, CodigoEdicao, Area, AgendamentoMensal, ObjetivoAnual, ObjetivoUnidade
 from datetime import datetime, timedelta, date
 from decimal import Decimal
 from main.dash_apps.components.app_top5leads import app
@@ -2308,17 +2308,43 @@ def dashboard_unidade(request, slug):
     clientes_ativos = captacoes.count()
     ticket_medio = (pl_total / clientes_ativos) if clientes_ativos > 0 else 0
 
+    # Calcular PL projetado baseado no modelo Planejado (AUC)
+    current_year = datetime.now().year
+    planejado_total = float(Planejado.objects.filter(
+        user__in=assessores,
+        year=current_year
+    ).aggregate(total_planejado=Sum('auc'))['total_planejado'] or 0)
+    
+    # PL projetado = PL atual + planejado total
+    pl_projetado = pl_atual + planejado_total
+
+    # Contar clientes por status
+    clientes_frios = captacoes.filter(status='Frio').count()
+    clientes_mornos = captacoes.filter(status='Morno').count()
+    clientes_quentes = captacoes.filter(status='Quente').count()
+
+    # Buscar objetivo AUC da unidade
+    try:
+        objetivo_unidade = ObjetivoUnidade.objects.get(unidade=unidade, year=current_year)
+        objetivo_auc = objetivo_unidade.objetivo_auc
+    except ObjetivoUnidade.DoesNotExist:
+        # Se não houver objetivo definido, usar valor padrão
+        objetivo_auc = 3200000
+
     context = {
         'unidade': unidade,
         'horizonte_meses': 12,
-        'pl_projetado': format_br_currency(15000000),  # pode ser ajustado conforme planejamento
+        'pl_projetado': format_br_currency(pl_projetado),
         'roa': roa_unidade,
-        'objetivo_auc': format_br_currency(3200000),  # fixo ou você pode puxar de uma tabela
+        'objetivo_auc': format_br_currency(objetivo_auc),
         'pl_total': format_br_currency(pl_total),
         'migracao_planejada': format_br_currency(planejado_migracao_total),
         'expectativa_migracao': round(expectativa_migracao, 2),
         'pl_atual': format_br_currency(pl_atual),
         'clientes_ativos': clientes_ativos,
+        'clientes_frios': clientes_frios,
+        'clientes_mornos': clientes_mornos,
+        'clientes_quentes': clientes_quentes,
         'ticket_medio': format_br_currency(ticket_medio),
     }
 

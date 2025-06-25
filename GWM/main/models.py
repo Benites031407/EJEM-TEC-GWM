@@ -56,6 +56,29 @@ class ObjetivoAnual(models.Model):
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.year}: {self.valor}"
 
+class ObjetivoUnidade(models.Model):
+    """
+    Model to store annual AUC objectives for units
+    This is defined by masters/admin users for unit planning purposes
+    """
+    unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE, related_name='objetivos_anuais')
+    year = models.IntegerField("Ano")
+    objetivo_auc = models.DecimalField("Objetivo AUC Anual (R$)", max_digits=15, decimal_places=2)
+    
+    # Admin user who defined this objective
+    definido_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, 
+                                    related_name='objetivos_unidade_definidos', null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Objetivo de Unidade"
+        verbose_name_plural = "Objetivos de Unidade"
+        unique_together = ('unidade', 'year')
+        
+    def __str__(self):
+        return f"{self.unidade.nome} - {self.year}: R$ {self.objetivo_auc:,.2f}"
+
 class CustomUser(AbstractUser):
     phone_number = models.CharField("Telefone", max_length=15, blank=True)
     birth_date = models.DateField("Data de Nascimento", null=True, blank=True)

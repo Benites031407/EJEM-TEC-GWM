@@ -194,13 +194,13 @@
                 <i class="fas fa-chart-bar me-2"></i>Crescimento Projetado
             </h5>
             <div>
-                <button class="btn btn-sm" style="background-color: #005678; color: white;">Mês</button>
-                <button class="btn btn-sm btn-outline-secondary">Trimestre</button>
-                <button class="btn btn-sm btn-outline-secondary">Ano</button>
+                <button class="btn btn-sm period-btn active" data-period="month" style="background-color: #005678; color: white;">Mês</button>
+                <button class="btn btn-sm period-btn btn-outline-secondary" data-period="quarter">Trimestre</button>
+                <button class="btn btn-sm period-btn btn-outline-secondary" data-period="year">Ano</button>
             </div>
         </div>
         <div class="card-body">
-            <canvas id="growthChart" width="100%" height="300"></canvas>
+            <canvas id="growthChart"></canvas>
         </div>
     </div>
 </div>
@@ -213,15 +213,16 @@
     const clientsChart = new Chart(clientsCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Ativos', 'Prospecção', 'Inativos'],
+            labels: ['Frios', 'Mornos', 'Quentes'],
             datasets: [{
-                data: [{{ clientes_ativos }}, {{ clientes_ativos|divisibleby:2 }}, {{ clientes_ativos|divisibleby:4 }}],
-                backgroundColor: ['#5b7954', '#005678', '#354431'],
+                data: [{{ clientes_frios|default:0 }}, {{ clientes_mornos|default:0 }}, {{ clientes_quentes|default:0 }}],
+                backgroundColor: ['#005678', '#ffc107', '#dc3545'],
                 borderWidth: 0
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false
@@ -231,11 +232,9 @@
         }
     });
 
-    // Growth Chart
-    const growthCtx = document.getElementById('growthChart').getContext('2d');
-    const growthChart = new Chart(growthCtx, {
-        type: 'line',
-        data: {
+    // Growth Chart Data
+    const chartData = {
+        month: {
             labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
             datasets: [
                 {
@@ -262,8 +261,62 @@
                 }
             ]
         },
+        quarter: {
+            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            datasets: [
+                {
+                    label: 'PL Real',
+                    data: [32500000, 36000000, {{ pl_atual|default:0|floatformat:0 }}, null],
+                    borderColor: '#5b7954',
+                    backgroundColor: 'rgba(91, 121, 84, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Projeção',
+                    data: [32500000, 36000000, {{ pl_atual|default:0|floatformat:0 }}, {{ pl_projetado|default:0|floatformat:0 }}],
+                    borderColor: '#005678',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.4
+                }
+            ]
+        },
+        year: {
+            labels: ['2023', '2024', '2025'],
+            datasets: [
+                {
+                    label: 'PL Real',
+                    data: [120000000, {{ pl_atual|default:0|floatformat:0 }}, null],
+                    borderColor: '#5b7954',
+                    backgroundColor: 'rgba(91, 121, 84, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Projeção',
+                    data: [120000000, {{ pl_atual|default:0|floatformat:0 }}, {{ pl_projetado|default:0|floatformat:0 }}],
+                    borderColor: '#005678',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.4
+                }
+            ]
+        }
+    };
+
+    // Growth Chart
+    const growthCtx = document.getElementById('growthChart').getContext('2d');
+    const growthChart = new Chart(growthCtx, {
+        type: 'line',
+        data: chartData.month,
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -280,6 +333,31 @@
                 }
             }
         }
+    });
+
+    // Period button functionality
+    document.querySelectorAll('.period-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const period = this.getAttribute('data-period');
+            
+            // Update button styles
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-secondary');
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+            });
+            
+            this.classList.add('active');
+            this.classList.remove('btn-outline-secondary');
+            this.style.backgroundColor = '#005678';
+            this.style.color = 'white';
+            
+            // Update chart data
+            growthChart.data = chartData[period];
+            growthChart.update();
+        });
     });
 </script>
 {% endblock %}

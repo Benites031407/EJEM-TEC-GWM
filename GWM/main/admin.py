@@ -3,7 +3,7 @@ from .models import (
     CustomUser, Unidade, Area, 
     AgendamentoMensal, 
     AlertaDuplicado, CodigoEdicao,
-    ObjetivoAnual
+    ObjetivoAnual, ObjetivoUnidade
 )
 from django.utils import timezone
 from django.contrib.admin import SimpleListFilter
@@ -177,6 +177,50 @@ class BulkObjetivoAnualForm(forms.Form):
                     max_digits=15,
                     required=False
                 )
+
+@admin.register(ObjetivoUnidade)
+class ObjetivoUnidadeAdmin(admin.ModelAdmin):
+    list_display = ('unidade', 'year', 'objetivo_auc_formatado', 'definido_por', 'updated_at')
+    list_filter = (YearFilter, 'definido_por', 'unidade')
+    search_fields = ('unidade__nome',)
+    
+    def objetivo_auc_formatado(self, obj):
+        return f"R$ {obj.objetivo_auc:,.2f}".replace(',', '_').replace('.', ',').replace('_', '.')
+    objetivo_auc_formatado.short_description = "Objetivo AUC"
+    
+    def save_model(self, request, obj, form, change):
+        # Set the current user as the definer if not already set
+        if not obj.definido_por:
+            obj.definido_por = request.user
+        super().save_model(request, obj, form, change)
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Masters and superusers can see all objectives
+        if request.user.is_master() or request.user.is_superuser:
+            return qs
+        # Other users can only see objectives for their units
+        if hasattr(request.user, 'unidade') and request.user.unidade:
+            return qs.filter(unidade=request.user.unidade)
+        return qs.none()
+    
+    def has_change_permission(self, request, obj=None):
+        # Only masters and superusers can change objectives
+        if request.user.is_master() or request.user.is_superuser:
+            return True
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        # Only masters and superusers can delete objectives
+        if request.user.is_master() or request.user.is_superuser:
+            return True
+        return False
+        
+    def has_add_permission(self, request):
+        # Only masters and superusers can add objectives
+        if request.user.is_master() or request.user.is_superuser:
+            return True
+        return False
 
 @admin.register(ObjetivoAnual)
 class ObjetivoAnualAdmin(admin.ModelAdmin):
