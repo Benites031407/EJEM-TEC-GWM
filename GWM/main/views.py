@@ -1060,29 +1060,47 @@ def dashboard_master(request):
               Sum('qtd_banking') + Sum('qtd_advisory')
     )['total'] or 0
     
-    # NEW KPIs
-    # 1. AUC (on+offshore) - sum of all auc from Executado model
-    auc_total = float(Executado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
-    auc_total_formatted = format_br_currency(auc_total)
-    
-    # 2. Receita PJ1 - from API (placeholder function)
-    receita_pj1 = get_receita_pj1_from_api()
-    receita_pj1_formatted = format_br_currency(receita_pj1)
-    
-    # 3. Receita PJ2 - from master user (placeholder function)
-    receita_pj2 = get_receita_pj2_from_master()
-    receita_pj2_formatted = format_br_currency(receita_pj2)
-    
-    # 4. Receita total - sum of PJ1 and PJ2
-    receita_total = receita_pj1 + receita_pj2
-    receita_total_formatted = format_br_currency(receita_total)
-    
-    # Calculate time-based metrics
+    # NEW KPIs with detailed breakdown
+    # Calculate time-based metrics for pace calculations
     months_elapsed = current_month
     months_total = 12
     time_elapsed_percentage = (months_elapsed / months_total) * 100
     
-    # Get total planned PL for the company
+    # 1. AUC (on+offshore) - Detailed breakdown
+    auc_planejado = float(Planejado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
+    auc_executado = float(Executado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
+    auc_percentual_atingido = (auc_executado / auc_planejado * 100) if auc_planejado > 0 else 0
+    auc_pace = (auc_percentual_atingido / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
+    
+    # 2. Receita PJ1 - Detailed breakdown (placeholder functions for now)
+    receita_pj1_planejado = 5000000  # Placeholder - should come from actual data source
+    receita_pj1_executado = get_receita_pj1_from_api()
+    receita_pj1_percentual_atingido = (receita_pj1_executado / receita_pj1_planejado * 100) if receita_pj1_planejado > 0 else 0
+    receita_pj1_pace = (receita_pj1_percentual_atingido / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
+    
+    # 3. Receita PJ2 - Detailed breakdown (placeholder functions for now)
+    receita_pj2_planejado = 3000000  # Placeholder - should come from actual data source
+    receita_pj2_executado = get_receita_pj2_from_master()
+    receita_pj2_percentual_atingido = (receita_pj2_executado / receita_pj2_planejado * 100) if receita_pj2_planejado > 0 else 0
+    receita_pj2_pace = (receita_pj2_percentual_atingido / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
+    
+    # 4. Receita total - Detailed breakdown
+    receita_total_planejado = receita_pj1_planejado + receita_pj2_planejado
+    receita_total_executado = receita_pj1_executado + receita_pj2_executado
+    receita_total_percentual_atingido = (receita_total_executado / receita_total_planejado * 100) if receita_total_planejado > 0 else 0
+    receita_total_pace = (receita_total_percentual_atingido / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
+    
+    # Format values for display
+    auc_planejado_formatted = format_br_currency(auc_planejado)
+    auc_executado_formatted = format_br_currency(auc_executado)
+    receita_pj1_planejado_formatted = format_br_currency(receita_pj1_planejado)
+    receita_pj1_executado_formatted = format_br_currency(receita_pj1_executado)
+    receita_pj2_planejado_formatted = format_br_currency(receita_pj2_planejado)
+    receita_pj2_executado_formatted = format_br_currency(receita_pj2_executado)
+    receita_total_planejado_formatted = format_br_currency(receita_total_planejado)
+    receita_total_executado_formatted = format_br_currency(receita_total_executado)
+    
+    # Get total planned PL for the company (for overall performance)
     total_planejado = float(Planejado.objects.filter(
         year=current_year
     ).aggregate(total_planejado=Sum('auc'))['total_planejado'] or 0)
@@ -1252,10 +1270,26 @@ def dashboard_master(request):
         'pl_chart_geral': pl_chart_geral_html,
         'percentual_atingido_geral': percentual_atingido_geral,
         'pace_geral': pace_geral,
-        'auc_total': auc_total_formatted,
-        'receita_pj1': receita_pj1_formatted,
-        'receita_pj2': receita_pj2_formatted,
-        'receita_total': receita_total_formatted,
+        # AUC KPI variables
+        'auc_planejado': auc_planejado_formatted,
+        'auc_executado': auc_executado_formatted,
+        'auc_percentual_atingido': auc_percentual_atingido,
+        'auc_pace': auc_pace,
+        # Receita PJ1 KPI variables
+        'receita_pj1_planejado': receita_pj1_planejado_formatted,
+        'receita_pj1_executado': receita_pj1_executado_formatted,
+        'receita_pj1_percentual_atingido': receita_pj1_percentual_atingido,
+        'receita_pj1_pace': receita_pj1_pace,
+        # Receita PJ2 KPI variables
+        'receita_pj2_planejado': receita_pj2_planejado_formatted,
+        'receita_pj2_executado': receita_pj2_executado_formatted,
+        'receita_pj2_percentual_atingido': receita_pj2_percentual_atingido,
+        'receita_pj2_pace': receita_pj2_pace,
+        # Receita Total KPI variables
+        'receita_total_planejado': receita_total_planejado_formatted,
+        'receita_total_executado': receita_total_executado_formatted,
+        'receita_total_percentual_atingido': receita_total_percentual_atingido,
+        'receita_total_pace': receita_total_pace,
     }
     
     return render(request, 'main/dashboard_master.html', context)
@@ -1479,7 +1513,6 @@ def dashboard_area(request, area_slug):
     }
     
     return render(request, 'main/dashboard_area.html', context)
-
 
 @user_passes_test(lambda u: u.is_master())
 def lista_unidades(request):
@@ -1762,7 +1795,6 @@ def dashboard_headunidade(request):
     }
     
     return render(request, 'main/dashboard_headunidade.html', context)
-
 
 @user_passes_test(lambda u: u.is_headunidade())
 def assessor_monitoring(request, assessor_id=None):
