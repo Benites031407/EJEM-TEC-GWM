@@ -342,8 +342,8 @@ class PlanejadoRendaVariavelForm(forms.ModelForm):
         fields = ['receita', 'cpfs_operados', 'volume_ofertas']
         labels = {
             'receita': 'Receita Estimada',
-            'cpfs_operados': 'CPFs Operados',
-            'volume_ofertas': 'Volume em Ofertas Públicas',
+            'cpfs_operados': 'CPFs Esperados',
+            'volume_ofertas': 'Volume em Ofertas Públicas Esperado',
         }
         widgets = {
             'cpfs_operados': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o número de CPFs operados...'}),
@@ -387,7 +387,7 @@ class ExecutadoRendaVariavelForm(forms.ModelForm):
         labels = {
             'receita': 'Receita Alcançada',
             'cpfs_operados': 'CPFs Operados',
-            'volume_ofertas': 'Volume em Ofertas Públicas',
+            'volume_ofertas': 'Volume em Ofertas Públicas Atingido',
         }
         widgets = {
             'receita': forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a receita alcançada...'}),
@@ -408,8 +408,8 @@ class PlanejadoCambioForm(forms.ModelForm):
         fields = ['receita', 'volume_operado', 'assessores_ativos']
         labels = {
             'receita': 'Receita Estimada',
-            'volume_operado': 'Volume Operado',
-            'assessores_ativos': 'Qtd de Assessores que Operaram',
+            'volume_operado': 'Volume a ser Operado (R$)',
+            'assessores_ativos': 'Qtd de Assessores a operar',
         }
         widgets = {
             'assessores_ativos': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de assessores que operaram...'}),
@@ -451,9 +451,9 @@ class PlanejadoSegurosForm(forms.ModelForm):
         model = Planejado
         fields = ['qtd_reunioes', 'qtd_seguros', 'volume_pa']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões',
-            'qtd_seguros': 'QTD de Seguros Realizados',
-            'volume_pa': 'Volume de PA',
+            'qtd_reunioes': 'QTD de Reuniões Planejadas',
+            'qtd_seguros': 'QTD de Seguros Planejados',
+            'volume_pa': 'Volume de PA Planejado',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
@@ -470,9 +470,9 @@ class ExecutadoSegurosForm(forms.ModelForm):
         model = Executado
         fields = ['qtd_reunioes', 'qtd_seguros', 'volume_pa']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões',
+            'qtd_reunioes': 'QTD de Reuniões Realizadas',
             'qtd_seguros': 'QTD de Seguros Realizados',
-            'volume_pa': 'Volume de PA',
+            'volume_pa': 'Volume de PA Realizado',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
@@ -490,8 +490,8 @@ class PlanejadoCorporateForm(forms.ModelForm):
         model = Planejado
         fields = ['volume_credito', 'qtd_reunioes']
         labels = {
-            'volume_credito': 'Volume de Liberação de Crédito (R$)',
-            'qtd_reunioes': 'Quantidade de Reuniões',
+            'volume_credito': 'Volume de Liberação de Crédito Planejado (R$)',
+            'qtd_reunioes': 'QTD de Reuniões Planejadas',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
@@ -507,8 +507,8 @@ class ExecutadoCorporateForm(forms.ModelForm):
         model = Executado
         fields = ['volume_credito', 'qtd_reunioes']
         labels = {
-            'volume_credito': 'Volume de Liberação de Crédito (R$)',
-            'qtd_reunioes': 'Quantidade de Reuniões',
+            'volume_credito': 'Volume de Liberação de Crédito Realizado (R$)',
+            'qtd_reunioes': 'QTD de Reuniões Realizadas',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
@@ -528,8 +528,8 @@ class PlanejadoBankingForm(forms.ModelForm):
         model = Planejado
         fields = ['principalidade', 'cartoes_emitidos']
         labels = {
-            'principalidade': 'Principalidade',
-            'cartoes_emitidos': 'Emissões de Cartões de Crédito',
+            'principalidade': 'Principalidade Planejada',
+            'cartoes_emitidos': 'Emissões de Cartões de Crédito Planejadas',
         }
     def clean_principalidade(self):
         return parse_brl_currency(self.cleaned_data['principalidade'])
@@ -547,8 +547,8 @@ class ExecutadoBankingForm(forms.ModelForm):
         model = Executado
         fields = ['principalidade', 'cartoes_emitidos']
         labels = {
-            'principalidade': 'Principalidade',
-            'cartoes_emitidos': 'Emissões de Cartões de Crédito',
+            'principalidade': 'Principalidade Realizada',
+            'cartoes_emitidos': 'Emissões de Cartões de Crédito Realizadas',
         }
     def clean_principalidade(self):
         return parse_brl_currency(self.cleaned_data['principalidade'])
@@ -567,11 +567,11 @@ class PlanejadoMarketingForm(forms.ModelForm):
         model = Planejado
         fields = ['seguidores', 'interacoes', 'leads_sociais', 'percentual_pl_credito', 'captacao_mesa']
         labels = {
-            'seguidores': 'Quantidade de Seguidores',
-            'interacoes': 'Interações em Posts e Stories',
-            'leads_sociais': 'Leads Captados via Rede Sociais',
-            'percentual_pl_credito': '% do PL em Crédito Corporativo',
-            'captacao_mesa': 'Captação Mesa Trader (AUC)',
+            'seguidores': 'Quantidade de Seguidores Esperados',
+            'interacoes': 'Interações em Posts e Stories Esperado',
+            'leads_sociais': 'Leads Captados via Rede Sociais Esperado',
+            'percentual_pl_credito': '% do PL em Crédito Corporativo Esperado',
+            'captacao_mesa': 'Captação Mesa Trader (AUC) Esperado',
         }
         widgets = {
             'seguidores': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de seguidores...'}),
@@ -594,11 +594,11 @@ class ExecutadoMarketingForm(forms.ModelForm):
         model = Executado
         fields = ['seguidores', 'interacoes', 'leads_sociais', 'percentual_pl_credito', 'captacao_mesa']
         labels = {
-            'seguidores': 'Quantidade de Seguidores',
-            'interacoes': 'Interações em Posts e Stories',
-            'leads_sociais': 'Leads Captados via Rede Sociais',
-            'percentual_pl_credito': '% do PL em Crédito Corporativo',
-            'captacao_mesa': 'Captação Mesa Trader (AUC)',
+            'seguidores': 'Quantidade de Seguidores Realizadas',
+            'interacoes': 'Interações em Posts e Stories Realizadas',
+            'leads_sociais': 'Leads Captados via Rede Sociais Realizadas',
+            'percentual_pl_credito': '% do PL em Crédito Corporativo Realizado',
+            'captacao_mesa': 'Captação Mesa Trader (AUC) Realizada',
         }
         widgets = {
             'seguidores': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de seguidores...'}),
@@ -615,55 +615,40 @@ class PlanejadoConsorcioForm(forms.ModelForm):
     volume_financeiro = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume financeiro...'})
     )
-    percentual_atingido = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual atingido...'})
-    )
+
     class Meta:
         model = Planejado
-        fields = ['qtd_reunioes', 'qtd_consorcios', 'volume_financeiro', 'percentual_atingido', 'pace']
+        fields = ['qtd_reunioes', 'qtd_consorcios', 'volume_financeiro']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões',
-            'qtd_consorcios': 'QTD de Consórcios Realizados',
-            'volume_financeiro': 'Volume Financeiro',
-            'percentual_atingido': '% Atingido',
-            'pace': 'Pace',
+            'qtd_reunioes': 'QTD de Reuniões Planejadas',
+            'qtd_consorcios': 'QTD de Consórcios Planejados',
+            'volume_financeiro': 'Volume Financeiro Planejado',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
             'qtd_consorcios': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de consórcios realizados...'}),
-            'pace': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o pace...'}),
         }
     def clean_volume_financeiro(self):
         return parse_brl_currency(self.cleaned_data['volume_financeiro'])
-    def clean_percentual_atingido(self):
-        return parse_brl_currency(self.cleaned_data['percentual_atingido'])
 
 class ExecutadoConsorcioForm(forms.ModelForm):
     volume_financeiro = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume financeiro...'})
     )
-    percentual_atingido = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual atingido...'})
-    )
     class Meta:
         model = Executado
-        fields = ['qtd_reunioes', 'qtd_consorcios', 'volume_financeiro', 'percentual_atingido', 'pace']
+        fields = ['qtd_reunioes', 'qtd_consorcios', 'volume_financeiro']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões',
+            'qtd_reunioes': 'QTD de Reuniões Realizadas',
             'qtd_consorcios': 'QTD de Consórcios Realizados',
-            'volume_financeiro': 'Volume Financeiro',
-            'percentual_atingido': '% Atingido',
-            'pace': 'Pace',
+            'volume_financeiro': 'Volume Financeiro Realizado',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
             'qtd_consorcios': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de consórcios realizados...'}),
-            'pace': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o pace...'}),
         }
     def clean_volume_financeiro(self):
         return parse_brl_currency(self.cleaned_data['volume_financeiro'])
-    def clean_percentual_atingido(self):
-        return parse_brl_currency(self.cleaned_data['percentual_atingido'])
 
 # Advisory
 class PlanejadoAdvisoryForm(forms.ModelForm):
@@ -686,11 +671,11 @@ class PlanejadoAdvisoryForm(forms.ModelForm):
         model = Planejado
         fields = ['pl_liquidez', 'percentual_pl_liquidez', 'volume_credito', 'percentual_pl_credito', 'ofertas_publicas']
         labels = {
-            'pl_liquidez': 'PL em Liquidez (D+0/D+5)',
-            'percentual_pl_liquidez': '% do PL em Liquidez (D+0/D+5)',
-            'volume_credito': 'Volume Financeiro em Crédito Corporativo',
-            'percentual_pl_credito': '% do PL em Crédito Corporativo',
-            'ofertas_publicas': 'Ofertas Públicas (R$)',
+            'pl_liquidez': 'PL em Liquidez Planejado',
+            'percentual_pl_liquidez': '% do PL em Liquidez Planejado',
+            'volume_credito': 'Volume Financeiro em Crédito Corporativo Esperado',
+            'percentual_pl_credito': '% do PL em Crédito Corporativo Esperado',
+            'ofertas_publicas': 'Ofertas Públicas Esperadas',
         }
     def clean_pl_liquidez(self):
         return parse_brl_currency(self.cleaned_data['pl_liquidez'])
@@ -723,11 +708,11 @@ class ExecutadoAdvisoryForm(forms.ModelForm):
         model = Executado
         fields = ['pl_liquidez', 'percentual_pl_liquidez', 'volume_credito', 'percentual_pl_credito', 'ofertas_publicas']
         labels = {
-            'pl_liquidez': 'PL em Liquidez (D+0/D+5)',
-            'percentual_pl_liquidez': '% do PL em Liquidez (D+0/D+5)',
-            'volume_credito': 'Volume Financeiro em Crédito Corporativo',
-            'percentual_pl_credito': '% do PL em Crédito Corporativo',
-            'ofertas_publicas': 'Ofertas Públicas (R$)',
+            'pl_liquidez': 'PL em Liquidez Realizado',
+            'percentual_pl_liquidez': '% do PL em Liquidez Realizado',
+            'volume_credito': 'Volume Financeiro em Crédito Corporativo Realizado',
+            'percentual_pl_credito': '% do PL em Crédito Corporativo Realizado',
+            'ofertas_publicas': 'Ofertas Públicas Realizadas',
         }
     def clean_pl_liquidez(self):
         return parse_brl_currency(self.cleaned_data['pl_liquidez'])
