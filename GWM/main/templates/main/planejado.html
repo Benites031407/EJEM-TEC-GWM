@@ -18,12 +18,6 @@
         <!-- Card do formulário -->
         <div class="card shadow-sm border-0">
             <div class="card-body">
-                {% if area %}
-                <div class="alert alert-info mb-4">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Este formulário está configurado especificamente para a área de <strong>{{ area.nome }}</strong>.
-                </div>
-                {% endif %}
                 
                 <form method="post" id="planejado-form">
                     {% csrf_token %}

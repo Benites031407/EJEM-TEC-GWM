@@ -42,6 +42,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 import plotly.graph_objects as go
 import plotly.offline as opy
+import unicodedata
 
 @login_required
 def login_redirect(request):
@@ -123,60 +124,37 @@ def home_head(request):
     month = datetime.now().month
     year = datetime.now().year
 
-    # Get the areas the head is responsible for
-    # First check areas_gerenciadas (where user is set as head of area)
     head_areas = user.areas_gerenciadas.all()
-    
-    # Also check if the user has an area_ref assigned in admin
     if user.area_ref and not head_areas.filter(id=user.area_ref.id).exists():
-        # If user's area_ref exists and is not already in head_areas, add it
         head_areas = list(head_areas)
         head_areas.append(user.area_ref)
-    
-    # Get the primary area for this head (for form display)
     primary_area = None
     if head_areas:
         if isinstance(head_areas, list):
             primary_area = head_areas[0]
         else:
             primary_area = head_areas.first()
-    
-    # If we still have no areas after both checks
     if not head_areas:
-        # If no areas are assigned, show a message
         return render(request, 'main/home_head.html', {
             'no_area': True,
             'message': 'Você não possui áreas atribuídas. Entre em contato com o administrador.',
         })
-    
-    # Find advisors in the head's area
     advisors = CustomUser.objects.none()
     for area in head_areas:
         advisors = advisors | CustomUser.objects.filter(area_ref=area, cargo='assessor')
-    
-    # Remove duplicates
     advisors = advisors.distinct()
-    
-    # Get advisor statistics
     advisor_count = advisors.count()
-    
-    # Get Planejado and Executado data for this head
     has_planejado = Planejado.objects.filter(user=user, month=month, year=year).exists()
     has_executado = Executado.objects.filter(user=user, month=month, year=year).exists()
-    
-    # Get stats for Captacao made by advisors in this area
     captacoes = Captacao.objects.filter(user__in=advisors, month=month, year=year)
     total_captacoes = captacoes.count()
-    
-    # Calculate total PL from all captacoes (with safe conversion)
     from django.db.models import Sum, F, Value, DecimalField
     from django.db.models.functions import Replace, Cast
-    
     pl_stats = (
         captacoes
         .exclude(pl__isnull=True)
-        .filter(pl__gt=0)  # Only include records with pl > 0 instead of excluding empty strings
-        .annotate(pl_text=Cast('pl', output_field=models.TextField()))  # First cast to text
+        .filter(pl__gt=0)
+        .annotate(pl_text=Cast('pl', output_field=models.TextField()))
         .annotate(pl_temp=Replace(F('pl_text'), Value('R$'), Value('')))
         .annotate(pl_temp=Replace(F('pl_temp'), Value('.'), Value('')))
         .annotate(pl_temp=Replace(F('pl_temp'), Value(','), Value('.')))
@@ -185,22 +163,15 @@ def home_head(request):
         )
         .aggregate(Sum('pl_number'))
     )
-    
     total_pl = pl_stats['pl_number__sum'] or 0
-    
-    # Get statistics for advisors
     estatisticas = Estatisticas.objects.filter(user__in=advisors, month=month, year=year)
     estatisticas_count = estatisticas.count()
-    
-    # Calculate indicators specific to this head's area
     indicators = {}
-    
-    # Get area-specific indicators
     for area in head_areas:
         area_name = area.nome.lower() if hasattr(area, 'nome') else ""
         if area_name == 'expansão':
             indicators['expansao'] = estatisticas.filter(expansao=True).count()
-        elif area_name == 'seguro':
+        elif area_name == 'seguro' or area_name == 'seguros':
             indicators['seguros'] = estatisticas.filter(seguros=True).count()
         elif area_name == 'renda variável':
             indicators['rv'] = estatisticas.filter(rv=True).count()
@@ -217,13 +188,52 @@ def home_head(request):
         elif area_name == 'advisory':
             indicators['advisory'] = estatisticas.filter(advisory=True).count()
 
-    # Add area metrics for display in template
+    # Função para detectar área do registro Executado
+    def detect_area(obj):
+        if getattr(obj, 'qtd_consorcios', None) is not None or getattr(obj, 'volume_financeiro', None) is not None:
+            return 'Consórcio'
+        if getattr(obj, 'qtd_seguros', None) is not None or getattr(obj, 'volume_pa', None) is not None:
+            return 'Seguros'
+        if getattr(obj, 'entrevistas', None) is not None and getattr(obj, 'contratacoes', None) is not None:
+            return 'Expansão'
+        if getattr(obj, 'cpfs_operados', None) is not None or getattr(obj, 'volume_ofertas', None) is not None:
+            return 'Renda Variável'
+        if getattr(obj, 'volume_operado', None) is not None or getattr(obj, 'assessores_ativos', None) is not None:
+            return 'Câmbio'
+        if getattr(obj, 'volume_credito', None) is not None:
+            return 'Corporate'
+        if getattr(obj, 'principalidade', None) is not None or getattr(obj, 'cartoes_emitidos', None) is not None:
+            return 'Banking'
+        if getattr(obj, 'seguidores', None) is not None or getattr(obj, 'interacoes', None) is not None:
+            return 'Marketing'
+        if getattr(obj, 'pl_liquidez', None) is not None or getattr(obj, 'ofertas_publicas', None) is not None:
+            return 'Advisory'
+        return 'Outro'
+
+    def normalize_area(nome):
+        if not nome:
+            return ""
+        return unicodedata.normalize('NFKD', nome).encode('ASCII', 'ignore').decode('ASCII').lower()
+
+    # Buscar todos os Executado e Planejado do mês/ano do usuário
+    executados = Executado.objects.filter(user=user, month=month, year=year)
+    planejados = Planejado.objects.filter(user=user, month=month, year=year)
+    # Para cada área, buscar o registro Executado e Planejado correspondente
     for area in head_areas:
         if not hasattr(area, 'nome'):
             continue
-            
-        # Initialize area metrics with defaults
-        # These would normally come from a database query
+        area_nome = normalize_area(area.nome)
+        area_exec = None
+        area_plan = None
+        for exec_item in executados:
+            if normalize_area(detect_area(exec_item)) == area_nome:
+                area_exec = exec_item
+                break
+        for plan_item in planejados:
+            if normalize_area(detect_area(plan_item)) == area_nome:
+                area_plan = plan_item
+                break
+        # Inicializar métricas executadas
         setattr(area, 'entrevistas', 0)
         setattr(area, 'contratacoes', 0)
         setattr(area, 'nps', 0)
@@ -249,30 +259,114 @@ def home_head(request):
         setattr(area, 'volume_credito', 0)
         setattr(area, 'percentual_pl_credito', 0)
         setattr(area, 'ofertas_publicas', 0)
-        
-        # Here you would fetch the actual data for these metrics
-        # For example, from Executado or other models
-        try:
-            # Example: Get latest Executado data for this area
-            executado = Executado.objects.filter(
-                user=user, 
-                year=year,
-                month=month
-            ).first()
-            
-            if executado:
-                if area.nome == 'Expansão':
-                    setattr(area, 'entrevistas', executado.entrevistas or 0)
-                    setattr(area, 'contratacoes', executado.contratacoes or 0)
-                    setattr(area, 'nps', executado.nps or 0)
-                elif area.nome == 'Seguro' or area.nome == 'Seguros':
-                    setattr(area, 'qtd_reunioes', executado.qtd_reunioes or 0)
-                    setattr(area, 'qtd_seguros', executado.qtd_seguros or 0)
-                    setattr(area, 'volume_pa', executado.volume_pa or 0)
-                # Add similar mappings for other area types as needed
-        except Exception:
-            # Just continue if there's an error
-            pass
+        # Inicializar métricas de meta (planejado)
+        setattr(area, 'entrevistas_meta', 0)
+        setattr(area, 'contratacoes_meta', 0)
+        setattr(area, 'nps_meta', 0)
+        setattr(area, 'volume_pa_meta', 0)
+        setattr(area, 'qtd_reunioes_meta', 0)
+        setattr(area, 'qtd_seguros_meta', 0)
+        setattr(area, 'receita_meta', 0)
+        setattr(area, 'cpfs_operados_meta', 0)
+        setattr(area, 'volume_ofertas_meta', 0)
+        setattr(area, 'volume_operado_meta', 0)
+        setattr(area, 'assessores_ativos_meta', 0)
+        setattr(area, 'volume_credito_meta', 0)
+        setattr(area, 'principalidade_meta', 0)
+        setattr(area, 'cartoes_emitidos_meta', 0)
+        setattr(area, 'seguidores_meta', 0)
+        setattr(area, 'interacoes_meta', 0)
+        setattr(area, 'leads_sociais_meta', 0)
+        setattr(area, 'captacao_mesa_meta', 0)
+        setattr(area, 'qtd_consorcios_meta', 0)
+        setattr(area, 'volume_financeiro_meta', 0)
+        setattr(area, 'pl_liquidez_meta', 0)
+        setattr(area, 'percentual_pl_liquidez_meta', 0)
+        setattr(area, 'volume_credito_meta', 0)
+        setattr(area, 'percentual_pl_credito_meta', 0)
+        setattr(area, 'ofertas_publicas_meta', 0)
+        # Preencher métricas executadas
+        if area_exec:
+            if area_nome == normalize_area('Expansão'):
+                area.entrevistas = area_exec.entrevistas or 0
+                area.contratacoes = area_exec.contratacoes or 0
+                area.nps = area_exec.nps or 0
+            elif area_nome == normalize_area('Seguros'):
+                area.qtd_reunioes = area_exec.qtd_reunioes or 0
+                area.qtd_seguros = area_exec.qtd_seguros or 0
+                area.volume_pa = area_exec.volume_pa or 0
+            elif area_nome == normalize_area('Consórcio'):
+                area.qtd_reunioes = area_exec.qtd_reunioes or 0
+                area.qtd_consorcios = area_exec.qtd_consorcios or 0
+                area.volume_financeiro = area_exec.volume_financeiro or 0
+                area.percentual_atingido = area_exec.percentual_atingido or 0
+                area.pace = area_exec.pace or 0
+            elif area_nome == normalize_area('Renda Variável'):
+                area.receita = area_exec.receita or 0
+                area.cpfs_operados = area_exec.cpfs_operados or 0
+                area.volume_ofertas = area_exec.volume_ofertas or 0
+            elif area_nome == normalize_area('Câmbio'):
+                area.receita = area_exec.receita or 0
+                area.volume_operado = area_exec.volume_operado or 0
+                area.assessores_ativos = area_exec.assessores_ativos or 0
+            elif area_nome == normalize_area('Corporate'):
+                area.volume_credito = area_exec.volume_credito or 0
+                area.qtd_reunioes = area_exec.qtd_reunioes or 0
+            elif area_nome == normalize_area('Banking'):
+                area.principalidade = area_exec.principalidade or 0
+                area.cartoes_emitidos = area_exec.cartoes_emitidos or 0
+            elif area_nome == normalize_area('Marketing'):
+                area.seguidores = area_exec.seguidores or 0
+                area.interacoes = area_exec.interacoes or 0
+                area.leads_sociais = area_exec.leads_sociais or 0
+                area.percentual_pl_credito = area_exec.percentual_pl_credito or 0
+                area.captacao_mesa = area_exec.captacao_mesa or 0
+            elif area_nome == normalize_area('Advisory'):
+                area.pl_liquidez = area_exec.pl_liquidez or 0
+                area.percentual_pl_liquidez = area_exec.percentual_pl_liquidez or 0
+                area.volume_credito = area_exec.volume_credito or 0
+                area.percentual_pl_credito = area_exec.percentual_pl_credito or 0
+                area.ofertas_publicas = area_exec.ofertas_publicas or 0
+        # Preencher métricas de meta (planejado)
+        if area_plan:
+            if area_nome == normalize_area('Expansão'):
+                area.entrevistas_meta = area_plan.entrevistas or 0
+                area.contratacoes_meta = area_plan.contratacoes or 0
+                area.nps_meta = area_plan.nps or 0
+            elif area_nome == normalize_area('Seguros'):
+                area.qtd_reunioes_meta = area_plan.qtd_reunioes or 0
+                area.qtd_seguros_meta = area_plan.qtd_seguros or 0
+                area.volume_pa_meta = area_plan.volume_pa or 0
+            elif area_nome == normalize_area('Consórcio'):
+                area.qtd_reunioes_meta = area_plan.qtd_reunioes or 0
+                area.qtd_consorcios_meta = area_plan.qtd_consorcios or 0
+                area.volume_financeiro_meta = area_plan.volume_financeiro or 0
+            elif area_nome == normalize_area('Renda Variável'):
+                area.receita_meta = area_plan.receita or 0
+                area.cpfs_operados_meta = area_plan.cpfs_operados or 0
+                area.volume_ofertas_meta = area_plan.volume_ofertas or 0
+            elif area_nome == normalize_area('Câmbio'):
+                area.receita_meta = area_plan.receita or 0
+                area.volume_operado_meta = area_plan.volume_operado or 0
+                area.assessores_ativos_meta = area_plan.assessores_ativos or 0
+            elif area_nome == normalize_area('Corporate'):
+                area.volume_credito_meta = area_plan.volume_credito or 0
+                area.qtd_reunioes_meta = area_plan.qtd_reunioes or 0
+            elif area_nome == normalize_area('Banking'):
+                area.principalidade_meta = area_plan.principalidade or 0
+                area.cartoes_emitidos_meta = area_plan.cartoes_emitidos or 0
+            elif area_nome == normalize_area('Marketing'):
+                area.seguidores_meta = area_plan.seguidores or 0
+                area.interacoes_meta = area_plan.interacoes or 0
+                area.leads_sociais_meta = area_plan.leads_sociais or 0
+                area.percentual_pl_credito_meta = area_plan.percentual_pl_credito or 0
+                area.captacao_mesa_meta = area_plan.captacao_mesa or 0
+            elif area_nome == normalize_area('Advisory'):
+                area.pl_liquidez_meta = area_plan.pl_liquidez or 0
+                area.percentual_pl_liquidez_meta = area_plan.percentual_pl_liquidez or 0
+                area.volume_credito_meta = area_plan.volume_credito or 0
+                area.percentual_pl_credito_meta = area_plan.percentual_pl_credito or 0
+                area.ofertas_publicas_meta = area_plan.ofertas_publicas or 0
 
     context = {
         'has_planejado': has_planejado,
@@ -286,7 +380,6 @@ def home_head(request):
         'advisors': advisors,
         'primary_area': primary_area,
     }
-
     return render(request, 'main/home_head.html', context)
 
 # Dashboard Head
@@ -531,27 +624,25 @@ def planejado_view(request):
     month, year = get_current_period()
     month_name = MONTHS_PT[month]
     
-    # Verifica se já existe um registro para este mês/ano
-    instance = Planejado.objects.filter(user=request.user, month=month, year=year).first()
-    is_edit = instance is not None
-
-    can_edit = is_formulario_aberto('Planejado')
-
-    # Get the user's primary area
+    # Novo: pegar área da querystring se existir
+    area_nome = request.GET.get('area')
     user = request.user
     head_areas = user.areas_gerenciadas.all()
     if user.area_ref and not head_areas.filter(id=user.area_ref.id).exists():
         head_areas = list(head_areas)
         head_areas.append(user.area_ref)
-    primary_area = head_areas[0] if head_areas else None
-    area_nome = primary_area.nome if primary_area else None
+    if not area_nome:
+        primary_area = head_areas[0] if head_areas else None
+        area_nome = primary_area.nome if primary_area else None
+    # Verifica se já existe um registro para este mês/ano e área
+    instance = Planejado.objects.filter(user=request.user, month=month, year=year).first()
+    is_edit = instance is not None
+    can_edit = is_formulario_aberto('Planejado')
     PlanejadoAreaForm, _ = get_area_form_classes(area_nome)
-
     if request.method == 'POST':
         if not can_edit and not request.session.get('edit_code_valid'):
             messages.error(request, "O período de edição está fechado.")
             return redirect('home_head')
-            
         form = PlanejadoAreaForm(request.POST, instance=instance)
         if form.is_valid():
             obj = form.save(commit=False)
@@ -559,25 +650,21 @@ def planejado_view(request):
             obj.month = month
             obj.year = year
             obj.save()
-            # Limpa o código de edição da sessão após salvar
             request.session.pop('edit_code_valid', None)
             messages.success(request, "Formulário enviado com sucesso!")
             return redirect('historico_head')
     else:
         form = PlanejadoAreaForm(instance=instance)
-
-    # Se não estiver no período de edição e não tiver código válido, bloqueia o formulário
     if not can_edit and not request.session.get('edit_code_valid'):
         for field in form.fields.values():
             field.widget.attrs['readonly'] = True
             field.widget.attrs['disabled'] = True
-
     return render(request, 'main/planejado.html', {
         'form': form,
         'can_edit': can_edit,
         'month': month_name,
         'year': year,
-        'area': primary_area,
+        'area': area_nome,
         'is_edit': is_edit,
     })
 
@@ -587,28 +674,24 @@ def planejado_view(request):
 def executado_view(request):
     month, year = get_current_period()
     month_name = MONTHS_PT[month]
-    
-    # Verifica se já existe um registro para este mês/ano
-    instance = Executado.objects.filter(user=request.user, month=month, year=year).first()
-    is_edit = instance is not None
-
-    can_edit = is_formulario_aberto('Executado')
-
-    # Get the user's primary area
+    # Novo: pegar área da querystring se existir
+    area_nome = request.GET.get('area')
     user = request.user
     head_areas = user.areas_gerenciadas.all()
     if user.area_ref and not head_areas.filter(id=user.area_ref.id).exists():
         head_areas = list(head_areas)
         head_areas.append(user.area_ref)
-    primary_area = head_areas[0] if head_areas else None
-    area_nome = primary_area.nome if primary_area else None
+    if not area_nome:
+        primary_area = head_areas[0] if head_areas else None
+        area_nome = primary_area.nome if primary_area else None
+    instance = Executado.objects.filter(user=request.user, month=month, year=year).first()
+    is_edit = instance is not None
+    can_edit = is_formulario_aberto('Executado')
     _, ExecutadoAreaForm = get_area_form_classes(area_nome)
-
     if request.method == 'POST':
         if not can_edit and not request.session.get('edit_code_valid'):
             messages.error(request, "O período de edição está fechado.")
             return redirect('home_head')
-            
         form = ExecutadoAreaForm(request.POST, instance=instance)
         if form.is_valid():
             obj = form.save(commit=False)
@@ -616,25 +699,21 @@ def executado_view(request):
             obj.month = month
             obj.year = year
             obj.save()
-            # Limpa o código de edição da sessão após salvar
             request.session.pop('edit_code_valid', None)
             messages.success(request, "Formulário enviado com sucesso!")
             return redirect('historico_head')
     else:
         form = ExecutadoAreaForm(instance=instance)
-
-    # Se não estiver no período de edição e não tiver código válido, bloqueia o formulário
     if not can_edit and not request.session.get('edit_code_valid'):
         for field in form.fields.values():
             field.widget.attrs['readonly'] = True
             field.widget.attrs['disabled'] = True
-
     return render(request, 'main/executado.html', {
         'form': form,
         'can_edit': can_edit,
         'month': month_name,
         'year': year,
-        'area': primary_area,
+        'area': area_nome,
         'is_edit': is_edit,
     })
 
@@ -998,16 +1077,41 @@ def historico_head(request):
     planejado = Planejado.objects.filter(user=user).order_by('-created_at')
     executado = Executado.objects.filter(user=user).order_by('-created_at')
 
-    # Obter o nome da área do usuário logado
-    area_nome = None
-    if hasattr(user, 'area_ref') and user.area_ref:
-        area_nome = user.area_ref.nome
+    # Detectar área de cada registro pelo tipo de formulário preenchido
+    def detect_area(obj):
+        # Consórcio
+        if getattr(obj, 'qtd_consorcios', None) is not None or getattr(obj, 'volume_financeiro', None) is not None:
+            return 'Consórcio'
+        # Seguros
+        if getattr(obj, 'qtd_seguros', None) is not None or getattr(obj, 'volume_pa', None) is not None:
+            return 'Seguros'
+        # Expansão
+        if getattr(obj, 'entrevistas', None) is not None and getattr(obj, 'contratacoes', None) is not None:
+            return 'Expansão'
+        # Renda Variável
+        if getattr(obj, 'cpfs_operados', None) is not None or getattr(obj, 'volume_ofertas', None) is not None:
+            return 'Renda Variável'
+        # Câmbio
+        if getattr(obj, 'volume_operado', None) is not None or getattr(obj, 'assessores_ativos', None) is not None:
+            return 'Câmbio'
+        # Corporate
+        if getattr(obj, 'volume_credito', None) is not None:
+            return 'Corporate'
+        # Banking
+        if getattr(obj, 'principalidade', None) is not None or getattr(obj, 'cartoes_emitidos', None) is not None:
+            return 'Banking'
+        # Marketing
+        if getattr(obj, 'seguidores', None) is not None or getattr(obj, 'interacoes', None) is not None:
+            return 'Marketing'
+        # Advisory
+        if getattr(obj, 'pl_liquidez', None) is not None or getattr(obj, 'ofertas_publicas', None) is not None:
+            return 'Advisory'
+        return 'Outro'
 
-    # Adicionar o atributo area_nome a cada objeto nos querysets
     for obj in planejado:
-        obj.area_nome = area_nome
+        obj.area_nome = detect_area(obj)
     for obj in executado:
-        obj.area_nome = area_nome
+        obj.area_nome = detect_area(obj)
 
     return render(request, 'main/historico_head.html', {
         'planejado': planejado,
@@ -1209,7 +1313,7 @@ def dashboard_master(request):
                     if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
                         area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
             elif area.nome == 'Marketing':
-                for field in ['seguidores', 'interacoes', 'leads_redes', 'perc_pl_credito']:
+                for field in ['seguidores', 'interacoes', 'leads_redes', 'percentual_pl_credito']:
                     if hasattr(exec_item, field) and getattr(exec_item, field) is not None:
                         area_metrics[field] = area_metrics.get(field, 0) + float(getattr(exec_item, field))
             elif area.nome == 'Consórcio' or area.nome == 'Consorcio':

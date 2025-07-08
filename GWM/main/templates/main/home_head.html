@@ -51,91 +51,92 @@
     </div>
     
     <div class="row g-4 mb-4">
-        <!-- Card Planejado -->
+        <!-- Card Planejado área 1 -->
         <div class="col-md-6">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h5 class="card-title mb-1">Ações Planejadas</h5>
+                            <h5 class="card-title mb-1">Ações Planejadas <span class="badge bg-primary ms-2">{{ areas.0.nome }}</span></h5>
                             <p class="card-subtitle text-muted small">Defina as metas para o mês</p>
                         </div>
                         <div class="icon-box d-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle" style="width: 50px; height: 50px;">
                             <i class="fas fa-pen-to-square text-primary"></i>
                         </div>
                     </div>
-                    
                     <div class="mt-3">
-                        {% if has_planejado %}
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-success me-2">Enviado</span>
-                                <span class="text-muted small">Você já enviou este formulário</span>
-                            </div>
-                            <a href="{% url 'planejado' %}" class="btn btn-sm btn-outline-primary mt-2">
-                                <i class="fas fa-eye me-1"></i> Visualizar
-                                {% if primary_area %}
-                                    {{ primary_area.nome }}
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-warning text-dark me-2">Pendente</span>
-                                <span class="text-muted small">Você ainda não enviou este formulário</span>
-                            </div>
-                            <a href="{% url 'planejado' %}" class="btn btn-sm btn-primary mt-2">
-                                <i class="fas fa-paper-plane me-1"></i> Preencher Agora
-                                {% if primary_area %}
-                                    {{ primary_area.nome }}
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                        <a href="{% url 'planejado' %}?area={{ areas.0.nome }}" class="btn btn-sm btn-primary mt-2">
+                            <i class="fas fa-paper-plane me-1"></i> Preencher Agora {{ areas.0.nome }}
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Card Executado -->
+        <!-- Card Executado área 1 -->
         <div class="col-md-6">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h5 class="card-title mb-1">Ações Executadas</h5>
+                            <h5 class="card-title mb-1">Ações Executadas <span class="badge bg-success ms-2">{{ areas.0.nome }}</span></h5>
                             <p class="card-subtitle text-muted small">Registre os resultados alcançados</p>
                         </div>
                         <div class="icon-box d-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle" style="width: 50px; height: 50px;">
                             <i class="fas fa-check-double text-success"></i>
                         </div>
                     </div>
-                    
                     <div class="mt-3">
-                        {% if has_executado %}
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-success me-2">Enviado</span>
-                                <span class="text-muted small">Você já enviou este formulário</span>
-                            </div>
-                            <a href="{% url 'executado' %}" class="btn btn-sm btn-outline-success mt-2">
-                                <i class="fas fa-eye me-1"></i> Visualizar
-                                {% if primary_area %}
-                                    {{ primary_area.nome }}
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-warning text-dark me-2">Pendente</span>
-                                <span class="text-muted small">Você ainda não enviou este formulário</span>
-                            </div>
-                            <a href="{% url 'executado' %}" class="btn btn-sm btn-success mt-2">
-                                <i class="fas fa-paper-plane me-1"></i> Preencher Agora
-                                {% if primary_area %}
-                                    {{ primary_area.nome }}
-                                {% endif %}
-                            </a>
-                        {% endif %}
+                        <a href="{% url 'executado' %}?area={{ areas.0.nome }}" class="btn btn-sm btn-success mt-2">
+                            <i class="fas fa-paper-plane me-1"></i> Preencher Agora {{ areas.0.nome }}
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Card Planejado área 2 -->
+        {% if areas|length > 1 %}
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-1">Ações Planejadas <span class="badge bg-primary ms-2">{{ areas.1.nome }}</span></h5>
+                            <p class="card-subtitle text-muted small">Defina as metas para o mês</p>
+                        </div>
+                        <div class="icon-box d-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded-circle" style="width: 50px; height: 50px;">
+                            <i class="fas fa-pen-to-square text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'planejado' %}?area={{ areas.1.nome }}" class="btn btn-sm btn-primary mt-2">
+                            <i class="fas fa-paper-plane me-1"></i> Preencher Agora {{ areas.1.nome }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card Executado área 2 -->
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-1">Ações Executadas <span class="badge bg-success ms-2">{{ areas.1.nome }}</span></h5>
+                            <p class="card-subtitle text-muted small">Registre os resultados alcançados</p>
+                        </div>
+                        <div class="icon-box d-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded-circle" style="width: 50px; height: 50px;">
+                            <i class="fas fa-check-double text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'executado' %}?area={{ areas.1.nome }}" class="btn btn-sm btn-success mt-2">
+                            <i class="fas fa-paper-plane me-1"></i> Preencher Agora {{ areas.1.nome }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Áreas Gerenciadas -->

@@ -25,7 +25,7 @@
                                 <strong>Entrevistas Planejadas:</strong> {{ c.entrevistas }}<br>
                                 <strong>Contratações previstas:</strong> {{ c.contratacoes }}<br>
                                 <strong>NPS Esperado:</strong> {{ c.nps }}<br>
-                            {% elif c.area_nome == 'Seguro' %}
+                            {% elif c.area_nome == 'Seguros' %}
                                 <strong>Qtd de Reuniões:</strong> {{ c.qtd_reunioes }}<br>
                                 <strong>Qtd de Seguros:</strong> {{ c.qtd_seguros }}<br>
                                 <strong>Volume de PA:</strong> {{ c.volume_pa|currency }}<br>
@@ -53,8 +53,6 @@
                                 <strong>Qtd de Reuniões:</strong> {{ c.qtd_reunioes }}<br>
                                 <strong>Qtd de Consórcios:</strong> {{ c.qtd_consorcios }}<br>
                                 <strong>Volume Financeiro:</strong> {{ c.volume_financeiro|currency }}<br>
-                                <strong>% Atingido:</strong> {{ c.percentual_atingido|currency }}<br>
-                                <strong>Pace:</strong> {{ c.pace }}<br>
                             {% elif c.area_nome == 'Advisory' %}
                                 <strong>PL em Liquidez:</strong> {{ c.pl_liquidez|currency }}<br>
                                 <strong>% PL Liquidez:</strong> {{ c.percentual_pl_liquidez|currency }}<br>
@@ -84,7 +82,7 @@
                                 <strong>Entrevistas Executadas:</strong> {{ est.entrevistas }}<br>
                                 <strong>Contratações Realizadas:</strong> {{ est.contratacoes }}<br>
                                 <strong>NPS Alcançado:</strong> {{ est.nps }}<br>
-                            {% elif est.area_nome == 'Seguro' %}
+                            {% elif est.area_nome == 'Seguros' %}
                                 <strong>Qtd de Reuniões:</strong> {{ est.qtd_reunioes }}<br>
                                 <strong>Qtd de Seguros:</strong> {{ est.qtd_seguros }}<br>
                                 <strong>Volume de PA:</strong> {{ est.volume_pa|currency }}<br>
@@ -112,8 +110,6 @@
                                 <strong>Qtd de Reuniões:</strong> {{ est.qtd_reunioes }}<br>
                                 <strong>Qtd de Consórcios:</strong> {{ est.qtd_consorcios }}<br>
                                 <strong>Volume Financeiro:</strong> {{ est.volume_financeiro|currency }}<br>
-                                <strong>% Atingido:</strong> {{ est.percentual_atingido|currency }}<br>
-                                <strong>Pace:</strong> {{ est.pace }}<br>
                             {% elif est.area_nome == 'Advisory' %}
                                 <strong>PL em Liquidez:</strong> {{ est.pl_liquidez|currency }}<br>
                                 <strong>% PL Liquidez:</strong> {{ est.percentual_pl_liquidez|currency }}<br>
@@ -122,6 +118,7 @@
                                 <strong>Ofertas Públicas:</strong> {{ est.ofertas_publicas|currency }}<br>
                             {% endif %}
                         </li>
+                        
                     {% empty %}
                         <li class="list-group-item text-muted">Nenhuma ação executada registrada.</li>
                     {% endfor %}

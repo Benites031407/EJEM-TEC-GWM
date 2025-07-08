@@ -160,20 +160,19 @@ class CaptacaoForm(forms.ModelForm):
         # Process currency fields
         for field_name, model_field in [('pl_display', 'pl'), ('planejado_migracao_display', 'planejado_migracao')]:
             value = self.data.get(field_name, '')
-            
+            # Garante que value é string antes de usar .strip()
+            if isinstance(value, list):
+                value = value[0] if value else ''
             # If value is empty or just R$, set to zero
             if not value or value.strip() == 'R$' or value.strip() == 'R$ ,':
                 cleaned_data[model_field] = 0.0
                 continue
-            
             # Remove currency symbol and whitespace
             value = value.strip().replace('R$', '').strip()
-            
             # Handle empty string after removing R$
             if not value:
                 cleaned_data[model_field] = 0.0
                 continue
-            
             try:
                 # Replace dots (thousand separators) and change comma to decimal point
                 if ',' in value and '.' in value:
@@ -182,7 +181,6 @@ class CaptacaoForm(forms.ModelForm):
                 elif ',' in value:
                     # Format like 1234,56
                     value = value.replace(',', '.')
-                
                 # Convert to float
                 float_value = float(value)
                 cleaned_data[model_field] = float_value
@@ -337,6 +335,11 @@ class PlanejadoRendaVariavelForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a receita estimada...'}),
         required=True
     )
+    volume_ofertas = forms.CharField(
+        label='Volume em Ofertas Públicas Esperado',
+        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume alocado em ofertas públicas...'}),
+        required=True
+    )
     class Meta:
         model = Planejado
         fields = ['receita', 'cpfs_operados', 'volume_ofertas']
@@ -347,7 +350,6 @@ class PlanejadoRendaVariavelForm(forms.ModelForm):
         }
         widgets = {
             'cpfs_operados': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o número de CPFs operados...'}),
-            'volume_ofertas': forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume alocado em ofertas públicas...'}),
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -381,6 +383,16 @@ class PlanejadoRendaVariavelForm(forms.ModelForm):
         return cleaned_data
 
 class ExecutadoRendaVariavelForm(forms.ModelForm):
+    receita = forms.CharField(
+        label='Receita Alcançada',
+        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a receita alcançada...'}),
+        required=True
+    )
+    volume_ofertas = forms.CharField(
+        label='Volume em Ofertas Públicas Atingido',
+        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume alocado em ofertas públicas...'}),
+        required=True
+    )
     class Meta:
         model = Executado
         fields = ['receita', 'cpfs_operados', 'volume_ofertas']
@@ -394,6 +406,10 @@ class ExecutadoRendaVariavelForm(forms.ModelForm):
             'cpfs_operados': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o número de CPFs operados...'}),
             'volume_ofertas': forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume alocado em ofertas públicas...'}),
         }
+    def clean_receita(self):
+        return parse_brl_currency(self.cleaned_data['receita'])
+    def clean_volume_ofertas(self):
+        return parse_brl_currency(self.cleaned_data['volume_ofertas'])
 
 # Câmbio
 class PlanejadoCambioForm(forms.ModelForm):
@@ -570,7 +586,7 @@ class PlanejadoMarketingForm(forms.ModelForm):
             'seguidores': 'Quantidade de Seguidores Esperados',
             'interacoes': 'Interações em Posts e Stories Esperado',
             'leads_sociais': 'Leads Captados via Rede Sociais Esperado',
-            'percentual_pl_credito': '% do PL em Crédito Corporativo Esperado',
+            'percentual_pl_credito': 'Percentual do PL em Crédito Corporativo Esperado',
             'captacao_mesa': 'Captação Mesa Trader (AUC) Esperado',
         }
         widgets = {

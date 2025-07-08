@@ -62,24 +62,52 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-item mb-2">
-                        <a href="{% url 'planejado' %}" class="nav-link {% if request.path == '/planejado/' %}active{% endif %} text-white d-flex align-items-center">
-                            <i class="fas fa-pen-to-square me-3"></i>
-                            <span>Ações Planejadas</span>
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a href="{% url 'executado' %}" class="nav-link {% if request.path == '/executado/' %}active{% endif %} text-white d-flex align-items-center">
-                            <i class="fas fa-check-double me-3"></i>
-                            <span>Ações Executadas</span>
-                        </a>
-                    </li>
+                    {% if request.user.email != "nayra.sombra@gwminvestments.com.br" %}
+                        <li class="nav-item mb-2">
+                            <a href="{% url 'planejado' %}" class="nav-link {% if request.path == '/planejado/' %}active{% endif %} text-white d-flex align-items-center">
+                                <i class="fas fa-pen-to-square me-3"></i>
+                                <span>Ações Planejadas</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{% url 'executado' %}" class="nav-link {% if request.path == '/executado/' %}active{% endif %} text-white d-flex align-items-center">
+                                <i class="fas fa-check-double me-3"></i>
+                                <span>Ações Executadas</span>
+                            </a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item mb-2">
                         <a href="{% url 'historico_head' %}" class="nav-link text-white d-flex align-items-center">
                             <i class="fas fa-history me-2"></i>
                             <span>Histórico de Envios</span>
                         </a>
                     </li>
+                    {% if request.user.email == "nayra.sombra@gwminvestments.com.br" %}
+                        <li class="nav-item mb-2">
+                            <a href="{% url 'planejado' %}?area=Consórcio" class="nav-link text-white d-flex align-items-center">
+                                <i class="fas fa-pen-to-square me-3"></i>
+                                <span>Planejado Consórcio</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{% url 'executado' %}?area=Consórcio" class="nav-link text-white d-flex align-items-center">
+                                <i class="fas fa-check-double me-3"></i>
+                                <span>Executado Consórcio</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{% url 'planejado' %}?area=Seguros" class="nav-link text-white d-flex align-items-center">
+                                <i class="fas fa-pen-to-square me-3"></i>
+                                <span>Planejado Seguros</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a href="{% url 'executado' %}?area=Seguros" class="nav-link text-white d-flex align-items-center">
+                                <i class="fas fa-check-double me-3"></i>
+                                <span>Executado Seguros</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% elif request.user.is_assessor %}
                     <!-- Itens do assessor -->
                     <li class="nav-item mb-2">

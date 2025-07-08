@@ -207,7 +207,7 @@
                             <div class="col-md-3 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">{{ area_metrics.seguidores|default:"0" }}</h4>
+                                        <h4 class="mb-1">{{ area.seguidores|default:"2" }}</h4>
                                         <p class="text-muted mb-0 small">Seguidores</p>
                                     </div>
                                     <div class="mt-2">
@@ -218,7 +218,7 @@
                             <div class="col-md-3 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">{{ area_metrics.interacoes|default:"0" }}</h4>
+                                        <h4 class="mb-1">{{ area.interacoes|default:"0" }}</h4>
                                         <p class="text-muted mb-0 small">Interações</p>
                                     </div>
                                     <div class="mt-2">
@@ -335,18 +335,6 @@
                                             {% endif %}
                                         </span>
                                     </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Usuários na Área
-                                        <span class="badge bg-primary rounded-pill">{{ area_users_count }}</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Clientes Ativos
-                                        <span class="badge bg-primary rounded-pill">{{ clientes_ativos }}</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Leads Ativos
-                                        <span class="badge bg-primary rounded-pill">{{ leads_ativos }}</span>
-                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -354,14 +342,6 @@
                             <div class="mb-4">
                                 <h5 class="h5 mb-2 text-gray-800">Performance</h5>
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        PL Total
-                                        <span class="font-weight-bold">R$ {{ area_pl|floatformat:2 }}M</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        PL Planejado
-                                        <span class="font-weight-bold">R$ {{ area_planejado|floatformat:2 }}M</span>
-                                    </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         Ticket Médio
                                         <span class="font-weight-bold">R$ {{ ticket_medio|floatformat:2 }}M</span>
