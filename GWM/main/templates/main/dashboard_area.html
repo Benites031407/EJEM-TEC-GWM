@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
+{%load custom_filters%}
 {% block title %}Dashboard {{ area.nome }}{% endblock %}
 
 {% block content %}
@@ -81,7 +81,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.volume_pa|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.volume_pa|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Volume de PA</p>
                                     </div>
                                     <div class="mt-2">
@@ -93,7 +93,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.receita|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.receita|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Receita</p>
                                     </div>
                                     <div class="mt-2">
@@ -115,7 +115,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.volume_ofertas|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.volume_ofertas|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Volume em Ofertas</p>
                                     </div>
                                     <div class="mt-2">
@@ -127,7 +127,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.receita|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.receita|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Receita</p>
                                     </div>
                                     <div class="mt-2">
@@ -138,7 +138,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.volume_operado|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.volume_operado|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Volume Operado</p>
                                     </div>
                                     <div class="mt-2">
@@ -161,7 +161,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.volume_credito|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.volume_credito|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Volume de Crédito</p>
                                     </div>
                                     <div class="mt-2">
@@ -252,7 +252,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.volume_financeiro|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.volume_financeiro|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">Volume Financeiro</p>
                                     </div>
                                     <div class="mt-2">
@@ -275,7 +275,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">R$ {{ area_metrics.pl_liquidez|default:"0"|floatformat:2 }}M</h4>
+                                        <h4 class="mb-1">{{ area_metrics.pl_liquidez|default:"0"|currency }}M</h4>
                                         <p class="text-muted mb-0 small">PL com Liquidez</p>
                                     </div>
                                     <div class="mt-2">
@@ -297,7 +297,7 @@
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
-                                        <h4 class="mb-1">{{ area_metrics.ofertas_publicas|default:"0" }}</h4>
+                                        <h4 class="mb-1">{{ area_metrics.ofertas_publicas|default:"0"|currency }}</h4>
                                         <p class="text-muted mb-0 small">Ofertas Públicas</p>
                                     </div>
                                     <div class="mt-2">
@@ -343,13 +343,9 @@
                                 <h5 class="h5 mb-2 text-gray-800">Performance</h5>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        Ticket Médio
-                                        <span class="font-weight-bold">R$ {{ ticket_medio|floatformat:2 }}M</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
                                         % Atingido
-                                        <span class="font-weight-bold {% if percentual_atingido >= 100 %}text-success{% elif percentual_atingido >= 80 %}text-warning{% else %}text-danger{% endif %}">
-                                            {{ percentual_atingido|floatformat:1 }}%
+                                        <span class="font-weight-bold {% if area_metrics.percentual_atingido >= 100 %}text-success{% elif area_metrics.percentual_atingido >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ area_metrics.percentual_atingido|floatformat:1 }}%
                                         </span>
                                     </li>
                                 </ul>

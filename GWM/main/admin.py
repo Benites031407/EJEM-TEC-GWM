@@ -60,37 +60,33 @@ class AreaAdmin(admin.ModelAdmin):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'cargo', 'get_unidade_display', 'get_supervisor_display')
-    list_filter = ('cargo', 'unidade')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'cargo', 'area_ref', 'get_unidade_display', 'get_supervisor_display')
+    list_filter = ('cargo', 'unidade', 'area_ref')
     search_fields = ('username', 'email', 'first_name', 'last_name')
-    
-    def get_fieldsets(self, request, obj=None):
-        # Set base fieldsets for all users
-        fieldsets = [
-            (None, {'fields': ('username', 'password')}),
-            ('Informações Pessoais', {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'cge')}),
-            ('Estrutura Organizacional', {'fields': ('cargo', 'unidade', 'supervisor')}),
-            ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ]
-        
-        # Add area_ref field only for users who aren't assessors
-        if obj and not obj.is_assessor():
-            fieldsets[2][1]['fields'] = ('cargo', 'unidade', 'area_ref', 'supervisor')
-            
-        return fieldsets
-    
+
+    fieldsets = [
+        (None, {'fields': ('username', 'password')}),
+        ('Informações Pessoais', {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'cge')}),
+        ('Estrutura Organizacional', {'fields': ('cargo', 'unidade', 'area_ref', 'supervisor')}),
+        ('Permissões', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+    ]
+    add_fieldsets = [
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'cge', 'cargo', 'unidade', 'area_ref', 'supervisor', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+    ]
+
     def get_unidade_display(self, obj):
         return obj.unidade.nome if obj.unidade else "Sem Unidade"
     get_unidade_display.short_description = "Unidade"
-    
+
     def get_supervisor_display(self, obj):
         return obj.supervisor.get_full_name() if obj.supervisor else "Sem Supervisor"
     get_supervisor_display.short_description = "Supervisor"
-    
+
     def save_model(self, request, obj, form, change):
-        # If user is an assessor, make sure area_ref is None
-        if obj.is_assessor():
-            obj.area_ref = None
+        # Se o usuário for assessor, pode ou não zerar area_ref, dependendo da regra de negócio
         super().save_model(request, obj, form, change)
 
 @admin.register(AgendamentoMensal)
