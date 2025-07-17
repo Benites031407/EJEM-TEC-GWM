@@ -3,11 +3,12 @@ import pandas as pd
 
 def conectar():
     return psycopg2.connect(
-    dbname="GWM180725",
-    user="postgres",
-    password="banana",
-    host="localhost",
+    dbname="gwm1807",
+    user="gwm1807_user",
+    password="Sx9MIqQ160xrb8kaFN0Mh3Jezc9jc1NY",
+    host="dpg-d1sndaali9vc73c96o3g-a.virginia-postgres.render.com",
     port="5432",
+    sslmode='require'
     )
 
 
