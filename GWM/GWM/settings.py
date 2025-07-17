@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'GWM.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'GWM',
+#         'NAME': 'GWM180725',
 #         'USER': 'postgres',
 #         'PASSWORD': 'banana',
 #         'HOST': 'localhost',
@@ -110,7 +110,7 @@ WSGI_APPLICATION = 'GWM.wsgi.application'
 # }
 
 DATABASES = {
-    'default': dj_database_url.parse("postgresql://deploy2_user:s0N4Y56ytTN84reSeeoIGZPyr10mvsHl@dpg-d19lpvbipnbc7396bu1g-a.virginia-postgres.render.com/deploy2")
+   'default': dj_database_url.parse("postgresql://gwm1807_user:Sx9MIqQ160xrb8kaFN0Mh3Jezc9jc1NY@dpg-d1sndaali9vc73c96o3g-a.virginia-postgres.render.com/gwm1807")
 }
 
 # Password validation
