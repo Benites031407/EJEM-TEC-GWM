@@ -50,5 +50,9 @@ urlpatterns = [
     path('api/team/<int:user_id>/', views.api_team_hierarchy, name='api_team_hierarchy'),
     path('unidades/minhas/', views.minhas_unidades, name='minhas_unidades'),
 
+    # Remove popup do login
+    path('trocar-senha/', views.trocar_senha, name='trocar_senha'),
+    path('remover-popup/', views.remover_popup_sessao, name='remover_popup_sessao'),
+
 ]
 

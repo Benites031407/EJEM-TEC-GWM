@@ -40,6 +40,8 @@ from .utils import get_unit_structure, get_team_hierarchy
 from django.db import models
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 import plotly.graph_objects as go
 import plotly.offline as opy
 import unicodedata
@@ -2556,3 +2558,29 @@ def get_receita_pj2_from_master():
     # TODO: Add a field to CustomUser model for receita_pj2
     # For now, return a placeholder value
     return 800000.00  # R$ 800.000,00
+
+
+@login_required
+def trocar_senha(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)  # mantém login após mudar a senha
+            request.user.primeiro_login = False
+            request.user.save()
+
+           
+            messages.success(request, 'Senha atualizada com sucesso!')
+
+            return redirect('home')  # ou 'home_head', etc.
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'main/trocar_senha.html', {'form': form})
+@csrf_exempt
+def remover_popup_sessao(request):
+    if request.method == 'POST':
+        request.session.pop('exibir_popup_primeiro_login', None)
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'erro'}, status=400)

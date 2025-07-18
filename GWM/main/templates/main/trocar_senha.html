@@ -1,9 +1,9 @@
 {% extends 'main/login_base.html' %}
-{% block title %}Login{% endblock %}
-{% block content %}
+{% block title %}Trocar Senha{% endblock %}
 {% load static %}
 {% load form_tags %}
 
+{% block content %}
 <style>
     body {
         height: 100vh;
@@ -14,9 +14,10 @@
         background-color: #f4f4f4; 
         background-image: url('/static/images/gwm.png'); 
         background-size: cover;
-        background-repeat: no-repeat; 
+        background-repeat: no-repeat;
         background-position: center;
     }
+
     .login-card {
         max-width: 400px;
         width: 100%;
@@ -25,6 +26,7 @@
         background-color: rgb(53, 68, 49);
         box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
+
     .login-title {
         text-align: center;
         margin-bottom: 1.5rem;
@@ -39,20 +41,34 @@
         font-weight: bold;
     }
 
-    .extra-links {
-        text-align: center;
-        margin-top: 1rem;
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
+        margin-bottom: 1rem;
     }
 
-    .extra-links a {
-        color: #ffffff;
-        text-decoration: underline;
-        font-size: 0.9rem;
+    .btn-primary {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .alert {
+        background-color: #ffdddd;
+        color: #a94442;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 1rem;
     }
 </style>
 
 <div class="login-card">
-    <h3 class="login-title">Bem vindo ao portal GWM</h3>
+    <h3 class="login-title">Trocar Senha</h3>
     <form method="post" novalidate>
         {% csrf_token %}
         {% if form.errors %}
@@ -68,17 +84,18 @@
             </div>
         {% endif %}
         <div class="mb-3">
-            {{ form.username.label_tag }}
-            {{ form.username|add_class:"form-control" }}
+            {{ form.old_password.label_tag }}
+            {{ form.old_password|add_class:"form-control" }}
         </div>
         <div class="mb-3">
-            {{ form.password.label_tag }}
-            {{ form.password|add_class:"form-control" }}
+            {{ form.new_password1.label_tag }}
+            {{ form.new_password1|add_class:"form-control" }}
         </div>
-        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        <div class="mb-3">
+            {{ form.new_password2.label_tag }}
+            {{ form.new_password2|add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Atualizar Senha</button>
     </form>
-
-    
 </div>
-
 {% endblock %}
