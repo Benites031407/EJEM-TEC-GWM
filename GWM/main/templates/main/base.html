@@ -76,12 +76,6 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="nav-item mb-2">
-                        <a href="{% url 'historico_head' %}" class="nav-link text-white d-flex align-items-center">
-                            <i class="fas fa-history me-2"></i>
-                            <span>Histórico de Envios</span>
-                        </a>
-                    </li>
                     {% if request.user.email == "nayra.sombra@gwminvestments.com.br" %}
                         <li class="nav-item mb-2">
                             <a href="{% url 'planejado' %}?area=Consórcio" class="nav-link text-white d-flex align-items-center">
@@ -108,6 +102,12 @@
                             </a>
                         </li>
                     {% endif %}
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'historico_head' %}" class="nav-link text-white d-flex align-items-center">
+                            <i class="fas fa-history me-2"></i>
+                            <span>Histórico de Envios</span>
+                        </a>
+                    </li>
                 {% elif request.user.is_assessor %}
                     <!-- Itens do assessor -->
                     <li class="nav-item mb-2">

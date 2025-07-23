@@ -47,7 +47,7 @@
                                 <strong>Seguidores:</strong> {{ c.seguidores }}<br>
                                 <strong>Interações:</strong> {{ c.interacoes }}<br>
                                 <strong>Leads Sociais:</strong> {{ c.leads_sociais }}<br>
-                                <strong>% PL Crédito:</strong> {{ c.percentual_pl_credito|currency }}<br>
+                                <strong>% PL Crédito:</strong> {{ c.percentual_pl_credito }}<br>
                                 <strong>Captação Mesa:</strong> {{ c.captacao_mesa|currency }}<br>
                             {% elif c.area_nome == 'Consórcio' %}
                                 <strong>Qtd de Reuniões:</strong> {{ c.qtd_reunioes }}<br>
@@ -55,9 +55,9 @@
                                 <strong>Volume Financeiro:</strong> {{ c.volume_financeiro|currency }}<br>
                             {% elif c.area_nome == 'Advisory' %}
                                 <strong>PL em Liquidez:</strong> {{ c.pl_liquidez|currency }}<br>
-                                <strong>% PL Liquidez:</strong> {{ c.percentual_pl_liquidez|currency }}<br>
+                                <strong>% PL Liquidez:</strong> {{ c.percentual_pl_liquidez }}<br>
                                 <strong>Volume Crédito:</strong> {{ c.volume_credito|currency }}<br>
-                                <strong>% PL Crédito:</strong> {{ c.percentual_pl_credito|currency }}<br>
+                                <strong>% PL Crédito:</strong> {{ c.percentual_pl_credito }}<br>
                                 <strong>Ofertas Públicas:</strong> {{ c.ofertas_publicas|currency }}<br>
                             {% endif %}
                         </li>
@@ -104,7 +104,7 @@
                                 <strong>Seguidores:</strong> {{ est.seguidores }}<br>
                                 <strong>Interações:</strong> {{ est.interacoes }}<br>
                                 <strong>Leads Sociais:</strong> {{ est.leads_sociais }}<br>
-                                <strong>% PL Crédito:</strong> {{ est.percentual_pl_credito|currency }}<br>
+                                <strong>% PL Crédito:</strong> {{ est.percentual_pl_credito }}<br>
                                 <strong>Captação Mesa:</strong> {{ est.captacao_mesa|currency }}<br>
                             {% elif est.area_nome == 'Consórcio' %}
                                 <strong>Qtd de Reuniões:</strong> {{ est.qtd_reunioes }}<br>
@@ -112,9 +112,9 @@
                                 <strong>Volume Financeiro:</strong> {{ est.volume_financeiro|currency }}<br>
                             {% elif est.area_nome == 'Advisory' %}
                                 <strong>PL em Liquidez:</strong> {{ est.pl_liquidez|currency }}<br>
-                                <strong>% PL Liquidez:</strong> {{ est.percentual_pl_liquidez|currency }}<br>
+                                <strong>% PL Liquidez:</strong> {{ est.percentual_pl_liquidez }}<br>
                                 <strong>Volume Crédito:</strong> {{ est.volume_credito|currency }}<br>
-                                <strong>% PL Crédito:</strong> {{ est.percentual_pl_credito|currency }}<br>
+                                <strong>% PL Crédito:</strong> {{ est.percentual_pl_credito }}<br>
                                 <strong>Ofertas Públicas:</strong> {{ est.ofertas_publicas|currency }}<br>
                             {% endif %}
                         </li>

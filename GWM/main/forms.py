@@ -299,6 +299,12 @@ class EstatisticasForm(forms.ModelForm):
 
 # Expansão
 class PlanejadoExpansaoForm(forms.ModelForm):
+    nps = forms.IntegerField(
+        label='NPS Esperado',
+        min_value=0,
+        max_value=100,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o NPS esperado...'})
+    )
     class Meta:
         model = Planejado
         fields = ['entrevistas', 'contratacoes', 'nps']
@@ -314,6 +320,12 @@ class PlanejadoExpansaoForm(forms.ModelForm):
         }
 
 class ExecutadoExpansaoForm(forms.ModelForm):
+    nps = forms.IntegerField(
+        label='NPS Atingido',
+        min_value=0,
+        max_value=100,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o NPS alcançado...'})
+    )
     class Meta:
         model = Executado
         fields = ['entrevistas', 'contratacoes', 'nps']
@@ -414,9 +426,11 @@ class ExecutadoRendaVariavelForm(forms.ModelForm):
 # Câmbio
 class PlanejadoCambioForm(forms.ModelForm):
     receita = forms.CharField(
+        label='Receita Estimada',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a receita estimada...'})
     )
     volume_operado = forms.CharField(
+        label='Volume estimado a ser Operado (R$)',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume operado...'})
     )
     class Meta:
@@ -424,8 +438,8 @@ class PlanejadoCambioForm(forms.ModelForm):
         fields = ['receita', 'volume_operado', 'assessores_ativos']
         labels = {
             'receita': 'Receita Estimada',
-            'volume_operado': 'Volume a ser Operado (R$)',
-            'assessores_ativos': 'Qtd de Assessores a operar',
+            'volume_operado': 'Volume estimado a ser Operado (R$)',
+            'assessores_ativos': 'Quantidade de Assessores que irão operar',
         }
         widgets = {
             'assessores_ativos': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de assessores que operaram...'}),
@@ -437,9 +451,11 @@ class PlanejadoCambioForm(forms.ModelForm):
 
 class ExecutadoCambioForm(forms.ModelForm):
     receita = forms.CharField(
+        label='Receita Alcançada',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a receita alcançada...'})
     )
     volume_operado = forms.CharField(
+        label='Volume Operado (R$)',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume operado...'})
     )
     class Meta:
@@ -448,7 +464,7 @@ class ExecutadoCambioForm(forms.ModelForm):
         labels = {
             'receita': 'Receita Alcançada',
             'volume_operado': 'Volume Operado',
-            'assessores_ativos': 'Qtd de Assessores que Operaram',
+            'assessores_ativos': 'Quantidade de assessores que operaram',
         }
         widgets = {
             'assessores_ativos': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de assessores que operaram...'}),
@@ -461,14 +477,15 @@ class ExecutadoCambioForm(forms.ModelForm):
 # Seguro
 class PlanejadoSegurosForm(forms.ModelForm):
     volume_pa = forms.CharField(
+        label='Volume de PA Planejado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume de PA...'})
     )
     class Meta:
         model = Planejado
         fields = ['qtd_reunioes', 'qtd_seguros', 'volume_pa']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões Planejadas',
-            'qtd_seguros': 'QTD de Seguros Planejados',
+            'qtd_reunioes': 'Quantidade de Reuniões Planejadas',
+            'qtd_seguros': 'Quantidade de Seguros Planejados',
             'volume_pa': 'Volume de PA Planejado',
         }
         widgets = {
@@ -480,14 +497,15 @@ class PlanejadoSegurosForm(forms.ModelForm):
 
 class ExecutadoSegurosForm(forms.ModelForm):
     volume_pa = forms.CharField(
+        label='Volume de PA Realizado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume de PA...'})
     )
     class Meta:
         model = Executado
         fields = ['qtd_reunioes', 'qtd_seguros', 'volume_pa']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões Realizadas',
-            'qtd_seguros': 'QTD de Seguros Realizados',
+            'qtd_reunioes': 'Quantidade de Reuniões Realizadas',
+            'qtd_seguros': 'Quantidade de Seguros Realizados',
             'volume_pa': 'Volume de PA Realizado',
         }
         widgets = {
@@ -500,6 +518,7 @@ class ExecutadoSegurosForm(forms.ModelForm):
 # Corporate
 class PlanejadoCorporateForm(forms.ModelForm):
     volume_credito = forms.CharField(
+        label= 'Volume de Liberação de Crédito Planejado (R$)',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume de crédito...'})
     )
     class Meta:
@@ -507,7 +526,7 @@ class PlanejadoCorporateForm(forms.ModelForm):
         fields = ['volume_credito', 'qtd_reunioes']
         labels = {
             'volume_credito': 'Volume de Liberação de Crédito Planejado (R$)',
-            'qtd_reunioes': 'QTD de Reuniões Planejadas',
+            'qtd_reunioes': 'Quantidade de Reuniões Planejadas',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
@@ -517,6 +536,7 @@ class PlanejadoCorporateForm(forms.ModelForm):
 
 class ExecutadoCorporateForm(forms.ModelForm):
     volume_credito = forms.CharField(
+        label= 'Volume de Liberação de Crédito Realizado (R$)',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume de crédito...'})
     )
     class Meta:
@@ -524,7 +544,7 @@ class ExecutadoCorporateForm(forms.ModelForm):
         fields = ['volume_credito', 'qtd_reunioes']
         labels = {
             'volume_credito': 'Volume de Liberação de Crédito Realizado (R$)',
-            'qtd_reunioes': 'QTD de Reuniões Realizadas',
+            'qtd_reunioes': 'Quantidade de Reuniões Realizadas',
         }
         widgets = {
             'qtd_reunioes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite a quantidade de reuniões...'}),
@@ -535,10 +555,12 @@ class ExecutadoCorporateForm(forms.ModelForm):
 # Banking
 class PlanejadoBankingForm(forms.ModelForm):
     principalidade = forms.CharField(
+        label='Principalidade Planejada',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a principalidade...'})
     )
     cartoes_emitidos = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o número de cartões emitidos...'})
+        label='Emissões de Cartões de Crédito Planejadas',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o número de Emissões de Cartões de Crédito Planejadas'}),
     )
     class Meta:
         model = Planejado
@@ -554,10 +576,12 @@ class PlanejadoBankingForm(forms.ModelForm):
 
 class ExecutadoBankingForm(forms.ModelForm):
     principalidade = forms.CharField(
+        label='Principalidade Realizada',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a principalidade...'})
     )
     cartoes_emitidos = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o número de cartões emitidos...'})
+        label='Emissões de Cartões de Crédito Realizadas',
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Digite o número de Emissões de Cartões de Crédito Realizadas'}),
     )
     class Meta:
         model = Executado
@@ -573,10 +597,18 @@ class ExecutadoBankingForm(forms.ModelForm):
 
 # Marketing
 class PlanejadoMarketingForm(forms.ModelForm):
-    percentual_pl_credito = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual do PL em crédito corporativo...'})
+    percentual_pl_credito = forms.FloatField(
+        label='Percentual do PL em Crédito Corporativo Planejado',
+        min_value=0.0,
+        max_value=100.0,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control percent-mask',
+            'data-type': 'percent',
+            'placeholder': 'Digite o percentual do PL em Crédito Corporativo...'
+        })
     )
     captacao_mesa = forms.CharField(
+        label='Captação Mesa Trader (AUC) Esperado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a captação mesa trader...'})
     )
     class Meta:
@@ -586,7 +618,6 @@ class PlanejadoMarketingForm(forms.ModelForm):
             'seguidores': 'Quantidade de Seguidores Esperados',
             'interacoes': 'Interações em Posts e Stories Esperado',
             'leads_sociais': 'Leads Captados via Rede Sociais Esperado',
-            'percentual_pl_credito': 'Percentual do PL em Crédito Corporativo Esperado',
             'captacao_mesa': 'Captação Mesa Trader (AUC) Esperado',
         }
         widgets = {
@@ -600,10 +631,18 @@ class PlanejadoMarketingForm(forms.ModelForm):
         return parse_brl_currency(self.cleaned_data['captacao_mesa'])
 
 class ExecutadoMarketingForm(forms.ModelForm):
-    percentual_pl_credito = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual do PL em crédito corporativo...'})
+    percentual_pl_credito = forms.FloatField(
+        label='Percentual do PL em Crédito Corporativo Realizado',
+        min_value=0.0,
+        max_value=100.0,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control percent-mask',
+            'data-type': 'percent',
+            'placeholder': 'Digite o percentual do PL em Crédito Corporativo...'
+        })
     )
     captacao_mesa = forms.CharField(
+        label='Captação Mesa Trader (AUC) Realizada',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite a captação mesa trader...'})
     )
     class Meta:
@@ -636,8 +675,8 @@ class PlanejadoConsorcioForm(forms.ModelForm):
         model = Planejado
         fields = ['qtd_reunioes', 'qtd_consorcios', 'volume_financeiro']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões Planejadas',
-            'qtd_consorcios': 'QTD de Consórcios Planejados',
+            'qtd_reunioes': 'Quantidade de Reuniões Planejadas',
+            'qtd_consorcios': 'Quantidade de Consórcios Planejados',
             'volume_financeiro': 'Volume Financeiro Planejado',
         }
         widgets = {
@@ -655,8 +694,8 @@ class ExecutadoConsorcioForm(forms.ModelForm):
         model = Executado
         fields = ['qtd_reunioes', 'qtd_consorcios', 'volume_financeiro']
         labels = {
-            'qtd_reunioes': 'QTD de Reuniões Realizadas',
-            'qtd_consorcios': 'QTD de Consórcios Realizados',
+            'qtd_reunioes': 'Quantidade de Reuniões Realizadas',
+            'qtd_consorcios': 'Quantidade de Consórcios Realizados',
             'volume_financeiro': 'Volume Financeiro Realizado',
         }
         widgets = {
@@ -669,18 +708,31 @@ class ExecutadoConsorcioForm(forms.ModelForm):
 # Advisory
 class PlanejadoAdvisoryForm(forms.ModelForm):
     pl_liquidez = forms.CharField(
+        label='PL em Liquidez Planejado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o PL em liquidez...'})
     )
-    percentual_pl_liquidez = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual do PL em liquidez...'})
+    percentual_pl_liquidez = forms.FloatField(
+        label='Percentual do PL em Liquidez Planejado',
+        min_value=0.0,
+        max_value=100.0,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control percent-mask',
+            'data-type': 'percent',
+            'placeholder': 'Digite o percentual do PL em liquidez...'
+        })
     )
     volume_credito = forms.CharField(
+        label='Volume Financeiro em Crédito Corporativo Esperado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume financeiro em crédito corporativo...'})
     )
-    percentual_pl_credito = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual do PL em crédito corporativo...'})
+    percentual_pl_credito = forms.FloatField(
+        label='Percentual do PL em Crédito Corporativo Esperado',
+        min_value=0.0,
+        max_value=100.0,
+        widget=forms.TextInput(attrs={'class': 'form-control percent-mask', 'data-type': 'percent', 'placeholder': 'Digite o percentual do PL em crédito corporativo...'})
     )
     ofertas_publicas = forms.CharField(
+        label='Quantidade de Ofertas Públicas Esperadas',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite as ofertas públicas...'})
     )
     class Meta:
@@ -696,28 +748,41 @@ class PlanejadoAdvisoryForm(forms.ModelForm):
     def clean_pl_liquidez(self):
         return parse_brl_currency(self.cleaned_data['pl_liquidez'])
     def clean_percentual_pl_liquidez(self):
-        return parse_brl_currency(self.cleaned_data['percentual_pl_liquidez'])
+        return parse_percent(self.cleaned_data['percentual_pl_liquidez'])
     def clean_volume_credito(self):
         return parse_brl_currency(self.cleaned_data['volume_credito'])
     def clean_percentual_pl_credito(self):
-        return parse_brl_currency(self.cleaned_data['percentual_pl_credito'])
+        return parse_percent(self.cleaned_data['percentual_pl_credito'])
     def clean_ofertas_publicas(self):
         return parse_brl_currency(self.cleaned_data['ofertas_publicas'])
 
 class ExecutadoAdvisoryForm(forms.ModelForm):
     pl_liquidez = forms.CharField(
+        label='PL em Liquidez Realizado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o PL em liquidez...'})
     )
-    percentual_pl_liquidez = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual do PL em liquidez...'})
+    percentual_pl_liquidez = forms.FloatField(
+        label='Percentual do PL em Liquidez Realizado',
+        min_value=0.0,
+        max_value=100.0,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control percent-mask',
+            'data-type': 'percent',
+            'placeholder': 'Digite o percentual do PL em liquidez...'
+        })
     )
     volume_credito = forms.CharField(
+        label='Volume Financeiro em Crédito Corporativo Realizado',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o volume financeiro em crédito corporativo...'})
     )
-    percentual_pl_credito = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite o percentual do PL em crédito corporativo...'})
+    percentual_pl_credito = forms.FloatField(
+        label='Percentual do PL em Crédito Corporativo Realizado',
+        min_value=0.0,
+        max_value=100.0,
+        widget=forms.TextInput(attrs={'class': 'form-control percent-mask', 'data-type': 'percent', 'placeholder': 'Digite o percentual do PL em crédito corporativo...'})
     )
     ofertas_publicas = forms.CharField(
+        label='Quantidade de Ofertas Públicas Realizadas',
         widget=forms.TextInput(attrs={'class': 'form-control money-mask', 'data-type': 'currency', 'placeholder': 'Digite as ofertas públicas...'})
     )
     class Meta:
@@ -733,26 +798,53 @@ class ExecutadoAdvisoryForm(forms.ModelForm):
     def clean_pl_liquidez(self):
         return parse_brl_currency(self.cleaned_data['pl_liquidez'])
     def clean_percentual_pl_liquidez(self):
-        return parse_brl_currency(self.cleaned_data['percentual_pl_liquidez'])
+        return parse_percent(self.cleaned_data['percentual_pl_liquidez'])
     def clean_volume_credito(self):
         return parse_brl_currency(self.cleaned_data['volume_credito'])
     def clean_percentual_pl_credito(self):
-        return parse_brl_currency(self.cleaned_data['percentual_pl_credito'])
+        return parse_percent(self.cleaned_data['percentual_pl_credito'])
     def clean_ofertas_publicas(self):
         return parse_brl_currency(self.cleaned_data['ofertas_publicas'])
 
+import re
+from decimal import Decimal
+
 def parse_brl_currency(value):
-    """Converts a string like 'R$ 1.234.567,89' to Decimal or None if empty."""
-    if not value or str(value).strip() in ["", "R$", "R$ ,", "R$ ,00"]:
+    """Converte string tipo 'R$ 1.234.567,89' para Decimal ou None se vazio."""
+    
+    # Trata None ou campos vazios
+    if value in [None, "", "R$", "R$ ,", "R$ ,00"]:
         return None
+
+    # Se já for Decimal, retorna
     if isinstance(value, Decimal):
         return value
-    value = re.sub(r'[^\d,]', '', value)  # remove 'R$' and dots
+
+    # Se for float ou int, converte direto para Decimal
+    if isinstance(value, (float, int)):
+        return Decimal(str(value))
+
+    # Agora garante que é string e trata como moeda brasileira
+    value = str(value).strip()
+    value = re.sub(r'[^\d,]', '', value)  # remove R$, pontos e espaços
     value = value.replace('.', '').replace(',', '.')  # pt-BR → en-US
+
     try:
         return Decimal(value)
-    except:
+    except Exception:
         return None
+
+
+# Função utilitária para parsear porcentagem
+def parse_percent(value):
+    """Converte '12,5%' ou '12.5' para Decimal('12.5')"""
+    if not value:
+        return None
+    value = str(value).replace('%', '').replace(',', '.').strip()
+    try:
+        return Decimal(value)
+    except Exception:
+        raise forms.ValidationError('Informe um percentual válido, ex: 12,5')
 
 
 

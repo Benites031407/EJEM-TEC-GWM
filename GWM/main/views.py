@@ -183,8 +183,7 @@ def home_head(request):
             indicators['corporate'] = estatisticas.filter(corporate=True).count()
         elif area_name == 'banking':
             indicators['banking'] = estatisticas.filter(banking=True).count()
-        elif area_name == 'marketing':
-            indicators['marketing'] = estatisticas.filter(marketing=True).count()
+        
         elif area_name == 'consórcio':
             indicators['consorcio'] = estatisticas.filter(consorcio=True).count()
         elif area_name == 'advisory':
@@ -746,7 +745,6 @@ def captacao_view(request):
                     assessor=request.user,
                     nome=new.nome,
                 )
-                messages.warning(request, f"Atenção: O cliente {new.nome} já existe no sistema.")
 
             messages.success(request, "Cliente cadastrado com sucesso!")
             return redirect('historico')
