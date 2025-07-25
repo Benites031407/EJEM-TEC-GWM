@@ -11,9 +11,10 @@ from .forms import (
     PlanejadoMarketingForm, ExecutadoMarketingForm,
     PlanejadoConsorcioForm, ExecutadoConsorcioForm,
     PlanejadoAdvisoryForm, ExecutadoAdvisoryForm,
+    FinanceForm,
 )
 from django.contrib import messages
-from .models import Planejado, Executado, Captacao, Estatisticas, Unidade, CustomUser, AlertaDuplicado, CodigoEdicao, Area, AgendamentoMensal, ObjetivoAnual, ObjetivoUnidade
+from .models import Planejado, Executado, Captacao, Estatisticas, Unidade, CustomUser, AlertaDuplicado, CodigoEdicao, Area, AgendamentoMensal, ObjetivoAnual, ObjetivoUnidade, FinanceHistory
 from datetime import datetime, timedelta, date
 from decimal import Decimal
 from main.dash_apps.components.app_top5leads import app
@@ -1190,7 +1191,7 @@ def dashboard_master(request):
     
     # 4. Receita total - Detailed breakdown
     receita_total_planejado = receita_pj1_planejado + receita_pj2_planejado
-    receita_total_executado = receita_pj1_executado + receita_pj2_executado
+    receita_total_executado = receita_pj1_executado + float(receita_pj2_executado)
     receita_total_percentual_atingido = (receita_total_executado / receita_total_planejado * 100) if receita_total_planejado > 0 else 0
     receita_total_pace = (receita_total_percentual_atingido / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
     
@@ -2582,3 +2583,219 @@ def remover_popup_sessao(request):
         request.session.pop('exibir_popup_primeiro_login', None)
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'erro'}, status=400)
+
+def create_revenue_chart(revenue_data):
+    """
+    Creates a Plotly chart showing the evolution of revenues over time.
+    
+    Args:
+        revenue_data: List of FinanceHistory objects ordered by date
+        
+    Returns:
+        str: HTML representation of the Plotly chart
+    """
+    # Prepare data for the chart
+    months = [f"{d.month}/{d.year}" for d in revenue_data]
+    receita_pj1 = [float(d.receita_pj1) for d in revenue_data]
+    receita_pj2 = [float(d.receita_pj2) for d in revenue_data]
+    receita_total = [float(d.receita_total) for d in revenue_data]
+    
+    # Create the figure
+    fig = go.Figure()
+    
+    # Add traces for each revenue type
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_pj1,
+        mode='lines+markers',
+        name='Receita PJ1'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_pj2,
+        mode='lines+markers',
+        name='Receita PJ2'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_total,
+        mode='lines+markers',
+        name='Receita Total'
+    ))
+    
+    # Update layout
+    fig.update_layout(
+        title='Evolução da Receita',
+        xaxis_title='Mês/Ano',
+        yaxis_title='Receita (R$)',
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20)
+    )
+    
+    # Convert to HTML
+    return opy.plot(fig, auto_open=False, output_type='div')
+
+
+@user_passes_test(lambda u: u.is_master())
+def finance_dashboard(request):
+    # Get current month and year
+    current_date = datetime.now()
+    current_month = current_date.month
+    current_year = current_date.year
+
+    # Calculate monthly percentage (for pace)
+    months_elapsed = current_month
+    months_total = 12
+    time_elapsed_percentage = (months_elapsed / months_total) * 100
+
+    # Try to get current month's finance history
+    try:
+        finance_history = FinanceHistory.objects.get(
+            month=current_month,
+            year=current_year
+        )
+    except FinanceHistory.DoesNotExist:
+        # Create new record with default values
+        finance_history = FinanceHistory(
+            month=current_month,
+            year=current_year
+        )
+        finance_history.save()
+
+    # Handle form submission
+    if request.method == 'POST':
+        form = FinanceForm(request.POST, instance=finance_history)
+        if form.is_valid():
+            finance_history = form.save()
+            messages.success(request, 'Valores atualizados com sucesso!')
+            return redirect('finance_dashboard')
+    else:
+        form = FinanceForm(instance=finance_history)
+
+    # Get historical data
+    historical_data = FinanceHistory.objects.exclude(
+        month=current_month,
+        year=current_year
+    ).order_by('-year', '-month')
+
+    # Calculate KPI metrics
+    auc_planejado = float(Planejado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
+    auc_executado = float(Executado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
+    auc_percentual_atingido = (auc_executado / auc_planejado * 100) if auc_planejado > 0 else 0
+    auc_pace = (auc_percentual_atingido / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
+
+    # Get PJ1 revenue from API
+    receita_pj1_executado = get_receita_pj1_from_api()
+    finance_history.receita_pj1 = Decimal(str(receita_pj1_executado))
+    finance_history.save()
+
+    # Calculate percentages and paces
+    def calculate_metrics(executado, planejado):
+        percentual = (float(executado) / float(planejado) * 100) if planejado > 0 else 0
+        pace = (percentual / time_elapsed_percentage * 100) if time_elapsed_percentage > 0 else 0
+        return percentual, pace
+
+    # Calculate metrics for each revenue type
+    receita_pj1_percentual, receita_pj1_pace = calculate_metrics(
+        finance_history.receita_pj1, 
+        finance_history.receita_pj1_planejado
+    )
+    
+    receita_pj2_percentual, receita_pj2_pace = calculate_metrics(
+        finance_history.receita_pj2, 
+        finance_history.receita_pj2_planejado
+    )
+    
+    receita_total_percentual, receita_total_pace = calculate_metrics(
+        finance_history.receita_total, 
+        finance_history.receita_total_planejado
+    )
+
+    # Create revenue evolution chart
+    revenue_data = list(historical_data)
+    revenue_data.append(finance_history)
+    
+    # Prepare data for the template
+    context = {
+        'form': form,
+        'historical_data': historical_data,
+        'current_data': {
+            'auc_planejado': format_br_currency(auc_planejado),
+            'auc_executado': format_br_currency(auc_executado),
+            'auc_percentual': auc_percentual_atingido,
+            'auc_pace': auc_pace,
+            
+            'receita_pj1_planejado': format_br_currency(finance_history.receita_pj1_planejado),
+            'receita_pj1_executado': format_br_currency(finance_history.receita_pj1),
+            'receita_pj1_percentual': receita_pj1_percentual,
+            'receita_pj1_pace': receita_pj1_pace,
+            
+            'receita_pj2_planejado': format_br_currency(finance_history.receita_pj2_planejado),
+            'receita_pj2_executado': format_br_currency(finance_history.receita_pj2),
+            'receita_pj2_percentual': receita_pj2_percentual,
+            'receita_pj2_pace': receita_pj2_pace,
+            
+            'receita_total_planejado': format_br_currency(finance_history.receita_total_planejado),
+            'receita_total_executado': format_br_currency(finance_history.receita_total),
+            'receita_total_percentual': receita_total_percentual,
+            'receita_total_pace': receita_total_pace,
+        },
+        'revenue_chart': create_revenue_chart(revenue_data)
+    }
+
+    return render(request, 'main/finance_dashboard.html', context)
+
+def create_revenue_chart(revenue_data):
+    """
+    Creates a Plotly chart showing the evolution of revenues over time.
+    
+    Args:
+        revenue_data: List of FinanceHistory objects ordered by date
+        
+    Returns:
+        str: HTML representation of the Plotly chart
+    """
+    # Prepare data for the chart
+    months = [f"{d.month}/{d.year}" for d in revenue_data]
+    receita_pj1 = [float(d.receita_pj1) for d in revenue_data]
+    receita_pj2 = [float(d.receita_pj2) for d in revenue_data]
+    receita_total = [float(d.receita_total) for d in revenue_data]
+    
+    # Create the figure
+    fig = go.Figure()
+    
+    # Add traces for each revenue type
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_pj1,
+        mode='lines+markers',
+        name='Receita PJ1'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_pj2,
+        mode='lines+markers',
+        name='Receita PJ2'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_total,
+        mode='lines+markers',
+        name='Receita Total'
+    ))
+    
+    # Update layout
+    fig.update_layout(
+        title='Evolução da Receita',
+        xaxis_title='Mês/Ano',
+        yaxis_title='Receita (R$)',
+        height=400,
+        margin=dict(l=20, r=20, t=40, b=20)
+    )
+    
+    # Convert to HTML
+    return opy.plot(fig, auto_open=False, output_type='div')

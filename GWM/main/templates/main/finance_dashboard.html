@@ -1,0 +1,299 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Financeiro{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Current Month Stats -->
+    <div class="row mb-4">
+        <!-- AUC Card -->
+        <div class="col-12 mb-4">
+            <div class="card shadow h-100 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        <i class="fas fa-dollar-sign me-2"></i>AUC (on+offshore)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Planejado</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ current_data.auc_planejado }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Executado</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ current_data.auc_executado }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">% Atingido</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span class="{% if current_data.auc_percentual >= 100 %}text-success{% elif current_data.auc_percentual >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ current_data.auc_percentual|floatformat:1 }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pace</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span class="{% if current_data.auc_pace >= 100 %}text-success{% elif current_data.auc_pace >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ current_data.auc_pace|floatformat:1 }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" class="w-100">
+            {% csrf_token %}
+            
+            <!-- Receita PJ1 Card -->
+            <div class="col-12 mb-4">
+                <div class="card shadow h-100 rounded-lg">
+                    <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-chart-line me-2"></i>Receita PJ1
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Planejado</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ current_data.receita_pj1_planejado }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Executado</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ current_data.receita_pj1_executado }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">% Atingido</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <span class="{% if current_data.receita_pj1_percentual >= 100 %}text-success{% elif current_data.receita_pj1_percentual >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                                {{ current_data.receita_pj1_percentual|floatformat:1 }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pace</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <span class="{% if current_data.receita_pj1_pace >= 100 %}text-success{% elif current_data.receita_pj1_pace >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                                {{ current_data.receita_pj1_pace|floatformat:1 }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receita PJ2 Card -->
+            <div class="col-12 mb-4">
+                <div class="card shadow h-100 rounded-lg">
+                    <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                        <h6 class="m-0 font-weight-bold text-white">
+                            <i class="fas fa-chart-bar me-2"></i>Receita PJ2
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Planejado</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ form.receita_pj2_planejado }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Executado</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ form.receita_pj2|currency }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">% Atingido</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <span class="{% if current_data.receita_pj2_percentual >= 100 %}text-success{% elif current_data.receita_pj2_percentual >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                                {{ current_data.receita_pj2_percentual|floatformat:1 }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                    <div class="card-body text-center">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pace</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <span class="{% if current_data.receita_pj2_pace >= 100 %}text-success{% elif current_data.receita_pj2_pace >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                                {{ current_data.receita_pj2_pace|floatformat:1 }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-center mb-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Salvar Valores
+                </button>
+            </div>
+        </form>
+
+        <!-- Receita Total Card -->
+        <div class="col-12 mb-4">
+            <div class="card shadow h-100 rounded-lg">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">
+                        <i class="fas fa-calculator me-2"></i>Receita Total
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Planejado</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ current_data.receita_total_planejado }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Executado</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ current_data.receita_total_executado }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">% Atingido</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span class="{% if current_data.receita_total_percentual >= 100 %}text-success{% elif current_data.receita_total_percentual >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ current_data.receita_total_percentual|floatformat:1 }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body text-center">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pace</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span class="{% if current_data.receita_total_pace >= 100 %}text-success{% elif current_data.receita_total_pace >= 80 %}text-warning{% else %}text-danger{% endif %}">
+                                            {{ current_data.receita_total_pace|floatformat:1 }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evolution Charts -->
+    <div class="row">
+        <!-- Revenue Evolution Chart -->
+        <div class="col-12">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">Evolução da Receita</h6>
+                </div>
+                <div class="card-body">
+                    {{ revenue_chart|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical Data Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                    <h6 class="m-0 font-weight-bold text-white">Histórico Financeiro</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Mês/Ano</th>
+                                    <th>Receita PJ1</th>
+                                    <th>Receita PJ2</th>
+                                    <th>Receita Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in historical_data %}
+                                <tr>
+                                    <td>{{ item.month }}/{{ item.year }}</td>
+                                    <td>{{ item.receita_pj1|floatformat:2 }}</td>
+                                    <td>{{ item.receita_pj2|floatformat:2 }}</td>
+                                    <td>{{ item.receita_total|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

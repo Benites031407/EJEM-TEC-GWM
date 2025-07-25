@@ -37,6 +37,12 @@
                         </a>
                     </li>
                     <li class="nav-item mb-2">
+                        <a href="{% url 'finance_dashboard' %}" class="nav-link {% if request.path == '/dashboard/master/financeiro/' %}active{% endif %} text-white d-flex align-items-center">
+                            <i class="fas fa-money-bill-wave me-3"></i>
+                            <span>Dashboard Financeiro</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
                         <a href="{% url 'painel_alertas_master' %}" class="nav-link {% if request.path == '/painel/alertas/' %}active{% endif %} text-white d-flex align-items-center">
                             <i class="fas fa-exclamation-triangle me-3"></i>
                             <span>Painel de Alertas</span>

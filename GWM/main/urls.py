@@ -22,6 +22,7 @@ urlpatterns = [
     path('captacao/', views.captacao_view, name='captacao'),
     path('historico/', historico_view, name='historico'),
     path('dashboard/master/', views.dashboard_master, name='dashboard_master'),
+    path('dashboard/master/financeiro/', views.finance_dashboard, name='finance_dashboard'),
     path('dashboard/master/area/<slug:area_slug>/', views.dashboard_area, name='dashboard_area'),
     path('unidades/', views.lista_unidades, name='unidades'),
     path('unidades/<slug:slug>/', views.dashboard_unidade, name='dashboard_unidade'),

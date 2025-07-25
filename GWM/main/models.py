@@ -387,3 +387,45 @@ class CodigoEdicao(models.Model):
     class Meta:
         verbose_name = "Código de Edição"
         verbose_name_plural = "Código de Edição"
+
+class FinanceHistory(models.Model):
+    month = models.IntegerField()
+    year = models.IntegerField()
+    receita_pj1 = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    receita_pj2 = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    receita_total = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    receita_pj1_planejado = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    receita_pj2_planejado = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    receita_total_planejado = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('month', 'year')
+        ordering = ['-year', '-month']
+
+    def __str__(self):
+        return f"Finance History - {self.month}/{self.year}"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        
+        # Validate non-negative values
+        fields_to_check = ['receita_pj1', 'receita_pj2', 'receita_total',
+                          'receita_pj1_planejado', 'receita_pj2_planejado', 'receita_total_planejado']
+        
+        for field in fields_to_check:
+            value = getattr(self, field)
+            if value < 0:
+                raise ValidationError({field: 'O valor não pode ser negativo.'})
+
+        # Validate total matches sum of parts
+        if self.receita_total != self.receita_pj1 + self.receita_pj2:
+            self.receita_total = self.receita_pj1 + self.receita_pj2
+
+        if self.receita_total_planejado != self.receita_pj1_planejado + self.receita_pj2_planejado:
+            self.receita_total_planejado = self.receita_pj1_planejado + self.receita_pj2_planejado
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)

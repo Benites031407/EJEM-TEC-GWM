@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Planejado, Executado, Captacao, Estatisticas, Area
+from .models import Planejado, Executado, Captacao, Estatisticas, Area, FinanceHistory
 from decimal import Decimal
 import re
 
@@ -845,6 +845,39 @@ def parse_percent(value):
         return Decimal(value)
     except Exception:
         raise forms.ValidationError('Informe um percentual válido, ex: 12,5')
+
+
+class FinanceForm(forms.ModelForm):
+    class Meta:
+        model = FinanceHistory
+        fields = ['receita_pj2', 'receita_pj1_planejado', 'receita_pj2_planejado']
+        labels = {
+            'receita_pj2': 'Receita PJ2 Executado',
+            'receita_pj1_planejado': 'Receita PJ1 Planejado',
+            'receita_pj2_planejado': 'Receita PJ2 Planejado',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Apply currency widget to all fields
+        for field in self.fields.values():
+            field.widget = forms.TextInput(attrs={
+                'class': 'form-control money-mask',
+                'data-type': 'currency',
+                'placeholder': 'R$ 0,00'
+            })
+
+    def clean(self):
+        cleaned_data = super().clean()
+        
+        # Convert all currency fields from string to Decimal
+        for field_name in self.fields:
+            if field_name in cleaned_data:
+                value = cleaned_data[field_name]
+                if isinstance(value, str):
+                    cleaned_data[field_name] = parse_brl_currency(value) or Decimal('0')
+
+        return cleaned_data
 
 
 
