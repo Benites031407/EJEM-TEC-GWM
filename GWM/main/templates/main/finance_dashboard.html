@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Dashboard Financeiro{% endblock %}
 
@@ -283,9 +284,9 @@
                                 {% for item in historical_data %}
                                 <tr>
                                     <td>{{ item.month }}/{{ item.year }}</td>
-                                    <td>{{ item.receita_pj1|floatformat:2 }}</td>
-                                    <td>{{ item.receita_pj2|floatformat:2 }}</td>
-                                    <td>{{ item.receita_total|floatformat:2 }}</td>
+                                    <td>{{ item.receita_pj1|currency }}</td>
+                                    <td>{{ item.receita_pj2|currency }}</td>
+                                    <td>{{ item.receita_total|currency }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

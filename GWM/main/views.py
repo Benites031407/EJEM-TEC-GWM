@@ -2594,11 +2594,17 @@ def create_revenue_chart(revenue_data):
     Returns:
         str: HTML representation of the Plotly chart
     """
+    # Sort data by date
+    revenue_data = sorted(revenue_data, key=lambda x: (x.year, x.month))
+    
     # Prepare data for the chart
     months = [f"{d.month}/{d.year}" for d in revenue_data]
     receita_pj1 = [float(d.receita_pj1) for d in revenue_data]
     receita_pj2 = [float(d.receita_pj2) for d in revenue_data]
     receita_total = [float(d.receita_total) for d in revenue_data]
+    receita_pj1_planejado = [float(d.receita_pj1_planejado) for d in revenue_data]
+    receita_pj2_planejado = [float(d.receita_pj2_planejado) for d in revenue_data]
+    receita_total_planejado = [float(d.receita_total_planejado) for d in revenue_data]
     
     # Create the figure
     fig = go.Figure()
@@ -2608,21 +2614,48 @@ def create_revenue_chart(revenue_data):
         x=months,
         y=receita_pj1,
         mode='lines+markers',
-        name='Receita PJ1'
+        name='Receita PJ1',
+        line=dict(color='#1f77b4')
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_pj1_planejado,
+        mode='lines',
+        name='PJ1 Planejado',
+        line=dict(dash='dash', color='#1f77b4')
     ))
     
     fig.add_trace(go.Scatter(
         x=months,
         y=receita_pj2,
         mode='lines+markers',
-        name='Receita PJ2'
+        name='Receita PJ2',
+        line=dict(color='#ff7f0e')
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_pj2_planejado,
+        mode='lines',
+        name='PJ2 Planejado',
+        line=dict(dash='dash', color='#ff7f0e')
     ))
     
     fig.add_trace(go.Scatter(
         x=months,
         y=receita_total,
         mode='lines+markers',
-        name='Receita Total'
+        name='Receita Total',
+        line=dict(color='#2ca02c')
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=months,
+        y=receita_total_planejado,
+        mode='lines',
+        name='Total Planejado',
+        line=dict(dash='dash', color='#2ca02c')
     ))
     
     # Update layout
@@ -2631,7 +2664,15 @@ def create_revenue_chart(revenue_data):
         xaxis_title='Mês/Ano',
         yaxis_title='Receita (R$)',
         height=400,
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=40, b=20),
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
     )
     
     # Convert to HTML
@@ -2678,7 +2719,7 @@ def finance_dashboard(request):
     historical_data = FinanceHistory.objects.exclude(
         month=current_month,
         year=current_year
-    ).order_by('-year', '-month')
+    ).order_by('year', 'month')
 
     # Calculate KPI metrics
     auc_planejado = float(Planejado.objects.filter(year=current_year).aggregate(Sum('auc'))['auc__sum'] or 0)
@@ -2716,6 +2757,8 @@ def finance_dashboard(request):
     # Create revenue evolution chart
     revenue_data = list(historical_data)
     revenue_data.append(finance_history)
+    # Sort by date to ensure correct order
+    revenue_data.sort(key=lambda x: (x.year, x.month))
     
     # Prepare data for the template
     context = {
@@ -2747,55 +2790,4 @@ def finance_dashboard(request):
 
     return render(request, 'main/finance_dashboard.html', context)
 
-def create_revenue_chart(revenue_data):
-    """
-    Creates a Plotly chart showing the evolution of revenues over time.
-    
-    Args:
-        revenue_data: List of FinanceHistory objects ordered by date
-        
-    Returns:
-        str: HTML representation of the Plotly chart
-    """
-    # Prepare data for the chart
-    months = [f"{d.month}/{d.year}" for d in revenue_data]
-    receita_pj1 = [float(d.receita_pj1) for d in revenue_data]
-    receita_pj2 = [float(d.receita_pj2) for d in revenue_data]
-    receita_total = [float(d.receita_total) for d in revenue_data]
-    
-    # Create the figure
-    fig = go.Figure()
-    
-    # Add traces for each revenue type
-    fig.add_trace(go.Scatter(
-        x=months,
-        y=receita_pj1,
-        mode='lines+markers',
-        name='Receita PJ1'
-    ))
-    
-    fig.add_trace(go.Scatter(
-        x=months,
-        y=receita_pj2,
-        mode='lines+markers',
-        name='Receita PJ2'
-    ))
-    
-    fig.add_trace(go.Scatter(
-        x=months,
-        y=receita_total,
-        mode='lines+markers',
-        name='Receita Total'
-    ))
-    
-    # Update layout
-    fig.update_layout(
-        title='Evolução da Receita',
-        xaxis_title='Mês/Ano',
-        yaxis_title='Receita (R$)',
-        height=400,
-        margin=dict(l=20, r=20, t=40, b=20)
-    )
-    
-    # Convert to HTML
-    return opy.plot(fig, auto_open=False, output_type='div')
+
