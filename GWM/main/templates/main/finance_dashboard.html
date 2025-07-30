@@ -297,4 +297,34 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Aplica a máscara em todos os campos de valor
+    $('input[name*="receita"]').mask('000.000.000,00', {
+        reverse: true,
+        placeholder: "0,00",
+        onChange: function(value, e) {
+            // Remove pontos e vírgulas para o valor ser salvo corretamente
+            var numericValue = value.replace(/\./g, '').replace(',', '.');
+            $(e.target).siblings('input[type="hidden"]').val(numericValue);
+        }
+    });
+
+    // Formata os valores já existentes ao carregar a página
+    $('input[name*="receita"]').each(function() {
+        var value = $(this).val();
+        if (value) {
+            // Converte o valor para o formato brasileiro
+            var formattedValue = parseFloat(value).toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            $(this).val(formattedValue);
+        }
+    });
+});
+</script>
 {% endblock %} 
