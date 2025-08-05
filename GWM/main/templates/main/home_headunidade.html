@@ -279,7 +279,7 @@
                                     <h5 class="mb-1">Envios de formulário pendentes</h5>
                                     <span class="badge bg-danger rounded-pill" style="font-size: 1.2rem;">{{ assessores_sem_estatisticas|length }}</span>
                                 </div>
-                                <p class="mb-1 16px">Assessores que ainda não enviaram as estatísticas mensais</p>
+                                <p class="mb-1 16px">Assessores que ainda não enviaram as utilizações das Áreas (mês anterior)</p>
                                 <div class="mt-2">
                                     {% for assessor in assessores_sem_estatisticas|slice:":3" %}
                                         <span class="badge bg-light text-dark me-1">{{ assessor.get_full_name|default:assessor.username }}</span>
