@@ -117,10 +117,7 @@
                         <tr>
                             <th class="ps-3">Nome</th>
                             <th class="text-center">Clientes</th>
-                            <th class="text-center">Operações</th>
                             <th class="text-end">PL Total</th>
-                            <th class="text-center">Performance</th>
-                            <th class="text-end pe-3">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,25 +137,8 @@
                             <td class="text-center">
                                 <span class="badge bg-light text-dark rounded-pill px-3 py-2">{{ metric.captacoes_count }}</span>
                             </td>
-                            <td class="text-center">
-                                <span class="badge bg-light text-dark rounded-pill px-3 py-2">{{ metric.total_operations }}</span>
-                            </td>
                             <td class="text-end fw-bold">
                                 {{ metric.pl_total|currency }}
-                            </td>
-                            <td class="text-center">
-                                {% with percentage=metric.performance_percentage|default:50 %}
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <div class="progress flex-grow-1" style="height: 6px; max-width: 100px;">
-                                        <div class="progress-bar bg-{% if percentage >= 75 %}success{% elif percentage >= 50 %}warning{% else %}danger{% endif %}" 
-                                             role="progressbar" style="width: {{ percentage }}%;" 
-                                             aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <span class="ms-2 text-{% if percentage >= 75 %}success{% elif percentage >= 50 %}warning{% else %}danger{% endif %}">
-                                        {{ percentage }}%
-                                    </span>
-                                </div>
-                                {% endwith %}
                             </td>
                             <td class="text-end pe-3">
                                 <a href="{% url 'assessor_monitoring_detail' metric.assessor.id %}" class="btn btn-sm btn-primary rounded-pill px-3">

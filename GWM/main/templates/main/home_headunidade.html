@@ -64,14 +64,14 @@
                                 Dashboard da Unidade <strong>{{ unidade.nome }}</strong>
                             </p>
                         </div>
-                        <div class="d-flex flex-wrap justify-content-end mt-3 mt-sm-0 gap-2">
+                        <!-- <div class="d-flex flex-wrap justify-content-end mt-3 mt-sm-0 gap-2">
                             <a href="{% url 'dashboard_headunidade' %}" class="btn btn-outline-light px-4">
                                 <i class="fas fa-chart-line me-2"></i> Dashboard da Unidade
                             </a>
                             <a href="{% url 'assessor_monitoring' %}" class="btn btn-outline-light px-4">
                                 <i class="fas fa-user-check me-2"></i> Monitorar Assessores
                             </a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -151,33 +151,12 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-3">
-                            <div class="card bg-success bg-opacity-10 border-0 h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h4 class="text-success mb-0">Captações</h4>
-                                            <h4 class="mt-3 mb-0">{{ total_captacoes|default:"0" }}</h4>
-                                        </div>
-                                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                            <i class="fas fa-user-plus text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <small class="text-muted">Total de clientes cadastrados</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
                             <div class="card bg-info bg-opacity-10 border-0 h-100">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h4 class="text-info mb-0">PL Total</h4>
                                             <h4 class="mt-3 mb-0">R$ {{ total_pl }}</h4>
-                                        </div>
-                                        <div class="bg-info rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                            <i class="fas fa-wallet text-white"></i>
                                         </div>
                                     </div>
                                     <div class="mt-3">
@@ -194,12 +173,24 @@
                                             <h4 class="text-warning mb-0">ROA</h4>
                                             <h4 class="mt-3 mb-0">{{ unidade.roa|default:"0" }}%</h4>
                                         </div>
-                                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                            <i class="fas fa-percentage text-white"></i>
-                                        </div>
                                     </div>
                                     <div class="mt-3">
                                         <small class="text-muted">Retorno sobre ativos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card bg-success bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="text-success mb-0">Contas</h4>
+                                            <h4 class="mt-3 mb-0">{{ total_captacoes|default:"0" }}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">Total de clientes cadastrados</small>
                                     </div>
                                 </div>
                             </div>
@@ -309,7 +300,7 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-gradient-primary-to-secondary">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar text-info me-2"></i>Operações por Categoria</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-bar text-info me-2"></i>Operações por Categoria (mês anterior)</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-4">
