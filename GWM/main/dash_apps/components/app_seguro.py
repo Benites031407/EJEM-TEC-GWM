@@ -186,7 +186,7 @@ def atualizar_grafico(nome_tipo, ano, intervalo_meses):
     fig.add_trace(go.Scatter(
         x=x_labels,
         y=[v * 100 if v <= 1 else v for v in df["pace"]],
-        name="% Atingido",
+        name="Pace",
         mode="lines+markers+text",
         text=[f"{(v * 100 if v <= 1 else v):.1f}%" if pd.notna(v) else "" for v in df["pace"]],
         textposition="top center",
@@ -199,7 +199,7 @@ def atualizar_grafico(nome_tipo, ano, intervalo_meses):
 
     fig.update_layout(
         title=dict(
-            text=f"Comparativo Renda Variável - {nome_legenda.get(nome_tipo, nome_tipo)}<br><sup>{x_labels[0]} a {x_labels[-1]}/{ano}</sup>",
+            text=f"Comparativo Seguro - {nome_legenda.get(nome_tipo, nome_tipo)}<br><sup>{x_labels[0]} a {x_labels[-1]}/{ano}</sup>",
             x=0.5,
             xanchor="center",
             font=dict(size=20, color="#222222")

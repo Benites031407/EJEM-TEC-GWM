@@ -2,6 +2,7 @@
 {% load static %}
 {%load custom_filters%}
 {% block title %}Dashboard {{ area.nome }}{% endblock %}
+{% load plotly_dash %}
 
 {% block content %}
 <div class="container-fluid">
@@ -54,7 +55,22 @@
                                         <i class="fas fa-star text-warning"></i>
                                     </div>
                                 </div>
+                            </div>~
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Expansão</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="ExpansaoApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
                         {% elif area.nome == "Seguro" or area.nome == "Seguros" %}
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
@@ -89,6 +105,23 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Seguro</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="SeguroApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         {% elif area.nome == "Renda Variável" %}
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
@@ -123,6 +156,23 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Renda Variável</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="RendaVariavelApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         {% elif area.nome == "Câmbio" or area.nome == "Cambio" %}
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
@@ -157,6 +207,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Cambio</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="CambioApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         {% elif area.nome == "Corporate" %}
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
@@ -180,6 +244,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Corporate</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="CorporateApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         {% elif area.nome == "Banking" %}
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
@@ -200,6 +278,20 @@
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-credit-card text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Banking</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="BankingApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -248,6 +340,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Marketing</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="MarketingApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         {% elif area.nome == "Consórcio" or area.nome == "Consorcio" %}
                             <div class="col-md-4 mb-4">
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
@@ -268,6 +374,20 @@
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-clipboard-list text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Consórcio</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="ConsorcioApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -302,6 +422,20 @@
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-bullhorn text-info"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12">
+                                    <div class="card shadow mb-4 rounded-lg">
+                                        <div class="card-header py-3 bg-gradient-primary-to-secondary">
+                                            <h6 class="m-0 font-weight-bold text-white">Comparativo Advisory</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="grafico-top5-clientes" style="height: 600px;">
+                                                {% plotly_app name="AdvisoryApp" ratio=1.0 %}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

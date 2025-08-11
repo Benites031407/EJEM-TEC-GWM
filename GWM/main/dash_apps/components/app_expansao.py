@@ -201,7 +201,7 @@ def atualizar_grafico(nome_tipo, ano, intervalo_meses):
     fig.add_trace(go.Scatter(
         x=x_labels,
         y=[v * 100 if v <= 1 else v for v in df["pace"]],
-        name="% Atingido",
+        name="Pace",
         mode="lines+markers+text",
         text=[f"{(v * 100 if v <= 1 else v):.1f}%" if pd.notna(v) else "" for v in df["pace"]],
         textposition="top center",
