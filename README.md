@@ -13,6 +13,8 @@ Construção de um ERP financeiro para a empresa GWM Investiments visando melhor
 
 **Back-end:** Django, PostgreSQL
 
+**ReadME:** [readme.so](https://readme.so/pt)
+
 
 ## Instalação
 
@@ -38,4 +40,5 @@ Para fazer o deploy desse projeto rode
 
 - [@Benites031407](https://github.com/Benites031407)
 - [@JulioMechi](https://github.com/JulioMechi)
+
 
