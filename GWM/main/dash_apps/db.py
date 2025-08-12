@@ -11,6 +11,14 @@ def conectar():
     sslmode='require'
     )
 
+# def conectar():
+#     return psycopg2.connect(
+#     dbname="GWM",
+#     user="postgres",
+#     password="banana",
+#     host="localhost",
+#     port="5432",
+#     )
 
 def pegar_planejado():
     conn = conectar()
