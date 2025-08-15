@@ -27,7 +27,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.entrevistas|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">Entrevistas</p>
+                                        <p class="text-muted mb-0 small">Entrevistas executadas</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-user-tie text-primary"></i>
@@ -38,7 +38,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.contratacoes|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">Contratações</p>
+                                        <p class="text-muted mb-0 small">Contratações executadas</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-handshake text-success"></i>
@@ -49,7 +49,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.nps|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">NPS</p>
+                                        <p class="text-muted mb-0 small">NPS alcançado</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-star text-warning"></i>
@@ -76,7 +76,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.qtd_reunioes|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">QTD de Reuniões</p>
+                                        <p class="text-muted mb-0 small">QTD de Reuniões executadas</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-calendar-check text-primary"></i>
@@ -87,7 +87,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.qtd_seguros|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">QTD de Seguros</p>
+                                        <p class="text-muted mb-0 small">QTD de Seguros executadas</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-shield-alt text-success"></i>
@@ -98,7 +98,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.volume_pa|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Volume de PA</p>
+                                        <p class="text-muted mb-0 small">Volume de PA alcançada</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-money-bill-wave text-info"></i>
@@ -127,7 +127,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.receita|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Receita</p>
+                                        <p class="text-muted mb-0 small">Receita alcançada</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-dollar-sign text-success"></i>
@@ -149,7 +149,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.volume_ofertas|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Volume em Ofertas</p>
+                                        <p class="text-muted mb-0 small">Volume em Ofertas alcançado</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-chart-line text-info"></i>
@@ -178,7 +178,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.receita|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Receita</p>
+                                        <p class="text-muted mb-0 small">Receita alcançada</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-dollar-sign text-success"></i>
@@ -189,7 +189,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.volume_operado|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Volume Operado</p>
+                                        <p class="text-muted mb-0 small">Volume Operado alcançado</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-exchange-alt text-primary"></i>
@@ -200,7 +200,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.assessores_ativos|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">Assessores Operando</p>
+                                        <p class="text-muted mb-0 small">Assessores Operando atingido</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-user-tie text-info"></i>
@@ -226,7 +226,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.volume_credito|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Volume de Crédito</p>
+                                        <p class="text-muted mb-0 small">Volume de Crédito atingido</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-money-check-alt text-success"></i>
@@ -237,7 +237,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.qtd_reunioes|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">QTD de Reuniões</p>
+                                        <p class="text-muted mb-0 small">QTD de Reuniõe executadass</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-calendar-check text-primary"></i>
@@ -263,7 +263,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.principalidade|default:"0"|floatformat:2 }}%</h4>
-                                        <p class="text-muted mb-0 small">Principalidade</p>
+                                        <p class="text-muted mb-0 small">Principalidade atingida</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-university text-primary"></i>
@@ -300,7 +300,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area.seguidores|default:"2" }}</h4>
-                                        <p class="text-muted mb-0 small">Seguidores</p>
+                                        <p class="text-muted mb-0 small">Seguidores alcançados</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-users text-primary"></i>
@@ -311,7 +311,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area.interacoes|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">Interações</p>
+                                        <p class="text-muted mb-0 small">Interações alcançadas</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-heart text-danger"></i>
@@ -322,7 +322,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.leads_redes|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">Leads Redes Sociais</p>
+                                        <p class="text-muted mb-0 small">Leads Redes Sociais atingidos</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-funnel-dollar text-success"></i>
@@ -333,7 +333,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.perc_pl_credito|default:"0"|floatformat:2 }}%</h4>
-                                        <p class="text-muted mb-0 small">% PL em Crédito</p>
+                                        <p class="text-muted mb-0 small">% PL em Crédito executado</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-percentage text-info"></i>
@@ -359,7 +359,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.volume_financeiro|default:"0"|currency }}M</h4>
-                                        <p class="text-muted mb-0 small">Volume Financeiro</p>
+                                        <p class="text-muted mb-0 small">Volume Financeiro alcançado</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-dollar-sign text-success"></i>
@@ -370,7 +370,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.qtd_consorcios|default:"0" }}</h4>
-                                        <p class="text-muted mb-0 small">Quantidade de Consórcios</p>
+                                        <p class="text-muted mb-0 small">Quantidade de Consórcios executados</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-clipboard-list text-primary"></i>
@@ -418,7 +418,7 @@
                                 <div class="small-box bg-light p-3 rounded shadow-sm text-center">
                                     <div class="inner">
                                         <h4 class="mb-1">{{ area_metrics.ofertas_publicas|default:"0"|currency }}</h4>
-                                        <p class="text-muted mb-0 small">Ofertas Públicas</p>
+                                        <p class="text-muted mb-0 small">Ofertas Públicas executadas</p>
                                     </div>
                                     <div class="mt-2">
                                         <i class="fas fa-bullhorn text-info"></i>
@@ -467,19 +467,6 @@
                                             {% else %}
                                                 Não definido
                                             {% endif %}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-4">
-                                <h5 class="h5 mb-2 text-gray-800">Performance</h5>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        % Atingido
-                                        <span class="font-weight-bold {% if area_metrics.percentual_atingido >= 100 %}text-success{% elif area_metrics.percentual_atingido >= 80 %}text-warning{% else %}text-danger{% endif %}">
-                                            {{ area_metrics.percentual_atingido|floatformat:1 }}%
                                         </span>
                                     </li>
                                 </ul>
