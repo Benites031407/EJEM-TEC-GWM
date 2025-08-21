@@ -17,18 +17,18 @@ from django.contrib import messages
 from .models import Planejado, Executado, Captacao, Estatisticas, Unidade, CustomUser, AlertaDuplicado, CodigoEdicao, Area, AgendamentoMensal, ObjetivoAnual, ObjetivoUnidade, FinanceHistory
 from datetime import datetime, timedelta, date
 from decimal import Decimal
-from main.dash_apps.components.app_top5leads import app
-from main.dash_apps.components.cliente_pizza import app
-from main.dash_apps.components.callback_pl_auc import app
-from main.dash_apps.components.app_seguro import app
-from main.dash_apps.components.app_expansao import app
-from main.dash_apps.components.app_renda_variavel import app
-from main.dash_apps.components.app_corporate import app
-from main.dash_apps.components.app_banking import app
-from main.dash_apps.components.app_consorcio import app
-from main.dash_apps.components.app_marketing import app
-from main.dash_apps.components.app_cambio import app
-from main.dash_apps.components.app_advisory import app
+# from main.dash_apps.components.app_top5leads import app
+# from main.dash_apps.components.cliente_pizza import app
+# from main.dash_apps.components.callback_pl_auc import app
+# from main.dash_apps.components.app_seguro import app
+# from main.dash_apps.components.app_expansao import app
+# from main.dash_apps.components.app_renda_variavel import app
+# from main.dash_apps.components.app_corporate import app
+# from main.dash_apps.components.app_banking import app
+# from main.dash_apps.components.app_consorcio import app
+# from main.dash_apps.components.app_marketing import app
+# from main.dash_apps.components.app_cambio import app
+# from main.dash_apps.components.app_advisory import app
 from django.views.decorators.http import require_POST
 import re
 from django.db.models import Sum, F, Func, Value, DecimalField, Q, Count, Avg, Max
