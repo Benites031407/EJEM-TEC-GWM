@@ -13,7 +13,7 @@ import pandas as pd
 
 def conectar():
     return psycopg2.connect(
-    dbname="GWM",
+    dbname="gwm",
     user="adm",
     password="admingwm",
     host="localhost",
