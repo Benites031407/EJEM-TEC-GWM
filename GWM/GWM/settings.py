@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-z2c@*9#68g19z4jk)j)i)or92w6n@ql4*^+3cp#x3_=%yn_e1b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -98,20 +98,20 @@ WSGI_APPLICATION = 'GWM.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'GWM',
-#         'USER': 'postgres',
-#         'PASSWORD': 'banana',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
 DATABASES = {
-   'default': dj_database_url.parse("postgresql://gwm1807_user:Sx9MIqQ160xrb8kaFN0Mh3Jezc9jc1NY@dpg-d1sndaali9vc73c96o3g-a.virginia-postgres.render.com/gwm1807")
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'GWM',
+        'USER': 'adm',
+        'PASSWORD': 'admingwm',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
 }
+
+# DATABASES = {
+#    'default': dj_database_url.parse("postgresql://gwm1807_user:Sx9MIqQ160xrb8kaFN0Mh3Jezc9jc1NY@dpg-d1sndaali9vc73c96o3g-a.virginia-postgres.render.com/gwm1807")
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
