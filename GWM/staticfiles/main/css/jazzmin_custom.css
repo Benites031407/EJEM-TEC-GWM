@@ -1,0 +1,78 @@
+/* static/css/jazzmin_custom.css */
+
+.bg-custom-brand {
+    background-color: #002733 !important;  /* Azul escuro */
+}
+
+.accent-custom-accent {
+    color: #005678 !important; /* Azul claro */
+}
+
+.btn-custom-primary {
+    background-color: #005678;
+    border-color: #005678;
+    color: white;
+}
+/* Fundo da navbar */
+.main-header.navbar {
+    background-color: #002733 !important;
+}
+
+/* Fundo da sidebar */
+.main-sidebar {
+    background-color: #354431 !important;
+}
+
+/* Links ativos e hover na sidebar */
+.nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #5b7954 !important;
+    color: #fff !important;
+}
+
+.nav-sidebar > .nav-item > .nav-link:hover {
+    background-color: #5b7954 !important;
+    color: #fff !important;
+}
+
+/* Botões primários */
+.btn-success {
+    background-color: #5b7954;
+    border-color: #5b7954;
+}
+
+.btn-custom-primary:hover {
+    background-color: #003c58;
+    border-color: #003c58;
+}
+
+.btn-custom-success {
+    background-color: #5b7954;
+    border-color: #5b7954;
+    color: white;
+}
+
+.btn-custom-success:hover {
+    background-color: #3d5037;
+    border-color: #3d5037;
+}
+
+/* Altera o fundo da tela de login */
+body.login-page {
+    background-color: #002733 !important; /* Azul escuro */
+}
+
+/* Opcional: estiliza o box do login */
+.login-box, .login-box-body {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Botão de login */
+.login-box .btn {
+    background-color: #5b7954;
+    border: none;
+    color: white;
+}
+
