@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-z2c@*9#68g19z4jk)j)i)or92w6n@ql4*^+3cp#x3_=%yn_e1b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['34.95.250.154']
+ALLOWED_HOSTS = ['34.95.250.154', '127.0.0.1']
 
 
 # Application definition
@@ -108,6 +108,17 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'GWM180725',
+#         'USER': 'postgres',
+#         'PASSWORD': 'banana',
+#         'HOST': 'localhost',    
+#         'PORT': '5432',
+#     }
+# }
 
 # DATABASES = {
 #    'default': dj_database_url.parse("postgresql://gwm1807_user:Sx9MIqQ160xrb8kaFN0Mh3Jezc9jc1NY@dpg-d1sndaali9vc73c96o3g-a.virginia-postgres.render.com/gwm1807")

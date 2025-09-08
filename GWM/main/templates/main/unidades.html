@@ -62,16 +62,21 @@
                         </div>
                         
                         <!-- Financial Info -->
-                        <div class="mt-3 d-flex justify-content-between">
-                            <div class="text-center">
-                                <span class="small text-muted d-block">PL Total</span>
-                                <span class="font-weight-bold" style="color: #354431;">{{ unidade.enhanced_data.pl_total|default:"R$ 0,00" }}</span>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <div class="stat-item p-3 rounded-lg text-center" style="background-color: #354431; color: white;">
+                                    <div class="small text-white mb-1">PL Total</div>
+                                    <h5 class="m-0 text-white">{{ unidade.enhanced_data.pl_total|default:"R$ 0,00" }}</h5>
+                                </div>
                             </div>
-                            <div class="text-center">
-                                <span class="small text-muted d-block">Ticket Médio</span>
-                                <span class="font-weight-bold" style="color: #005678;">{{ unidade.enhanced_data.ticket_medio|default:"R$ 0,00" }}</span>
+                            <div class="col-md-6">
+                                <div class="stat-item p-3 rounded-lg text-center" style="background-color: #005678; color: white;">
+                                    <div class="small text-white mb-1">Ticket Médio</div>
+                                    <h5 class="m-0 text-white">{{ unidade.enhanced_data.ticket_medio|default:"R$ 0,00" }}</h5>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="card-footer border-0 d-flex justify-content-between py-3">
                         <a href="{% url 'dashboard_unidade' unidade.slug %}" class="btn btn-icon-split" style="background-color: #005678; color: white;">

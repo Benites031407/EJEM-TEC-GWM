@@ -20,6 +20,15 @@ def conectar():
     port="5432",
     )
 
+# def conectar():
+#     return psycopg2.connect(
+#     dbname="GWM180725",
+#     user="postgres",
+#     password="banana",
+#     host="localhost",
+#     port="5432",
+#     )
+
 def pegar_planejado():
     conn = conectar()
     query = "SELECT * FROM main_planejado;"  # Altere para sua view ou tabela correta
